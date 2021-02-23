@@ -1,0 +1,1406 @@
+
+
+<!doctype html>
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>owlifttypeh.core &#8212; owlifttypeh 1.0.0 ドキュメント</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <script src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">owlifttypeh 1.0.0 ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">owlifttypeh.core</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>owlifttypeh.core のソースコード</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. only:: ja</span>
+
+<span class="sd">    OWLIFT Type-H Python SDK のモジュール</span>
+
+<span class="sd">.. only:: en</span>
+
+<span class="sd">    OWLIFT Type-H Python SDK&#39;s module</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">IntEnum</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Thread</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="OwStatus"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwStatus">[ドキュメント]</a><span class="k">class</span> <span class="nc">OwStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        エラーコードを表します。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Represents error codes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">OK</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        成功。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Success.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INTERNAL_ERROR</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        ライブラリの内部エラー。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Internal error in the library.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NO_MEMORY</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        メモリ不足。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Not enough memory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEVICE_NOT_FOUND</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        デバイスが見つかりません。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        No device was found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEVICE_NOT_READY</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        デバイスの準備ができていません。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Device is not ready.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEVICE_UNSUPPORTED</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        サポートされていないデバイスです。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Unsupported device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NOT_ENOUGH_SIZE</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        領域のサイズが不足しています。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Not enough size of the area.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NOT_YET</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        処理がまだ完了していません。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Processing is not completed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FIRMWARE_ERROR</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        デバイスのファームウェアでエラーが発生しました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Error occurred in device firmware.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SENSOR_ERROR</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        デバイスのセンサでエラーが発生しました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Error occurred in device sensor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DIRECTSHOW_ERROR</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        DirectShowがエラーコードを返しました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Error occurred in DirectShow.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">V4L2_ERROR</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        V4L2がエラーコードを返しました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Error occurred in V4L2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NULL_POINTER</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        引数のポインタがNULLです。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Argument as a pointer type is NULL.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INVALID_VALUE</span> <span class="o">=</span> <span class="mi">21</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        引数の値が不正です。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Value of argument is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INVALID_STATE</span> <span class="o">=</span> <span class="mi">22</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        不正な状態で関数が実行されました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Function is called in invalid state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FILE_IO_ERROR</span> <span class="o">=</span> <span class="mi">23</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        ファイルI/Oエラーが発生しました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        File I/O error occurred.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INVALID_FILE_FORMAT</span> <span class="o">=</span> <span class="mi">24</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        不正なファイルフォーマットです。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Invalid file format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">END_OF_FILE</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        ファイルの終端です。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        End of file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INCOMPATIBLE</span> <span class="o">=</span> <span class="mi">26</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        互換性がありません。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Incompatible.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="OwException"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwException">[ドキュメント]</a><span class="k">class</span> <span class="nc">OwException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        例外を表します。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Represents exception.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">OwException</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            エラーの種類。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            The kind of error.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      :class:`OwStatus`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set in the extension</span>
+        <span class="k">return</span> <span class="n">OwStatus</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_status</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">host_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            ホストエラー。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">            ホストエラーは status が :data:`OwStatus.DIRECTSHOW_ERROR`</span>
+<span class="sd">            または :data:`OwStatus.V4L2_ERROR` のときの、</span>
+<span class="sd">            プラットフォームに依存したエラーコードです。</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Host error.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">            A host error is platform-dependant error code when &#39;status&#39; is</span>
+<span class="sd">            OwStatus.DIRECTSHOW_ERROR or OwStatus.V4L2_ERROR.</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set in the extension</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_host_error</span></div>
+
+
+<div class="viewcode-block" id="OwhMeta"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhMeta">[ドキュメント]</a><span class="k">class</span> <span class="nc">OwhMeta</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        フレームに付随するデータを表します。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Represents additional only of frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">S_OK</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`status` : 通常の状態。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">S_ERROR</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`status` : エラーが発生して温度を取得できない状態。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">S_NO_TEMP</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`status` : まだ温度データを取得できない状態。</span>
+<span class="sd">        電源ONの後、最初の数秒間取り得えます。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">S_INVALID_TEMP</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`status` : 温度データを取得できるが誤差が大きい状態。</span>
+<span class="sd">        電源ONの後、約20分間取り得えます。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EV_NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`event_type` : イベントなし。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EV_CORRECT</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`event_type` : 補正処理中に :data:`body_temp` を検知しました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EV_BODY_TEMP</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`event_type` : :data:`body_temp` を検知しました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EV_LOST</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">3</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`event_type` : 追跡していた動体を見失いました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EV_DIST_VALID</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`event_type` : 計測可能距離内に物体を検知しました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EV_DIST_INVALID</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`event_type` : 物体が計測可能距離外に出ました。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CE_NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`correct_error` : 成功。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CE_TOO_HIGH</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`correct_error` : 検知した温度が高すぎます。</span>
+<span class="sd">        :ref:`options &lt;options&gt;` の :ref:`manual_body_temp &lt;manual_body_temp&gt;` と比較して、</span>
+<span class="sd">        マニュアル補正計測中に検知された体表温度が高すぎるとき返されます。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CE_TOO_LOW</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        :data:`correct_error` : 検知した温度が低すぎます。</span>
+<span class="sd">        :ref:`options &lt;options&gt;` の :ref:`manual_body_temp &lt;manual_body_temp&gt;` と比較して、</span>
+<span class="sd">        マニュアル補正計測中に検知された体表温度が低すぎるとき返されます。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_time_ofs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_body_temp</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_body_temp_x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_body_temp_y</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_updated</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_correct_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manu_corr</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manu_corr_ref</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obs_temps</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temp_tab</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_dev_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            温度データの状態。定数 OwhMeta.S_*。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            State of temperature data. Constants OwhMeta.S_*.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">file_time_ofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            OWIファイルのオフセット(ミリ秒)。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Offset of OWI-file (milli second).</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_time_ofs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">event_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            イベントID。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Event ID.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">event_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            イベントタイプ。定数 OwhMeta.EV_*。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Event type. Constants OwhMeta.EV_*.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_type</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">body_temp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            検知された温度。</span>
+<span class="sd">            :data:`OwhMeta.EV_BODY_TEMP` イベントのとき返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Detected temperature.</span>
+<span class="sd">            This property is set at event :data:`OwhMeta.EV_BODY_TEMP`.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_body_temp</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">body_temp_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            body_temp を検知したX座標。</span>
+<span class="sd">            :data:`OwhMeta.EV_BODY_TEMP` イベントのとき返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            X-coodinate where body_temp is detected.</span>
+<span class="sd">            This property is set at event :data:`OwhMeta.EV_BODY_TEMP`.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_body_temp_x</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">body_temp_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            body_temp を検知したY座標。</span>
+<span class="sd">            :data:`OwhMeta.EV_BODY_TEMP` イベントのとき返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Y-coodinate where body_temp is detected.</span>
+<span class="sd">            This property is set at event :data:`OwhMeta.EV_BODY_TEMP`.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_body_temp_y</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">updated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            前回発行された :data:`OwhMeta.EV_BODY_TEMP` イベントに対する動体と同じ動体において、</span>
+<span class="sd">            より高い温度が検知されたかどうか。</span>
+<span class="sd">            :data:`OwhMeta.EV_BODY_TEMP` イベントのとき返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            This property is set at event :data:`OwhMeta.EV_BODY_TEMP`.</span>
+<span class="sd">            Whether or not the higher temperature is detected against</span>
+<span class="sd">            the same moving body that was detected before.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updated</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">correct_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            マニュアル補正計測における残りの検知回数。</span>
+<span class="sd">            :data:`OwhMeta.EV_CORRECT` イベントのとき返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_correct_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">correct_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            マニュアル補正計測でのエラー。定数 OwhMeta.CE_*。</span>
+<span class="sd">            :data:`OwhMeta.EV_CORRECT` イベントのとき返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_correct_error</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">manu_corr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            マニュアル補正値(体表温度と体温の差)。</span>
+<span class="sd">            :data:`OwhMeta.EV_CORRECT` イベントで :data:`correct_count` = 0 のときに返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manu_corr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">manu_corr_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            マニュアル補正計測における周辺温度に関連する値。</span>
+<span class="sd">            :data:`OwhMeta.EV_CORRECT` イベントで :data:`correct_count` = 0 のとき返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manu_corr_ref</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obs_temps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            :ref:`options &lt;options&gt;` の :ref:`obs_points &lt;obs_points&gt;` で指定した座標の温度。</span>
+<span class="sd">            計測可能距離内に物体を検知している間返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      [float, float, float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obs_temps</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">temp_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            各画素の温度が格納された配列。</span>
+<span class="sd">            :ref:`options &lt;options&gt;` の :ref:`temp_tab &lt;temp_tab&gt;` = True のとき返されます。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      numpy.array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_tab</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            超音波センサで検知された物体との距離(mm単位)。</span>
+<span class="sd">            検知されていないときと計測可能距離外のときは0。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      [int]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_dev_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            使用中のデバイスID (0, 1)。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      [int]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_dev_id</span></div>
+
+<div class="viewcode-block" id="OwhLedStat"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhLedStat">[ドキュメント]</a><span class="k">class</span> <span class="nc">OwhLedStat</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        LEDの動作・状態を表します。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Represents LED status.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">OFF</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        OFF</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        OFF</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ON</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        ON</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        ON</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FLASH</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        一瞬だけON</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Flashes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BLINK_ON</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        最初ONから点滅</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Blinks after turning ON at first</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BLINK_OFF</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        最初OFFから点滅</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Blinks after turning OFF at first</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">._owlifttypeh_ext</span> <span class="k">import</span> \
+        <span class="n">owh_get_lib_version</span><span class="p">,</span> \
+        <span class="n">owh_connect</span><span class="p">,</span> \
+        <span class="n">owh_open</span><span class="p">,</span> \
+        <span class="n">owh_release</span><span class="p">,</span> \
+        <span class="n">owh_get_properties</span><span class="p">,</span> \
+        <span class="n">owh_capture_start</span><span class="p">,</span> \
+        <span class="n">owh_capture_stop</span><span class="p">,</span> \
+        <span class="n">owh_get_frame</span><span class="p">,</span> \
+        <span class="n">owh_get_frame_counter</span><span class="p">,</span> \
+        <span class="n">owh_get_disconnected</span><span class="p">,</span> \
+        <span class="n">owh_run_ffc</span><span class="p">,</span> \
+        <span class="n">owh_get_sensor_serial_num</span><span class="p">,</span> \
+        <span class="n">owh_get_job</span><span class="p">,</span> \
+        <span class="n">owh_write_start</span><span class="p">,</span> \
+        <span class="n">owh_write_stop</span><span class="p">,</span> \
+        <span class="n">owh_set_led</span><span class="p">,</span> \
+        <span class="n">owh_set_options</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">_owlifttypeh_ext</span> <span class="k">import</span> \
+        <span class="n">owh_get_lib_version</span><span class="p">,</span> \
+        <span class="n">owh_connect</span><span class="p">,</span> \
+        <span class="n">owh_open</span><span class="p">,</span> \
+        <span class="n">owh_release</span><span class="p">,</span> \
+        <span class="n">owh_get_properties</span><span class="p">,</span> \
+        <span class="n">owh_capture_start</span><span class="p">,</span> \
+        <span class="n">owh_capture_stop</span><span class="p">,</span> \
+        <span class="n">owh_get_frame</span><span class="p">,</span> \
+        <span class="n">owh_get_frame_counter</span><span class="p">,</span> \
+        <span class="n">owh_get_disconnected</span><span class="p">,</span> \
+        <span class="n">owh_run_ffc</span><span class="p">,</span> \
+        <span class="n">owh_get_sensor_serial_num</span><span class="p">,</span> \
+        <span class="n">owh_get_job</span><span class="p">,</span> \
+        <span class="n">owh_write_start</span><span class="p">,</span> \
+        <span class="n">owh_write_stop</span><span class="p">,</span> \
+        <span class="n">owh_set_led</span><span class="p">,</span> \
+        <span class="n">owh_set_options</span>
+
+<div class="viewcode-block" id="OwhDevice"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice">[ドキュメント]</a><span class="k">class</span> <span class="nc">OwhDevice</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. only:: ja</span>
+
+<span class="sd">        1組（または1個）のデバイスを表します。</span>
+
+<span class="sd">    .. only:: en</span>
+
+<span class="sd">        Represents the device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_DTYPE_TEMP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">_DTYPE_IMG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cobj</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span> <span class="o">=</span> <span class="n">cobj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_frame_size</span><span class="p">,</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fwx_ofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_multi_devs</span> <span class="o">=</span> <span class="n">owh_get_properties</span><span class="p">(</span><span class="n">cobj</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OwhDevice.lib_version"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.lib_version">[ドキュメント]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">lib_version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            ネイティブライブラリのバージョンを返します。</span>
+
+<span class="sd">            :Return:        ネイティブライブラリのバージョン。</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Returns the native library&#39;s version number.</span>
+
+<span class="sd">            :Return:        The native library&#39;s version number.</span>
+
+<span class="sd">        :Return Type:   (int, int, int)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">owh_get_lib_version</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OwhDevice.connect"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.connect">[ドキュメント]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            デバイスを取得します。</span>
+
+<span class="sd">            * options</span>
+
+<span class="sd">                常にNone。</span>
+
+<span class="sd">            :Return:        :class:`OwhDevice` オブジェクト</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Get the device(s).</span>
+
+<span class="sd">            :Return:        :class:`OwhDevice` object</span>
+
+<span class="sd">        :Return Type:   :class:`OwhDevice`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OwhDevice</span><span class="p">(</span><span class="n">owh_connect</span><span class="p">(</span><span class="n">options</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="OwhDevice.open"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.open">[ドキュメント]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path0</span><span class="p">,</span> <span class="n">path1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            OWIファイルを読み込みます。</span>
+
+<span class="sd">            * path0 : str</span>
+
+<span class="sd">                デバイス0のOWIファイルパス。</span>
+
+<span class="sd">            * path1 : str</span>
+
+<span class="sd">                デバイス1のOWIファイルパス。</span>
+
+<span class="sd">            :Return:        :class:`OwhDevice` オブジェクト</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Get the device(s).</span>
+
+<span class="sd">            :Return:        :class:`OwhDevice` object</span>
+
+<span class="sd">        :Return Type:   :class:`OwhDevice`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">path1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">OwhDevice</span><span class="p">(</span><span class="n">owh_open</span><span class="p">(</span><span class="n">path0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">OwhDevice</span><span class="p">(</span><span class="n">owh_open</span><span class="p">(</span><span class="n">path0</span><span class="p">,</span> <span class="n">path1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="OwhDevice.release"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.release">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            デバイスを解放します。</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Release the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">owh_release</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">frame_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            フレームサイズ(幅、高さ)を取得します。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en </span>
+
+<span class="sd">            Frame size (width, height).</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      (int, int)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_multi_devs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            複数のデバイス(カメラの片眼)が接続されているかを取得します。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en </span>
+
+<span class="sd">            Returns whether or not multiple devices (one eye of camera) are connected.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_multi_devs</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_worker_proc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="n">owh_get_job</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">job</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">owh_run_ffc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="n">job</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OwhDevice.capture_start"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.capture_start">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">capture_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            カメラからのデータ取得を開始します。</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Starts getting data from the camera.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">worker</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">OwhDevice</span><span class="o">.</span><span class="n">_worker_proc</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">,),</span> <span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span> <span class="o">=</span> <span class="n">worker</span>
+        <span class="n">owh_run_ffc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">owh_run_ffc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">owh_capture_start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OwhDevice.capture_stop"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.capture_stop">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">capture_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            カメラからのデータ取得を停止します。</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            Stops getting data from the camera.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">owh_capture_stop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">frame_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            フレームカウンタ。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en </span>
+
+<span class="sd">            Frame counter.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">owh_get_frame_counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OwhDevice.get_frame"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.get_frame">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            画像データ、メタデータのタプル。</span>
+
+<span class="sd">        .. only:: en </span>
+
+<span class="sd">            Tuple of the the image data and the meta data.</span>
+
+<span class="sd">        :Type:      (bytes, :class:`OwhMeta`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">OwhMeta</span><span class="p">()</span>
+        <span class="n">temp_buf</span><span class="p">,</span> <span class="n">img_buf</span> <span class="o">=</span> <span class="n">owh_get_frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">temp_buf</span><span class="p">:</span>
+            <span class="n">meta</span><span class="o">.</span><span class="n">_temp_tab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">temp_buf</span><span class="p">,</span> <span class="n">OwhDevice</span><span class="o">.</span><span class="n">_DTYPE_TEMP</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">img_buf</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OwhDevice.image_to_array"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.image_to_array">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">image_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            bytes オブジェクトを numpy.array に変換します。</span>
+
+<span class="sd">            * img : bytes</span>
+
+<span class="sd">                :func:`get_frame` で取得した bytes オブジェクト。</span>
+
+<span class="sd">        .. only:: en </span>
+
+<span class="sd">            TODO</span>
+
+<span class="sd">        :Type:      numpy.array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">OwhDevice</span><span class="o">.</span><span class="n">_DTYPE_IMG</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">disconnected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            デバイスが切断されたかどうか。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en </span>
+
+<span class="sd">            Whether or not the device was disconnected.</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">owh_get_disconnected</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            disconnected() と真偽逆の値。</span>
+<span class="sd">            [読み取り専用]</span>
+
+<span class="sd">        .. only:: en </span>
+
+<span class="sd">            Reverse value of disconnected().</span>
+<span class="sd">            [Read only]</span>
+
+<span class="sd">        :Type:      bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disconnected</span>
+
+<div class="viewcode-block" id="OwhDevice.write_start"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.write_start">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">write_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file0</span><span class="p">,</span> <span class="n">file1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            カメラの出力をOWI形式でファイルへ保存します。</span>
+
+<span class="sd">            * file0 : str</span>
+
+<span class="sd">                デバイス0の出力を保存するファイル名。</span>
+
+<span class="sd">            * file1 : str</span>
+
+<span class="sd">                デバイス1の出力を保存するファイル名。</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">file0</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">file0</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;file0&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">file1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">owh_write_start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="n">file0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">file1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;file1&quot;</span><span class="p">)</span>
+            <span class="n">owh_write_start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="n">file0</span><span class="p">,</span> <span class="n">file1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OwhDevice.set_options"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.set_options">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            オプションを設定します。</span>
+
+<span class="sd">            .. _options:</span>
+
+<span class="sd">            * options : dict</span>
+
+<span class="sd">                オプション名と値のdict型オブジェクト。</span>
+
+<span class="sd">                .. _correct_mode:</span>
+
+<span class="sd">                * correct_mode : int</span>
+
+<span class="sd">                    マニュアル補正計測を開始する。値は計測回数</span>
+
+<span class="sd">                .. _face_detect:</span>
+
+<span class="sd">                * face_detect : bool</span>
+
+<span class="sd">                    人体検知を行うか (デフォルト: True)</span>
+
+<span class="sd">                .. _hide_bg:</span>
+
+<span class="sd">                * hide_bg : bool</span>
+
+<span class="sd">                    動体検知による背景削除を行うか (デフォルト: True)</span>
+
+<span class="sd">                .. _image_tab:</span>
+
+<span class="sd">                * image_tab : bool</span>
+
+<span class="sd">                    :data:`OwhDevice.get_frame` で画像を返すか (デフォルト: True)</span>
+
+<span class="sd">                .. _manu_corr:</span>
+
+<span class="sd">                * manu_corr : float</span>
+
+<span class="sd">                    :data:`OwhMeta.manu_corr` の値。</span>
+<span class="sd">                    SDK利用側で取得・保存しておいた値をここで設定することで、</span>
+<span class="sd">                    マニュアル補正計測後と同じ状態に復元されます。</span>
+<span class="sd">                    (デフォルト: 0)</span>
+
+<span class="sd">                .. _manu_corr_ref:</span>
+
+<span class="sd">                * manu_corr_ref : float</span>
+
+<span class="sd">                    :data:`OwhMeta.manu_corr_ref` の値。</span>
+<span class="sd">                    SDK利用側で取得・保存しておいた値をここで設定することで、</span>
+<span class="sd">                    マニュアル補正計測後と同じ状態に復元されます。</span>
+
+<span class="sd">                .. _manual_body_temp:</span>
+
+<span class="sd">                * manual_body_temp : float</span>
+
+<span class="sd">                    基準値とする正式な体温計で計測した体温。</span>
+<span class="sd">                    :ref:`correct_mode &lt;correct_mode&gt;`</span>
+<span class="sd">                    でマニュアル補正計測を開始するときに設定が必要。</span>
+<span class="sd">                    また、マニュアル補正計測の状態を復元するときは</span>
+<span class="sd">                    :ref:`manu_corr &lt;manu_corr&gt;` / :ref:`manu_corr_ref &lt;manu_corr_ref&gt;`</span>
+<span class="sd">                    と同時に設定します。</span>
+
+<span class="sd">                .. _obs_points:</span>
+
+<span class="sd">                * obs_points : [[int, int], [int, int], [int, int]]</span>
+
+<span class="sd">                    :data:`OwhMeta.obs_temps` で返される温度の座標。</span>
+<span class="sd">                    3点まで指定可能で [[x1, y1], [x2, y2], [x3, y3]] の形式で設定します。</span>
+<span class="sd">                    X座標・Y座標の範囲は 0 .. 119 です。</span>
+<span class="sd">                    (デフォルト: [[60, 30], [60, 60], [60, 90]])</span>
+
+<span class="sd">                .. _show_target:</span>
+
+<span class="sd">                * show_target : bool</span>
+
+<span class="sd">                    人体検知での温度取得位置を表示するか (デフォルト: True)</span>
+
+<span class="sd">                .. _target_dist:</span>
+
+<span class="sd">                * target_dist : int</span>
+
+<span class="sd">                    距離のよる補正の固定値(mm単位)。</span>
+<span class="sd">                    :ref:`use_dist &lt;use_dist&gt;` = 2 のとき有効。</span>
+
+<span class="sd">                .. _target_emiss:</span>
+
+<span class="sd">                * target_emiss : float</span>
+
+<span class="sd">                    測定対象の放射率 (デフォルト0.98)</span>
+
+<span class="sd">                .. _temp_tab:</span>
+
+<span class="sd">                * temp_tab : bool</span>
+
+<span class="sd">                    :data:`OwhMeta.temp_tab` を返すか (デフォルト: False)</span>
+
+<span class="sd">                .. _use_dist:</span>
+
+<span class="sd">                * use_dist : int</span>
+
+<span class="sd">                    距離による補正の動作</span>
+
+<span class="sd">                    * 0: 距離による補正をしません</span>
+<span class="sd">                    * 1: 距離センサの出力で補正(デフォルト)</span>
+<span class="sd">                    * 2: :ref:`target_dist &lt;target_dist&gt;` の値で補正</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
+        <span class="n">owh_set_options</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OwhDevice.get_sensor_serial_num"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.get_sensor_serial_num">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">get_sensor_serial_num</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            赤外線センサのシリアル番号を取得します。</span>
+
+<span class="sd">            * id : int</span>
+
+<span class="sd">                デバイスID (0, 1)。</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">owh_get_sensor_serial_num</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OwhDevice.set_led"><a class="viewcode-back" href="../../owlifttypeh.core.html#owlifttypeh.core.OwhDevice.set_led">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_led</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">g0</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">g1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. only:: ja</span>
+
+<span class="sd">            LEDの動作・状態を変更します。</span>
+
+<span class="sd">            * r0 : :class:`OwhLedStat`</span>
+
+<span class="sd">                デバイス0/赤LEDの状態。</span>
+
+<span class="sd">            * g0 : :class:`OwhLedStat`</span>
+
+<span class="sd">                デバイス0/緑LEDの状態。</span>
+
+<span class="sd">            * r1 : :class:`OwhLedStat`</span>
+
+<span class="sd">                デバイス1/赤LEDの状態。</span>
+
+<span class="sd">            * g1 : :class:`OwhLedStat`</span>
+
+<span class="sd">                デバイス1/緑LEDの状態。</span>
+
+<span class="sd">        .. only:: en</span>
+
+<span class="sd">            TODO</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">owh_set_led</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cobj</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">r0</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g0</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g1</span><span class="p">))</span></div></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">owlifttypeh 1.0.0 ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">owlifttypeh.core</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020 Infinitegra, Inc.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

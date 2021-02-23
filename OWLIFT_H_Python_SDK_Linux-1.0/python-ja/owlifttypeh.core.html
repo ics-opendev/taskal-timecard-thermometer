@@ -1,0 +1,958 @@
+
+
+<!doctype html>
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>owlifttypeh.core module &#8212; owlifttypeh 1.0.0 ドキュメント</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="prev" title="owlifttypeh package" href="owlifttypeh.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="owlifttypeh.html" title="owlifttypeh package"
+             accesskey="P">前へ</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">owlifttypeh 1.0.0 ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="owlifttypeh.html" accesskey="U">owlifttypeh package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">owlifttypeh.core module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-owlifttypeh.core">
+<span id="owlifttypeh-core-module"></span><h1>owlifttypeh.core module<a class="headerlink" href="#module-owlifttypeh.core" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>OWLIFT Type-H Python SDK のモジュール</p>
+<dl class="py exception">
+<dt id="owlifttypeh.core.OwException">
+<em class="property">exception </em><code class="sig-name descname">OwException</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwException"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwException" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>例外を表します。</p>
+<dl class="py method">
+<dt id="owlifttypeh.core.OwException.host_error">
+<em class="property">property </em><code class="sig-name descname">host_error</code><a class="headerlink" href="#owlifttypeh.core.OwException.host_error" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ホストエラー。
+[読み取り専用]</p>
+<p>ホストエラーは status が <a class="reference internal" href="#owlifttypeh.core.OwStatus.DIRECTSHOW_ERROR" title="owlifttypeh.core.OwStatus.DIRECTSHOW_ERROR"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwStatus.DIRECTSHOW_ERROR</span></code></a>
+または <a class="reference internal" href="#owlifttypeh.core.OwStatus.V4L2_ERROR" title="owlifttypeh.core.OwStatus.V4L2_ERROR"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwStatus.V4L2_ERROR</span></code></a> のときの、
+プラットフォームに依存したエラーコードです。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwException.status">
+<em class="property">property </em><code class="sig-name descname">status</code><a class="headerlink" href="#owlifttypeh.core.OwException.status" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>エラーの種類。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#owlifttypeh.core.OwStatus" title="owlifttypeh.core.OwStatus"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwStatus</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="owlifttypeh.core.OwStatus">
+<em class="property">class </em><code class="sig-name descname">OwStatus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwStatus"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwStatus" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>エラーコードを表します。</p>
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.DEVICE_NOT_FOUND">
+<code class="sig-name descname">DEVICE_NOT_FOUND</code><em class="property"> = 3</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.DEVICE_NOT_FOUND" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>デバイスが見つかりません。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.DEVICE_NOT_READY">
+<code class="sig-name descname">DEVICE_NOT_READY</code><em class="property"> = 4</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.DEVICE_NOT_READY" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>デバイスの準備ができていません。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.DEVICE_UNSUPPORTED">
+<code class="sig-name descname">DEVICE_UNSUPPORTED</code><em class="property"> = 5</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.DEVICE_UNSUPPORTED" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>サポートされていないデバイスです。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.DIRECTSHOW_ERROR">
+<code class="sig-name descname">DIRECTSHOW_ERROR</code><em class="property"> = 12</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.DIRECTSHOW_ERROR" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>DirectShowがエラーコードを返しました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.END_OF_FILE">
+<code class="sig-name descname">END_OF_FILE</code><em class="property"> = 25</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.END_OF_FILE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ファイルの終端です。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.FILE_IO_ERROR">
+<code class="sig-name descname">FILE_IO_ERROR</code><em class="property"> = 23</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.FILE_IO_ERROR" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ファイルI/Oエラーが発生しました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.FIRMWARE_ERROR">
+<code class="sig-name descname">FIRMWARE_ERROR</code><em class="property"> = 10</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.FIRMWARE_ERROR" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>デバイスのファームウェアでエラーが発生しました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.INCOMPATIBLE">
+<code class="sig-name descname">INCOMPATIBLE</code><em class="property"> = 26</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.INCOMPATIBLE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>互換性がありません。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.INTERNAL_ERROR">
+<code class="sig-name descname">INTERNAL_ERROR</code><em class="property"> = 1</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.INTERNAL_ERROR" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ライブラリの内部エラー。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.INVALID_FILE_FORMAT">
+<code class="sig-name descname">INVALID_FILE_FORMAT</code><em class="property"> = 24</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.INVALID_FILE_FORMAT" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>不正なファイルフォーマットです。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.INVALID_STATE">
+<code class="sig-name descname">INVALID_STATE</code><em class="property"> = 22</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.INVALID_STATE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>不正な状態で関数が実行されました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.INVALID_VALUE">
+<code class="sig-name descname">INVALID_VALUE</code><em class="property"> = 21</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.INVALID_VALUE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>引数の値が不正です。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.NOT_ENOUGH_SIZE">
+<code class="sig-name descname">NOT_ENOUGH_SIZE</code><em class="property"> = 6</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.NOT_ENOUGH_SIZE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>領域のサイズが不足しています。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.NOT_YET">
+<code class="sig-name descname">NOT_YET</code><em class="property"> = 7</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.NOT_YET" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>処理がまだ完了していません。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.NO_MEMORY">
+<code class="sig-name descname">NO_MEMORY</code><em class="property"> = 2</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.NO_MEMORY" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>メモリ不足。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.NULL_POINTER">
+<code class="sig-name descname">NULL_POINTER</code><em class="property"> = 20</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.NULL_POINTER" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>引数のポインタがNULLです。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.OK">
+<code class="sig-name descname">OK</code><em class="property"> = 0</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.OK" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>成功。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.SENSOR_ERROR">
+<code class="sig-name descname">SENSOR_ERROR</code><em class="property"> = 11</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.SENSOR_ERROR" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>デバイスのセンサでエラーが発生しました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwStatus.V4L2_ERROR">
+<code class="sig-name descname">V4L2_ERROR</code><em class="property"> = 13</em><a class="headerlink" href="#owlifttypeh.core.OwStatus.V4L2_ERROR" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>V4L2がエラーコードを返しました。</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="owlifttypeh.core.OwhDevice">
+<em class="property">class </em><code class="sig-name descname">OwhDevice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cobj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>1組（または1個）のデバイスを表します。</p>
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.alive">
+<em class="property">property </em><code class="sig-name descname">alive</code><a class="headerlink" href="#owlifttypeh.core.OwhDevice.alive" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>disconnected() と真偽逆の値。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.capture_start">
+<code class="sig-name descname">capture_start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.capture_start"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.capture_start" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>カメラからのデータ取得を開始します。</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.capture_stop">
+<code class="sig-name descname">capture_stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.capture_stop"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.capture_stop" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>カメラからのデータ取得を停止します。</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.connect">
+<em class="property">classmethod </em><code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.connect"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.connect" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>デバイスを取得します。</p>
+<ul>
+<li><p>options</p>
+<blockquote>
+<div><p>常にNone。</p>
+</div></blockquote>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#owlifttypeh.core.OwhDevice" title="owlifttypeh.core.OwhDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhDevice</span></code></a> オブジェクト</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#owlifttypeh.core.OwhDevice" title="owlifttypeh.core.OwhDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhDevice</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.disconnected">
+<em class="property">property </em><code class="sig-name descname">disconnected</code><a class="headerlink" href="#owlifttypeh.core.OwhDevice.disconnected" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>デバイスが切断されたかどうか。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.frame_counter">
+<em class="property">property </em><code class="sig-name descname">frame_counter</code><a class="headerlink" href="#owlifttypeh.core.OwhDevice.frame_counter" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>フレームカウンタ。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.frame_size">
+<em class="property">property </em><code class="sig-name descname">frame_size</code><a class="headerlink" href="#owlifttypeh.core.OwhDevice.frame_size" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>フレームサイズ(幅、高さ)を取得します。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>(int, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.get_frame">
+<code class="sig-name descname">get_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.get_frame"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.get_frame" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>画像データ、メタデータのタプル。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>(bytes, <a class="reference internal" href="#owlifttypeh.core.OwhMeta" title="owlifttypeh.core.OwhMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhMeta</span></code></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.get_sensor_serial_num">
+<code class="sig-name descname">get_sensor_serial_num</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.get_sensor_serial_num"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.get_sensor_serial_num" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>赤外線センサのシリアル番号を取得します。</p>
+<ul>
+<li><p>id : int</p>
+<blockquote>
+<div><p>デバイスID (0, 1)。</p>
+</div></blockquote>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.has_multi_devs">
+<em class="property">property </em><code class="sig-name descname">has_multi_devs</code><a class="headerlink" href="#owlifttypeh.core.OwhDevice.has_multi_devs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>複数のデバイス(カメラの片眼)が接続されているかを取得します。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.image_to_array">
+<code class="sig-name descname">image_to_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">img</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.image_to_array"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.image_to_array" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>bytes オブジェクトを numpy.array に変換します。</p>
+<ul>
+<li><p>img : bytes</p>
+<blockquote>
+<div><p><a class="reference internal" href="#owlifttypeh.core.OwhDevice.get_frame" title="owlifttypeh.core.OwhDevice.get_frame"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_frame()</span></code></a> で取得した bytes オブジェクト。</p>
+</div></blockquote>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.lib_version">
+<em class="property">classmethod </em><code class="sig-name descname">lib_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.lib_version"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.lib_version" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ネイティブライブラリのバージョンを返します。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>ネイティブライブラリのバージョン。</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return Type</dt>
+<dd class="field-odd"><p>(int, int, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.open">
+<em class="property">classmethod </em><code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path0</span></em>, <em class="sig-param"><span class="n">path1</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.open"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.open" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>OWIファイルを読み込みます。</p>
+<ul>
+<li><p>path0 : str</p>
+<blockquote>
+<div><p>デバイス0のOWIファイルパス。</p>
+</div></blockquote>
+</li>
+<li><p>path1 : str</p>
+<blockquote>
+<div><p>デバイス1のOWIファイルパス。</p>
+</div></blockquote>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#owlifttypeh.core.OwhDevice" title="owlifttypeh.core.OwhDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhDevice</span></code></a> オブジェクト</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#owlifttypeh.core.OwhDevice" title="owlifttypeh.core.OwhDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhDevice</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.release">
+<code class="sig-name descname">release</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.release"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.release" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>デバイスを解放します。</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.set_led">
+<code class="sig-name descname">set_led</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r0</span></em>, <em class="sig-param"><span class="n">g0</span></em>, <em class="sig-param"><span class="n">r1</span></em>, <em class="sig-param"><span class="n">g1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.set_led"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.set_led" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>LEDの動作・状態を変更します。</p>
+<ul>
+<li><p>r0 : <a class="reference internal" href="#owlifttypeh.core.OwhLedStat" title="owlifttypeh.core.OwhLedStat"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhLedStat</span></code></a></p>
+<blockquote>
+<div><p>デバイス0/赤LEDの状態。</p>
+</div></blockquote>
+</li>
+<li><p>g0 : <a class="reference internal" href="#owlifttypeh.core.OwhLedStat" title="owlifttypeh.core.OwhLedStat"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhLedStat</span></code></a></p>
+<blockquote>
+<div><p>デバイス0/緑LEDの状態。</p>
+</div></blockquote>
+</li>
+<li><p>r1 : <a class="reference internal" href="#owlifttypeh.core.OwhLedStat" title="owlifttypeh.core.OwhLedStat"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhLedStat</span></code></a></p>
+<blockquote>
+<div><p>デバイス1/赤LEDの状態。</p>
+</div></blockquote>
+</li>
+<li><p>g1 : <a class="reference internal" href="#owlifttypeh.core.OwhLedStat" title="owlifttypeh.core.OwhLedStat"><code class="xref py py-class docutils literal notranslate"><span class="pre">OwhLedStat</span></code></a></p>
+<blockquote>
+<div><p>デバイス1/緑LEDの状態。</p>
+</div></blockquote>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.set_options">
+<code class="sig-name descname">set_options</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">options</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.set_options"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.set_options" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>オプションを設定します。</p>
+<ul id="options">
+<li><p>options : dict</p>
+<blockquote>
+<div><p>オプション名と値のdict型オブジェクト。</p>
+<ul id="correct-mode">
+<li><p>correct_mode : int</p>
+<blockquote>
+<div><p>マニュアル補正計測を開始する。値は計測回数</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="face-detect">
+<li><p>face_detect : bool</p>
+<blockquote>
+<div><p>人体検知を行うか (デフォルト: True)</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="hide-bg">
+<li><p>hide_bg : bool</p>
+<blockquote>
+<div><p>動体検知による背景削除を行うか (デフォルト: True)</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="image-tab">
+<li><p>image_tab : bool</p>
+<blockquote>
+<div><p><a class="reference internal" href="#owlifttypeh.core.OwhDevice.get_frame" title="owlifttypeh.core.OwhDevice.get_frame"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhDevice.get_frame</span></code></a> で画像を返すか (デフォルト: True)</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="manu-corr">
+<li><p>manu_corr : float</p>
+<blockquote>
+<div><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.manu_corr" title="owlifttypeh.core.OwhMeta.manu_corr"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.manu_corr</span></code></a> の値。
+SDK利用側で取得・保存しておいた値をここで設定することで、
+マニュアル補正計測後と同じ状態に復元されます。
+(デフォルト: 0)</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="manu-corr-ref">
+<li><p>manu_corr_ref : float</p>
+<blockquote>
+<div><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.manu_corr_ref" title="owlifttypeh.core.OwhMeta.manu_corr_ref"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.manu_corr_ref</span></code></a> の値。
+SDK利用側で取得・保存しておいた値をここで設定することで、
+マニュアル補正計測後と同じ状態に復元されます。</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="manual-body-temp">
+<li><p>manual_body_temp : float</p>
+<blockquote>
+<div><p>基準値とする正式な体温計で計測した体温。
+<a class="reference internal" href="#correct-mode"><span class="std std-ref">correct_mode</span></a>
+でマニュアル補正計測を開始するときに設定が必要。
+また、マニュアル補正計測の状態を復元するときは
+<a class="reference internal" href="#manu-corr"><span class="std std-ref">manu_corr</span></a> / <a class="reference internal" href="#manu-corr-ref"><span class="std std-ref">manu_corr_ref</span></a>
+と同時に設定します。</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="obs-points">
+<li><p>obs_points : [[int, int], [int, int], [int, int]]</p>
+<blockquote>
+<div><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.obs_temps" title="owlifttypeh.core.OwhMeta.obs_temps"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.obs_temps</span></code></a> で返される温度の座標。
+3点まで指定可能で [[x1, y1], [x2, y2], [x3, y3]] の形式で設定します。
+X座標・Y座標の範囲は 0 .. 119 です。
+(デフォルト: [[60, 30], [60, 60], [60, 90]])</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="show-target">
+<li><p>show_target : bool</p>
+<blockquote>
+<div><p>人体検知での温度取得位置を表示するか (デフォルト: True)</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="target-dist">
+<li><p>target_dist : int</p>
+<blockquote>
+<div><p>距離のよる補正の固定値(mm単位)。
+<a class="reference internal" href="#use-dist"><span class="std std-ref">use_dist</span></a> = 2 のとき有効。</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="target-emiss">
+<li><p>target_emiss : float</p>
+<blockquote>
+<div><p>測定対象の放射率 (デフォルト0.98)</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="temp-tab">
+<li><p>temp_tab : bool</p>
+<blockquote>
+<div><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.temp_tab" title="owlifttypeh.core.OwhMeta.temp_tab"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.temp_tab</span></code></a> を返すか (デフォルト: False)</p>
+</div></blockquote>
+</li>
+</ul>
+<ul id="use-dist">
+<li><p>use_dist : int</p>
+<blockquote>
+<div><p>距離による補正の動作</p>
+<ul class="simple">
+<li><p>0: 距離による補正をしません</p></li>
+<li><p>1: 距離センサの出力で補正(デフォルト)</p></li>
+<li><p>2: <a class="reference internal" href="#target-dist"><span class="std std-ref">target_dist</span></a> の値で補正</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhDevice.write_start">
+<code class="sig-name descname">write_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file0</span></em>, <em class="sig-param"><span class="n">file1</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhDevice.write_start"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhDevice.write_start" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>カメラの出力をOWI形式でファイルへ保存します。</p>
+<ul>
+<li><p>file0 : str</p>
+<blockquote>
+<div><p>デバイス0の出力を保存するファイル名。</p>
+</div></blockquote>
+</li>
+<li><p>file1 : str</p>
+<blockquote>
+<div><p>デバイス1の出力を保存するファイル名。</p>
+</div></blockquote>
+</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="owlifttypeh.core.OwhLedStat">
+<em class="property">class </em><code class="sig-name descname">OwhLedStat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhLedStat"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhLedStat" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p>
+<p>LEDの動作・状態を表します。</p>
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhLedStat.BLINK_OFF">
+<code class="sig-name descname">BLINK_OFF</code><em class="property"> = 4</em><a class="headerlink" href="#owlifttypeh.core.OwhLedStat.BLINK_OFF" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>最初OFFから点滅</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhLedStat.BLINK_ON">
+<code class="sig-name descname">BLINK_ON</code><em class="property"> = 3</em><a class="headerlink" href="#owlifttypeh.core.OwhLedStat.BLINK_ON" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>最初ONから点滅</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhLedStat.FLASH">
+<code class="sig-name descname">FLASH</code><em class="property"> = 2</em><a class="headerlink" href="#owlifttypeh.core.OwhLedStat.FLASH" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>一瞬だけON</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhLedStat.OFF">
+<code class="sig-name descname">OFF</code><em class="property"> = 0</em><a class="headerlink" href="#owlifttypeh.core.OwhLedStat.OFF" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>OFF</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhLedStat.ON">
+<code class="sig-name descname">ON</code><em class="property"> = 1</em><a class="headerlink" href="#owlifttypeh.core.OwhLedStat.ON" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ON</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="owlifttypeh.core.OwhMeta">
+<em class="property">class </em><code class="sig-name descname">OwhMeta</code><a class="reference internal" href="_modules/owlifttypeh/core.html#OwhMeta"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#owlifttypeh.core.OwhMeta" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>フレームに付随するデータを表します。</p>
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.CE_NONE">
+<code class="sig-name descname">CE_NONE</code><em class="property"> = 0</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.CE_NONE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.correct_error" title="owlifttypeh.core.OwhMeta.correct_error"><code class="xref py py-data docutils literal notranslate"><span class="pre">correct_error</span></code></a> : 成功。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.CE_TOO_HIGH">
+<code class="sig-name descname">CE_TOO_HIGH</code><em class="property"> = 1</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.CE_TOO_HIGH" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.correct_error" title="owlifttypeh.core.OwhMeta.correct_error"><code class="xref py py-data docutils literal notranslate"><span class="pre">correct_error</span></code></a> : 検知した温度が高すぎます。
+<a class="reference internal" href="#options"><span class="std std-ref">options</span></a> の <a class="reference internal" href="#manual-body-temp"><span class="std std-ref">manual_body_temp</span></a> と比較して、
+マニュアル補正計測中に検知された体表温度が高すぎるとき返されます。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.CE_TOO_LOW">
+<code class="sig-name descname">CE_TOO_LOW</code><em class="property"> = 2</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.CE_TOO_LOW" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.correct_error" title="owlifttypeh.core.OwhMeta.correct_error"><code class="xref py py-data docutils literal notranslate"><span class="pre">correct_error</span></code></a> : 検知した温度が低すぎます。
+<a class="reference internal" href="#options"><span class="std std-ref">options</span></a> の <a class="reference internal" href="#manual-body-temp"><span class="std std-ref">manual_body_temp</span></a> と比較して、
+マニュアル補正計測中に検知された体表温度が低すぎるとき返されます。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.EV_BODY_TEMP">
+<code class="sig-name descname">EV_BODY_TEMP</code><em class="property"> = 4</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.EV_BODY_TEMP" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.event_type" title="owlifttypeh.core.OwhMeta.event_type"><code class="xref py py-data docutils literal notranslate"><span class="pre">event_type</span></code></a> : <a class="reference internal" href="#owlifttypeh.core.OwhMeta.body_temp" title="owlifttypeh.core.OwhMeta.body_temp"><code class="xref py py-data docutils literal notranslate"><span class="pre">body_temp</span></code></a> を検知しました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.EV_CORRECT">
+<code class="sig-name descname">EV_CORRECT</code><em class="property"> = 2</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.EV_CORRECT" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.event_type" title="owlifttypeh.core.OwhMeta.event_type"><code class="xref py py-data docutils literal notranslate"><span class="pre">event_type</span></code></a> : 補正処理中に <a class="reference internal" href="#owlifttypeh.core.OwhMeta.body_temp" title="owlifttypeh.core.OwhMeta.body_temp"><code class="xref py py-data docutils literal notranslate"><span class="pre">body_temp</span></code></a> を検知しました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.EV_DIST_INVALID">
+<code class="sig-name descname">EV_DIST_INVALID</code><em class="property"> = 32</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.EV_DIST_INVALID" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.event_type" title="owlifttypeh.core.OwhMeta.event_type"><code class="xref py py-data docutils literal notranslate"><span class="pre">event_type</span></code></a> : 物体が計測可能距離外に出ました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.EV_DIST_VALID">
+<code class="sig-name descname">EV_DIST_VALID</code><em class="property"> = 16</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.EV_DIST_VALID" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.event_type" title="owlifttypeh.core.OwhMeta.event_type"><code class="xref py py-data docutils literal notranslate"><span class="pre">event_type</span></code></a> : 計測可能距離内に物体を検知しました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.EV_LOST">
+<code class="sig-name descname">EV_LOST</code><em class="property"> = 8</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.EV_LOST" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.event_type" title="owlifttypeh.core.OwhMeta.event_type"><code class="xref py py-data docutils literal notranslate"><span class="pre">event_type</span></code></a> : 追跡していた動体を見失いました。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.EV_NONE">
+<code class="sig-name descname">EV_NONE</code><em class="property"> = 0</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.EV_NONE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.event_type" title="owlifttypeh.core.OwhMeta.event_type"><code class="xref py py-data docutils literal notranslate"><span class="pre">event_type</span></code></a> : イベントなし。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.S_ERROR">
+<code class="sig-name descname">S_ERROR</code><em class="property"> = 1</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.S_ERROR" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.status" title="owlifttypeh.core.OwhMeta.status"><code class="xref py py-data docutils literal notranslate"><span class="pre">status</span></code></a> : エラーが発生して温度を取得できない状態。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.S_INVALID_TEMP">
+<code class="sig-name descname">S_INVALID_TEMP</code><em class="property"> = 3</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.S_INVALID_TEMP" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.status" title="owlifttypeh.core.OwhMeta.status"><code class="xref py py-data docutils literal notranslate"><span class="pre">status</span></code></a> : 温度データを取得できるが誤差が大きい状態。
+電源ONの後、約20分間取り得えます。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.S_NO_TEMP">
+<code class="sig-name descname">S_NO_TEMP</code><em class="property"> = 2</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.S_NO_TEMP" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.status" title="owlifttypeh.core.OwhMeta.status"><code class="xref py py-data docutils literal notranslate"><span class="pre">status</span></code></a> : まだ温度データを取得できない状態。
+電源ONの後、最初の数秒間取り得えます。</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="owlifttypeh.core.OwhMeta.S_OK">
+<code class="sig-name descname">S_OK</code><em class="property"> = 0</em><a class="headerlink" href="#owlifttypeh.core.OwhMeta.S_OK" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#owlifttypeh.core.OwhMeta.status" title="owlifttypeh.core.OwhMeta.status"><code class="xref py py-data docutils literal notranslate"><span class="pre">status</span></code></a> : 通常の状態。</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.body_temp">
+<em class="property">property </em><code class="sig-name descname">body_temp</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.body_temp" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>検知された温度。
+<a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_BODY_TEMP" title="owlifttypeh.core.OwhMeta.EV_BODY_TEMP"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_BODY_TEMP</span></code></a> イベントのとき返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.body_temp_x">
+<em class="property">property </em><code class="sig-name descname">body_temp_x</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.body_temp_x" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>body_temp を検知したX座標。
+<a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_BODY_TEMP" title="owlifttypeh.core.OwhMeta.EV_BODY_TEMP"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_BODY_TEMP</span></code></a> イベントのとき返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.body_temp_y">
+<em class="property">property </em><code class="sig-name descname">body_temp_y</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.body_temp_y" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>body_temp を検知したY座標。
+<a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_BODY_TEMP" title="owlifttypeh.core.OwhMeta.EV_BODY_TEMP"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_BODY_TEMP</span></code></a> イベントのとき返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.correct_count">
+<em class="property">property </em><code class="sig-name descname">correct_count</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.correct_count" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>マニュアル補正計測における残りの検知回数。
+<a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_CORRECT" title="owlifttypeh.core.OwhMeta.EV_CORRECT"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_CORRECT</span></code></a> イベントのとき返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.correct_error">
+<em class="property">property </em><code class="sig-name descname">correct_error</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.correct_error" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>マニュアル補正計測でのエラー。定数 OwhMeta.CE_*。
+<a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_CORRECT" title="owlifttypeh.core.OwhMeta.EV_CORRECT"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_CORRECT</span></code></a> イベントのとき返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.current_dev_id">
+<em class="property">property </em><code class="sig-name descname">current_dev_id</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.current_dev_id" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>使用中のデバイスID (0, 1)。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.distance">
+<em class="property">property </em><code class="sig-name descname">distance</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.distance" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>超音波センサで検知された物体との距離(mm単位)。
+検知されていないときと計測可能距離外のときは0。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.event_id">
+<em class="property">property </em><code class="sig-name descname">event_id</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.event_id" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントID。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.event_type">
+<em class="property">property </em><code class="sig-name descname">event_type</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.event_type" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントタイプ。定数 OwhMeta.EV_*。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.file_time_ofs">
+<em class="property">property </em><code class="sig-name descname">file_time_ofs</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.file_time_ofs" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>OWIファイルのオフセット(ミリ秒)。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.manu_corr">
+<em class="property">property </em><code class="sig-name descname">manu_corr</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.manu_corr" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>マニュアル補正値(体表温度と体温の差)。
+<a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_CORRECT" title="owlifttypeh.core.OwhMeta.EV_CORRECT"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_CORRECT</span></code></a> イベントで <a class="reference internal" href="#owlifttypeh.core.OwhMeta.correct_count" title="owlifttypeh.core.OwhMeta.correct_count"><code class="xref py py-data docutils literal notranslate"><span class="pre">correct_count</span></code></a> = 0 のときに返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.manu_corr_ref">
+<em class="property">property </em><code class="sig-name descname">manu_corr_ref</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.manu_corr_ref" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>マニュアル補正計測における周辺温度に関連する値。
+<a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_CORRECT" title="owlifttypeh.core.OwhMeta.EV_CORRECT"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_CORRECT</span></code></a> イベントで <a class="reference internal" href="#owlifttypeh.core.OwhMeta.correct_count" title="owlifttypeh.core.OwhMeta.correct_count"><code class="xref py py-data docutils literal notranslate"><span class="pre">correct_count</span></code></a> = 0 のとき返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.obs_temps">
+<em class="property">property </em><code class="sig-name descname">obs_temps</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.obs_temps" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#options"><span class="std std-ref">options</span></a> の <a class="reference internal" href="#obs-points"><span class="std std-ref">obs_points</span></a> で指定した座標の温度。
+計測可能距離内に物体を検知している間返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>[float, float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.status">
+<em class="property">property </em><code class="sig-name descname">status</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.status" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>温度データの状態。定数 OwhMeta.S_*。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.temp_tab">
+<em class="property">property </em><code class="sig-name descname">temp_tab</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.temp_tab" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>各画素の温度が格納された配列。
+<a class="reference internal" href="#options"><span class="std std-ref">options</span></a> の <a class="reference internal" href="#temp-tab"><span class="std std-ref">temp_tab</span></a> = True のとき返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="owlifttypeh.core.OwhMeta.updated">
+<em class="property">property </em><code class="sig-name descname">updated</code><a class="headerlink" href="#owlifttypeh.core.OwhMeta.updated" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>前回発行された <a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_BODY_TEMP" title="owlifttypeh.core.OwhMeta.EV_BODY_TEMP"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_BODY_TEMP</span></code></a> イベントに対する動体と同じ動体において、
+より高い温度が検知されたかどうか。
+<a class="reference internal" href="#owlifttypeh.core.OwhMeta.EV_BODY_TEMP" title="owlifttypeh.core.OwhMeta.EV_BODY_TEMP"><code class="xref py py-data docutils literal notranslate"><span class="pre">OwhMeta.EV_BODY_TEMP</span></code></a> イベントのとき返されます。
+[読み取り専用]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="owlifttypeh.html"
+                        title="前の章へ">owlifttypeh package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>このページ</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/owlifttypeh.core.rst.txt"
+            rel="nofollow">ソースコードを表示</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="owlifttypeh.html" title="owlifttypeh package"
+             >前へ</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">owlifttypeh 1.0.0 ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="owlifttypeh.html" >owlifttypeh package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">owlifttypeh.core module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020 Infinitegra, Inc.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>
