@@ -1,3 +1,6 @@
 {
-    "debug_mode": "true"
+    "log": {
+        "file_path": "logs/log_file.txt",
+        "level" : 10
+    }
 }
