@@ -24,7 +24,7 @@ class PreviewScreen(Screen):
     def __init__(self, app, **kwargs):
         super(PreviewScreen, self).__init__(**kwargs)
 
-        self.operating_mode = gParam.OPE_MODE_ALONE
+        self.operating_mode = app.operating_mode
 
         layoutPreview = FloatLayout()
         layoutSideBar = BoxLayout(orientation = 'vertical', size_hint = (1/3, 1))
@@ -41,7 +41,7 @@ class PreviewScreen(Screen):
 
         layoutPreview.add_widget(self.preview)
         layoutPreview.add_widget(Image(allow_stretch = True, keep_ratio = True,
-                source = os.path.join(get_home_dir(), '/kivy/human_frame.png')))
+                source = os.path.join(get_home_dir(), 'gui/human_frame.png')))
 
         layoutPreview.add_widget(self.labelInfo)
         layoutPreview.add_widget(self.labelInfo2)
@@ -111,6 +111,7 @@ class PreviewScreen(Screen):
 
     def on_touch_up(self, touch):
         super(PreviewScreen, self).on_touch_up(touch)
+        get_app().stop_alarm()
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             self.manager.transition = SlideTransition(direction = 'left')
             self.manager.current = 'Settings'

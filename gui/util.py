@@ -6,7 +6,6 @@ import platform
 import stat
 import time
 from turbojpeg import TurboJPEG
-from pathlib import Path
 
 g_version = "1.0"
 g_kernel_name = None
@@ -50,15 +49,17 @@ def is_controller():
     return os.environ.get('BODY_TEMP_CONTROLLER') == "1"
 
 def get_project_dir():
-    return os.environ.get('THERMO_APP_HOME')
+    return os.path.dirname(os.path.abspath(__file__))
 
 def get_home_dir():
-    print(os.environ.get('THERMO_APP_HOME'))
+    home = os.environ.get('THERMO_APP_HOME')
+    if home:
+        return home
     return get_project_dir()
 
 def create_turbo_jpeg():
     if is_raspbian():
-        return TurboJPEG(os.path.join(get_project_dir(), "lib/armv7l/libturbojpeg.so"))
+        return TurboJPEG(os.path.join(get_project_dir(), "/gui/lib/armv7l/libturbojpeg.so"))
     return TurboJPEG()
 
 def get_connect_opts():

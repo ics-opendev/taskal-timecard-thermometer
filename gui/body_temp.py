@@ -12,12 +12,12 @@ import socket
 from turbojpeg import TJPF_BGRA
 
 if 'KIVY_HOME' not in os.environ:
-    os.environ['KIVY_HOME'] = 'kivy'
+    os.environ['KIVY_HOME'] = 'gui/kivy'
 
 os.environ['KIVY_AUDIO'] = 'sdl2'
 
 from owlifttypeh import OwhDevice, OwhMeta
-import util
+from gui.util import is_controller, is_windows, is_linux, is_raspbian, get_connect_opts
 
 if getattr(sys, 'frozen', False):
     os.environ['PATH'] += os.pathsep + os.path.dirname(sys.executable)
@@ -32,7 +32,7 @@ Config.set('modules', 'touchring', True)
 Config.set('graphics', 'width', '320')
 Config.set('graphics', 'height', '240')
 
-if util.is_controller():
+if is_controller():
     Config.set('graphics', 'borderless', True)
     Config.set('graphics', 'resizable', False)
     Config.set('graphics', 'fullscreen', True)
@@ -46,30 +46,30 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.network.urlrequest import UrlRequest
 
-if util.is_windows():
+if is_windows():
     resource_add_path('c:/Windows/Fonts')
     LabelBase.register(DEFAULT_FONT, 'msgothic.ttc')
-elif util.is_linux():
+elif is_linux():
     resource_add_path(os.environ['KIVY_HOME'] + '/font')
     LabelBase.register(DEFAULT_FONT, 'mplus-1p-regular.ttf')
 
-from settings import SettingsScreen
-from settings import TemperatureScreen
-from settings import AlarmScreen
-from settings import SystemScreen
-from settings import TempThresholdScreen
-from settings import TempCalibrationScreen
-from settings import TempAverageScreen
-from settings import TempDisplayScreen
-from settings import SystemSoftwareInfoScreen
-from settings import SystemLicenseInfoScreen
-from settings import SystemOperatingModeScreen
-from settings import SystemResetSettingsScreen
-from settings import SystemRebootScreen
-from preview import PreviewScreen
-from alarm import Alarm
-from server import Server
-from param import gParam
+from gui.settings import SettingsScreen
+from gui.settings import TemperatureScreen
+from gui.settings import AlarmScreen
+from gui.settings import SystemScreen
+from gui.settings import TempThresholdScreen
+from gui.settings import TempCalibrationScreen
+from gui.settings import TempAverageScreen
+from gui.settings import TempDisplayScreen
+from gui.settings import SystemSoftwareInfoScreen
+from gui.settings import SystemLicenseInfoScreen
+from gui.settings import SystemOperatingModeScreen
+from gui.settings import SystemResetSettingsScreen
+from gui.settings import SystemRebootScreen
+from gui.preview import PreviewScreen
+from gui.alarm import Alarm
+from gui.server import Server
+from gui.param import gParam
 
 class BodyTemp(App):
     LABEL_NONE = 0
@@ -166,7 +166,7 @@ class BodyTemp(App):
         self.screenManager.add_widget(SystemLicenseInfoScreen(name = 'SystemLicenseInfo'))
         self.screenManager.add_widget(SystemOperatingModeScreen(name = 'SystemOperatingMode'))
         self.screenManager.add_widget(SystemResetSettingsScreen(name = 'SystemResetSettings'))
-        if util.is_raspbian():
+        if is_raspbian():
             self.screenManager.add_widget(SystemRebootScreen(name = 'SystemReboot'))
 
         self.ow = None
@@ -372,7 +372,7 @@ class BodyTemp(App):
                 if self.args.read:
                     self.ow = OwhDevice.open(self.args.file0, self.args.file1)
                 else:
-                    self.ow = OwhDevice.connect(util.get_connect_opts())
+                    self.ow = OwhDevice.connect(get_connect_opts())
                     if not self.ow.has_multi_devs:
                         self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                         self.ow = None
@@ -411,17 +411,19 @@ class BodyTemp(App):
             self.ow = None
 
     def start_client(self):
-        self.set_label(BodyTemp.LABEL_CONNECTING)
+        #self.set_label(BodyTemp.LABEL_CONNECTING)
         # IPアドレスでアクセスしないと、毎回mDNSで検索するので非常に遅くなる
-        ipaddr = socket.gethostbyname(gParam.Server)
-        self.url_capture = "http://{}:{}/capture".format(ipaddr, gParam.Port)
-        self.url_settings = "http://{}:{}/settings".format(ipaddr, gParam.Port)
-        self.jpeg = util.create_turbo_jpeg()
-        self.client_request(self.url_settings)
+        #ipaddr = socket.gethostbyname(gParam.Server)
+        #self.url_capture = "http://{}:{}/capture".format(ipaddr, gParam.Port)
+        #self.url_settings = "http://{}:{}/settings".format(ipaddr, gParam.Port)
+        #self.jpeg = util.create_turbo_jpeg()
+        #self.client_request(self.url_settings)
+        pass
 
     def start_server(self):
-        self.webServer = Server(self)
-        self.webServer.start()
+        #self.webServer = Server(self)
+        #self.webServer.start()
+        pass
 
     def start_alarm_service(self):
         self.alarm = Alarm()
@@ -496,16 +498,3 @@ class BodyTemp(App):
 
     def on_stop(self):
         self.stop_alarm_service()
-
-if __name__=="__main__":
-
-    app = None
-    try:
-        app = BodyTemp()
-        app.run()
-    except:
-        import traceback
-        traceback.print_exc()
-        if app:
-            app.stop()
-

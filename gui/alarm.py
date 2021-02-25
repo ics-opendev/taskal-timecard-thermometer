@@ -6,14 +6,14 @@ import threading
 import queue
 import time
 
-import util
+from gui.util import is_controller
 
-if util.is_controller():
+if is_controller():
     import RPi.GPIO as GPIO
 else:
     from kivy.core.audio import SoundLoader
 
-if util.is_controller():
+if is_controller():
     alarm0 = np.array([[0, 1, 240]])
     alarm1 = np.array([[1174.66, 0.5, 240],[0, 0.5, 240]])
     alarm2 = np.array([[1174.66, 0.5, 240],[1174.66, 0.5, 240],[1174.66, 1, 240]])
@@ -60,7 +60,7 @@ class Alarm(threading.Thread):
 
     def play(self, pattern):
         eid = self.eid
-        if util.is_controller():
+        if is_controller():
             if pattern == self.EV_PASS:
                 alarm = passed
             else:
@@ -93,7 +93,7 @@ class Alarm(threading.Thread):
             sound.unload()
 
     def run(self):
-        if util.is_controller():
+        if is_controller():
             GPIO.setwarnings(False)
             GPIO.setmode(GPIO.BCM)
             self.channel = 13
@@ -113,7 +113,7 @@ class Alarm(threading.Thread):
                 continue
             self.play(pattern)
 
-        if util.is_controller():
+        if is_controller():
             GPIO.cleanup()
 
     def trigger(self, pattern):
