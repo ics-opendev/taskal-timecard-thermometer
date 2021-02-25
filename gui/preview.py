@@ -17,8 +17,8 @@ from kivy.graphics import Color, Line, Rectangle
 from kivy.graphics.texture import Texture
 from kivy.graphics.instructions import InstructionGroup
 
-from param import gParam
-from util import get_app, get_home_dir, is_controller
+from gui.param import gParam
+from gui.util import get_app, get_home_dir, is_controller
 
 class PreviewScreen(Screen):
     def __init__(self, app, **kwargs):
@@ -41,7 +41,7 @@ class PreviewScreen(Screen):
 
         layoutPreview.add_widget(self.preview)
         layoutPreview.add_widget(Image(allow_stretch = True, keep_ratio = True,
-                source = os.path.join(get_home_dir(), 'human_frame.png')))
+                source = os.path.join(get_home_dir(), 'gui/human_frame.png')))
 
         layoutPreview.add_widget(self.labelInfo)
         layoutPreview.add_widget(self.labelInfo2)

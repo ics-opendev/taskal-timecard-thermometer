@@ -7,8 +7,6 @@ import math
 import numpy as np
 import subprocess
 
-import util
-
 previous_icon = os.environ['KIVY_HOME'] + '/icon/previous-icon-32.png'
 
 from kivy.app import App
@@ -25,8 +23,8 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 
-from param import gParam
-from util import get_app
+from gui.param import gParam
+from gui.util import get_app, is_raspbian, is_windows, is_controller, version, build_number
 
 class Label24sp(Label):
     def __init__(self, **kwargs):
@@ -360,14 +358,14 @@ class AlarmScreen(Screen):
 
         # Radio Button
         scrollView = ScrollView()
-        if util.is_controller():
+        if is_controller():
             size_hint = (1, 3.5)
         else:
             size_hint = (1, 1)
         layoutButton = BoxLayout(orientation = 'vertical', size_hint = size_hint)
         self.checkbox = []
         self.index = gParam.AlarmPattern
-        if util.is_controller():
+        if is_controller():
             num_pattern = 10
         else:
             num_pattern = 2
@@ -386,7 +384,7 @@ class AlarmScreen(Screen):
             layout.add_widget(checkbox)
             layout.add_widget(Label24sp(text = text))
             layoutButton.add_widget(layout)
-        if util.is_controller():
+        if is_controller():
             scrollView.add_widget(layoutButton)
             layoutScreen.add_widget(scrollView)
         else:
@@ -433,8 +431,8 @@ class SystemSoftwareInfoScreen(Screen):
         layoutScreen.add_widget(actionBar)
 
         # Label
-        layoutScreen.add_widget(Label24sp(text = 'ﾊﾞｰｼﾞｮﾝ: {}'.format(util.version())))
-        layoutScreen.add_widget(Label24sp(text = 'ﾋﾞﾙﾄﾞ番号: {}'.format(util.build_number())))
+        layoutScreen.add_widget(Label24sp(text = 'ﾊﾞｰｼﾞｮﾝ: {}'.format(version())))
+        layoutScreen.add_widget(Label24sp(text = 'ﾋﾞﾙﾄﾞ番号: {}'.format(build_number())))
 
         self.add_widget(layoutScreen)
 
@@ -604,10 +602,10 @@ class SystemRebootScreen(Screen):
         self.add_widget(layoutScreen)
 
     def callback_reboot(self, instance):
-        if util.is_windows():
+        if is_windows():
 #            os.system("shutdown -r -t 0")
             pass
-        elif util.is_raspbian():
+        elif is_raspbian():
             subprocess.run("./restart.sh", shell = True)
             get_app().stop()
 
@@ -652,7 +650,7 @@ class SystemScreen(Screen):
         buttonReset = Button24sp(text = '設定ﾘｾｯﾄ')
         buttonReset.bind(on_release = self.callback_next)
         layoutButton.add_widget(buttonReset)
-        if util.is_raspbian():
+        if is_raspbian():
             buttonReboot = Button24sp(text = '再起動')
             buttonReboot.bind(on_release = self.callback_next)
             layoutButton.add_widget(buttonReboot)

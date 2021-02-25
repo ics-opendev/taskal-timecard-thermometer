@@ -6,7 +6,7 @@ import sqlite3
 import threading
 import queue
 
-from util import get_home_dir, get_project_dir, is_raspbian
+from gui.util import get_home_dir, get_project_dir, is_raspbian
 
 class DType:
     str = 0

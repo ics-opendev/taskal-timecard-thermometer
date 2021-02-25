@@ -2,7 +2,7 @@
 
 import base64
 import json
-from flask import Flask, make_response, request
+#from flask import Flask, make_response, request
 import logging
 import numpy as np
 import pickle
@@ -11,8 +11,8 @@ import time
 from turbojpeg import TJPF_BGRA
 
 from owlifttypeh import OwhDevice, OwhMeta
-from util import get_app, create_turbo_jpeg
-from param import gParam
+from gui.util import get_app, create_turbo_jpeg
+from gui.param import gParam
 
 class Server(threading.Thread):
 

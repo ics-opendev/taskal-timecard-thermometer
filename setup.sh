@@ -1,3 +1,7 @@
+#!/bin/bash
+
+set -e
+
 sudo apt update
 
 sudo apt upgrade -y
@@ -10,4 +14,8 @@ sudo apt install -y libsdl2-ttf-2.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0
 
 sudo chmod 777 samples/*
 
-./samples/setup.sh
+# install dependency
+pip3 install "distro" "PyTurboJPEG"
+pip3 install "numpy>=1.19.5" "opencv_python>=4.1,<5.0"
+pip3 install "Kivy>=1.11,<2.0"
+pip3 install "Pillow"
