@@ -45,6 +45,7 @@ from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.network.urlrequest import UrlRequest
+from kivy.core.window import Window
 
 if is_windows():
     resource_add_path('c:/Windows/Fonts')
@@ -141,8 +142,13 @@ class BodyTemp(App):
 
         self.operating_mode = gParam.OperatingMode
 
+        # フルスクリーン
+        Window.fullscreen = 'auto'
+
+        # 温度計画像のサイズ
         self.wx = 120
         self.wy = 120
+
         self.screenManager = ScreenManager()
 
         # プレビュー画面
