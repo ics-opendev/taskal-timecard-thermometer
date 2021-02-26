@@ -22,7 +22,7 @@ from gui.util import is_controller, is_windows, is_linux, is_raspbian, get_conne
 if getattr(sys, 'frozen', False):
     os.environ['PATH'] += os.pathsep + os.path.dirname(sys.executable)
 
-owlift_icon = os.environ['KIVY_HOME'] + '/icon/owlift-icon-32.png'
+owlift_icon = os.environ['KIVY_HOME'] + '/icon/ttc-logo.png'
 previous_icon = os.environ['KIVY_HOME'] + '/icon/previous-icon-32.png'
 
 from kivy.config import Config
