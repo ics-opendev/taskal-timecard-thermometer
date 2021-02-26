@@ -34,6 +34,7 @@ class ApplicationEnvironment:
         app_env = json.load(json_file)
         self.LOG_LEVEL = app_env['log']['level']
         self.LOG_FILE_PATH = app_env['log']['file_path']
+        self.UUID = app_env['UUID']
 
 # Main関数
 if __name__ == '__main__':
