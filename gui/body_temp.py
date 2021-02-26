@@ -69,7 +69,6 @@ from gui.settings import SystemResetSettingsScreen
 from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
 from gui.alarm import Alarm
-from gui.server import Server
 from gui.param import gParam
 
 class BodyTemp(App):
@@ -416,21 +415,6 @@ class BodyTemp(App):
             print(e)
             self.ow = None
 
-    def start_client(self):
-        #self.set_label(BodyTemp.LABEL_CONNECTING)
-        # IPアドレスでアクセスしないと、毎回mDNSで検索するので非常に遅くなる
-        #ipaddr = socket.gethostbyname(gParam.Server)
-        #self.url_capture = "http://{}:{}/capture".format(ipaddr, gParam.Port)
-        #self.url_settings = "http://{}:{}/settings".format(ipaddr, gParam.Port)
-        #self.jpeg = util.create_turbo_jpeg()
-        #self.client_request(self.url_settings)
-        pass
-
-    def start_server(self):
-        #self.webServer = Server(self)
-        #self.webServer.start()
-        pass
-
     def start_alarm_service(self):
         self.alarm = Alarm()
         self.alarm.start()
@@ -496,11 +480,9 @@ class BodyTemp(App):
             self.start_owhdev()
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_STAFF:
-            self.start_client()
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_GUEST:
             self.start_owhdev()
-            self.start_server()
 
     def on_stop(self):
         self.stop_alarm_service()
