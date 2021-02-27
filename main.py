@@ -59,7 +59,7 @@ if __name__ == '__main__':
     from gui.body_temp import BodyTemp
     app = None
     try:
-        app = BodyTemp()
+        app = BodyTemp(app_env)
         app.run()
     except:
         import traceback
