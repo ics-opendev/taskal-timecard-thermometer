@@ -113,6 +113,10 @@ class BodyTemp(App):
     ALARM_CNT = 26
     INFO_DISP_CNT = 26
 
+    # コンストラクター
+    def __init__(environment):
+        self.environment = environment
+
     def open_settings(self, *largs):
         pass
 
@@ -256,6 +260,7 @@ class BodyTemp(App):
 
         self.previewScreen.preview.texture = texture
 
+    # フレームの更新
     def update(self, dt):
         currentScreen = self.screenManager.current_screen
         if currentScreen != self.previewScreen or self.ow.disconnected:
@@ -270,6 +275,8 @@ class BodyTemp(App):
         img, meta = self.ow.get_frame()
 
         self.update_frame(img, meta)
+
+        print(meta)
 
         if self.args.read:
             if not self.ow.alive:
