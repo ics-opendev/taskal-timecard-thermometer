@@ -293,6 +293,8 @@ class BodyTemp(App):
 
         if self.args.read:
             if not self.ow.alive:
+                # カメラの切断が切れた場合の対応
+                self.set_label(LABEL_DEV_CONNECT_ERR)
                 self.stop()
 
     def enable_shortcut(self):
