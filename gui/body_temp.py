@@ -278,8 +278,9 @@ class BodyTemp(App):
         if currentScreen != self.previewScreen:
             return
 
+        # デバイスの接続が切れた場合はエラー表示
         if self.ow.disconnected:
-            self.set_label(LABEL_DEV_CONNECT_ERR)
+            self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
             return
 
         fc = self.ow.frame_counter
