@@ -231,18 +231,23 @@ class BodyTemp(App):
                 evt = meta.event_type
                 if (evt & OwhMeta.EV_BODY_TEMP) != 0:
                     # 発見した人から体温を検出しました
+                    print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
+                    print("補正処理中に検出しました")
                     self.event_correct(meta)
                 if (evt & OwhMeta.EV_LOST) != 0:
                     # 人が消えた
+                    print("人が消えた")
                     self.event_lost(meta)
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
+                    print("人を検出しました")
                     self.event_dist(meta, True)
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
+                    print("計測範囲外に出ました")
                     self.event_dist(meta, False)
 
         else:
@@ -279,6 +284,7 @@ class BodyTemp(App):
             return
 
         # デバイスの接続が切れた場合はエラー表示
+        # TODO: 再接続処理を実装
         if self.ow.disconnected:
             self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
             return
@@ -388,14 +394,16 @@ class BodyTemp(App):
         self.keyboard.unbind(on_key_down = self.on_keyboard_down)
         self.keyboard = None
 
+    # キー操作を取得
     def on_keyboard_down(self, keyboard, keycode, text, modifiers):
         k = keycode[1]
-
+        
         if k == 'escape':
             self.stop()
 
         return True
 
+    # カメラの起動処理
     def start_owhdev(self):
         try:
             try:
@@ -500,6 +508,9 @@ class BodyTemp(App):
 
         return (img_buf, meta)
 
+    # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
+    # buildの実行直後に呼び出されるハンドラー
+    # デバイスの開始とサウンドサービスの開始を行っている
     def on_start(self):
         if self.operating_mode == gParam.OPE_MODE_ALONE:
             self.start_owhdev()
@@ -508,6 +519,8 @@ class BodyTemp(App):
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_GUEST:
             self.start_owhdev()
-
+    
+    # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
+    # Windowがクローズされる前に呼び出される
     def on_stop(self):
         self.stop_alarm_service()
