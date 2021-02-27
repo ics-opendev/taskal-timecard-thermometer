@@ -70,6 +70,7 @@ from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
 from gui.alarm import Alarm
 from gui.param import gParam
+from api.taskal_api_client import TaskalApiClient
 
 class BodyTemp(App):
     LABEL_NONE = 0
@@ -179,6 +180,11 @@ class BodyTemp(App):
         if is_raspbian():
             self.screenManager.add_widget(SystemRebootScreen(name = 'SystemReboot'))
 
+        # APIクライアント
+        self.api = TaskalApiClient(self.environment.BASE_URL, self.environment.SERVER_SUBSCRIPTION_KEY, self.environment.UUID)
+        # TESTCODE
+        self.sending = False
+
         self.ow = None
         self.fc0 = 0
         self.eid0 = 0
@@ -213,6 +219,7 @@ class BodyTemp(App):
             elif self.correct_cnt == 0:
                 self.set_label(BodyTemp.LABEL_NONE)
 
+            # 人を検出した場合は、取得箇所の温度を表示
             if self.correct_cnt == 0 and self.disp_temp and not self.detected \
                 and meta.obs_temps is not None \
                 and self.operating_mode != gParam.OPE_MODE_GUEST:
@@ -233,6 +240,11 @@ class BodyTemp(App):
                     # 発見した人から体温を検出しました
                     print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
+                    
+                    # TESTCODE
+                    if not self.sending:
+                        self.api.post_thermometer_output()
+                        self.sending = True
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     print("補正処理中に検出しました")
@@ -252,7 +264,7 @@ class BodyTemp(App):
 
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
-            # ステータスについては doc class OwhMetaを参照
+            # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
 
         if not self.detected and self.temp_disp_cnt > 0:
