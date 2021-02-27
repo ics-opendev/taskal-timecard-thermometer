@@ -115,6 +115,7 @@ class BodyTemp(App):
 
     # コンストラクター
     def __init__(self, environment):
+        super().__init__()
         self.environment = environment
 
     def open_settings(self, *largs):
