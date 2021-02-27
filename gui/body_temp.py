@@ -202,8 +202,11 @@ class BodyTemp(App):
             return '[color=FF0000]{:.1f}[/color]'.format(temp)
         return '{:.1f}'.format(temp)
 
+    # フレーム情報の解析
     def update_frame(self, img, meta):
         st = meta.status
+        # NOTE: カメラステータスのステータスをチェック
+        # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
             if self.info_disp_cnt > 0:
                 self.info_disp_cnt -= 1
@@ -221,22 +224,30 @@ class BodyTemp(App):
                 for i in range(0, 3):
                     self.previewScreen.labelObsTemps[i].text = ''
 
+            # イベントに応じた処理
             eid = meta.event_id
             if eid != self.eid0:
                 self.eid0 = eid
                 evt = meta.event_type
                 if (evt & OwhMeta.EV_BODY_TEMP) != 0:
+                    # 発見した人から体温を検出しました
                     self.event_body_temp(meta)
                 if (evt & OwhMeta.EV_CORRECT) != 0:
+                    # 補正処理中に検出しました
                     self.event_correct(meta)
                 if (evt & OwhMeta.EV_LOST) != 0:
+                    # 人が消えた
                     self.event_lost(meta)
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
+                    # 人を検出しました
                     self.event_dist(meta, True)
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
+                    # 計測範囲外に出ました
                     self.event_dist(meta, False)
 
         else:
+            # なんらかのイレギュラーが発生した場合は「準備中」を表示
+            # ステータスについては doc class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
 
         if not self.detected and self.temp_disp_cnt > 0:
@@ -273,11 +284,12 @@ class BodyTemp(App):
             return
 
         self.fc0 = fc
+        # フレームと詳細の取得
+        print("フレームの取得中")
         img, meta = self.ow.get_frame()
+        print("フレームの取得に成功")
 
         self.update_frame(img, meta)
-
-        print(meta)
 
         if self.args.read:
             if not self.ow.alive:
