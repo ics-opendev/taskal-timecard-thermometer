@@ -3,5 +3,7 @@
         "file_path": "logs/log_file.txt",
         "level" : 10
     },
-    "UUID": "795f4ced-1590-45a9-8d2a-ee39a94ebcfc"
+    "UUID": "795f4ced-1590-45a9-8d2a-ee39a94ebcfc",
+    "baseUrl": "http://192.168.10.101:1337",
+    "serverSubscriptionKey": "1a7ace1a34ed4bcf9999ed42a12d3e61"
 }
