@@ -114,7 +114,7 @@ class BodyTemp(App):
     INFO_DISP_CNT = 26
 
     # コンストラクター
-    def __init__(environment):
+    def __init__(self, environment):
         self.environment = environment
 
     def open_settings(self, *largs):
