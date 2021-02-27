@@ -142,7 +142,7 @@ class BodyTemp(App):
         self.operating_mode = gParam.OperatingMode
 
         # フルスクリーン
-        Window.fullscreen = 'auto'
+        # Window.fullscreen = 'auto'
 
         # 温度計画像のサイズ
         self.wx = 120
