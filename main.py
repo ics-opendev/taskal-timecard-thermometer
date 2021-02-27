@@ -36,6 +36,7 @@ class ApplicationEnvironment:
         self.LOG_FILE_PATH = app_env['log']['file_path']
         self.UUID = app_env['UUID']
         self.SERVER_SUBSCRIPTION_KEY = app_env['serverSubscriptionKey']
+        self.BASE_URL = app_env['baseUrl']
 
 # Main関数
 if __name__ == '__main__':
