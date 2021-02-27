@@ -275,7 +275,11 @@ class BodyTemp(App):
     # フレームの更新
     def update(self, dt):
         currentScreen = self.screenManager.current_screen
-        if currentScreen != self.previewScreen or self.ow.disconnected:
+        if currentScreen != self.previewScreen:
+            return
+
+        if self.ow.disconnected:
+            self.set_label(LABEL_DEV_CONNECT_ERR)
             return
 
         fc = self.ow.frame_counter
@@ -285,9 +289,7 @@ class BodyTemp(App):
 
         self.fc0 = fc
         # フレームと詳細の取得
-        print("フレームの取得中")
         img, meta = self.ow.get_frame()
-        print("フレームの取得に成功")
 
         self.update_frame(img, meta)
 
