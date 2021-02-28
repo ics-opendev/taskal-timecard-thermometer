@@ -3,7 +3,6 @@
 import argparse
 import base64
 import json
-import math
 import numpy as np
 import sys
 import os

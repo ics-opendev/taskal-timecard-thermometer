@@ -2,6 +2,7 @@
 import threading
 from datetime import datetime
 import copy
+import math
 
 from api.taskal_api_client import TaskalApiClient
 from api.taskal_api_client import ThermoStatus
