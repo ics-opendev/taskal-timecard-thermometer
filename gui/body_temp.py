@@ -243,7 +243,7 @@ class BodyTemp(App):
                     
                     # TESTCODE
                     if not self.sending:
-                        self.api.post_thermometer_output()
+                        self.api.post_thermometer_output(meta.body_temp, meta.distance, 1)
                         self.sending = True
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
