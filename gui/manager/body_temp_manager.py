@@ -63,8 +63,8 @@ class BodyTempManager:
 
         if self.current_body_temp.body_temp_need_sending:
             self.api.post_thermometer_output(
-                measuredTemperature=self.current_body_temp.measuredTemperature,
-                measuredDistance=self.current_body_temp.measuredDistance,
+                measuredTemperature=self.current_body_temp.measured_temperature,
+                measuredDistance=self.current_body_temp.measured_distance,
                 status=self.current_body_temp.status
                 )
             # 送信後は新しいデータを追加
