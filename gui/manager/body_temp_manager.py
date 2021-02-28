@@ -3,6 +3,7 @@ from enum import Enum
 import threading
 
 from api.taskal_api_client import TaskalApiClient
+from gui.manager.body_temp_manager import ThermoStatus
 from owlifttypeh import OwhMeta
 
 # enumの速度が遅いとの情報があるため、処理速度が遅い場合は要確認
