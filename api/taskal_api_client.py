@@ -32,7 +32,7 @@ class TaskalApiClient():
     # サーモメータが検出した情報を送信
     def post_thermometer_output(self, measuredTemperature=-1, measuredDistance=-1, status=ThermoStatus.ERROR):
         try:
-            dt_now = datetime.datetime.now()
+            dt_now = datetime.datetime.now(datetime.timezone.utc)
             measured_at = dt_now.strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
             request_url = f'{self.base_url}/api/v1/thermometeroutput'
