@@ -71,7 +71,6 @@ from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
 from gui.alarm import Alarm
 from gui.param import gParam
-from api.taskal_api_client import TaskalApiClient
 from gui.manager.body_temp_manager import BodyTempManager
 
 # 定期的に体温を送信するJOB
