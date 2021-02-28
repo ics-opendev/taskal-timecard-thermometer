@@ -76,7 +76,7 @@ from gui.manager.body_temp_manager import BodyTempManager
 
 # 定期的に体温を送信するJOB
 def send_body_temp_job(manager):
-    print(f"送信の時がきた。。。: {manager.current_body_temp_info()}" )
+    manager.try_send_current_body_temp()
 
 class BodyTemp(App):
     LABEL_NONE = 0
@@ -186,11 +186,8 @@ class BodyTemp(App):
         if is_raspbian():
             self.screenManager.add_widget(SystemRebootScreen(name = 'SystemReboot'))
 
-        # APIクライアント
-        self.api = TaskalApiClient(self.environment.BASE_URL, self.environment.SERVER_SUBSCRIPTION_KEY, self.environment.UUID)
-
         # 体温を管理するクラス
-        self.body_tmp_manager = BodyTempManager()
+        self.body_tmp_manager = BodyTempManager(self.environment)
 
         # 体温の定期送信スケジューラーを起動 (Mainスレッドと同期的に終了)
         self.schedule_thread = threading.Thread(target=self.send_body_temp_schedule, args=(self.body_tmp_manager,))
@@ -254,10 +251,6 @@ class BodyTemp(App):
                     print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
                     self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_BODY_TEMP)
-                    # TESTCODE
-                    #if not self.sending:
-                    #    self.api.post_thermometer_output(math.floor(Mathmeta.body_temp * 10) / 10, meta.distance, )
-                    #    self.sending = True
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
@@ -485,7 +478,6 @@ class BodyTemp(App):
         while True:
             schedule.run_pending()
             time.sleep(1)
-
 
     # アラーム
     def start_alarm_service(self):

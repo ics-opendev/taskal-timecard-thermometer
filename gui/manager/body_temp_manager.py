@@ -24,7 +24,9 @@ class BodyTempInfo:
 
 # 測定値を管理するクラス
 class BodyTempManager:
-    def __init__(self):
+    def __init__(self, environment):
+        # APIクライアント
+        self.api = TaskalApiClient(environment.BASE_URL, environment.SERVER_SUBSCRIPTION_KEY, environment.UUID)
         # マルチスレッド対策でロックを作成
         self.lock = threading.Lock()
         # 取得した体温をサーバに送る形にする最小集計時間 1000ms
@@ -35,8 +37,6 @@ class BodyTempManager:
         self.measuredDistance = -1
         # カメラステータス
         self.status = ThermoStatus.PREPARATION
-        # 最終計測時間
-        
         # testcode
         self.count = 0
 
@@ -50,8 +50,8 @@ class BodyTempManager:
         # 操作が完了したのでロックを解除
         self.lock.release()
 
-    def current_body_temp_info(self):
+    def try_send_current_body_temp(self):
         # TESTCODE
-        return self.count
+        self.api.post_thermometer_output(measuredTemperature=self.count)
 
     
