@@ -3,6 +3,7 @@ import requests
 import json
 import datetime
 from concurrent.futures import ThreadPoolExecutor
+from gui.manager.body_temp_manager import ThermoStatus
 
 class TaskalApiClient():
     
@@ -19,7 +20,7 @@ class TaskalApiClient():
         self.timeout = (15, 30)
     
     # サーモメータが検出した情報を送信
-    def post_thermometer_output(self, measuredTemperature=-1, measuredDistance=-1, status=99):
+    def post_thermometer_output(self, measuredTemperature=-1, measuredDistance=-1, status=ThermoStatus.ERROR):
         try:
             dt_now = datetime.datetime.now()
             measured_at = dt_now.strftime('%Y-%m-%dT%H:%M:%S')
@@ -31,7 +32,7 @@ class TaskalApiClient():
                 'measuredAt': measured_at,
                 'measuredTemperature': measuredTemperature,
                 'measuredDistance': measuredDistance,
-                'status': status,
+                'status': status.value,
                 }
             body_json = json.dumps(body)
 

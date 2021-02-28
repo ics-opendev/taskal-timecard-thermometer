@@ -28,8 +28,7 @@ class DB:
 
     PROPS = [ \
         DBProp("Server",                "192.168.221.1"),
-        DBProp("Port",                  8000,   dtype = DType.int),
-        DBProp("TempThreshold",         37.5,   dtype = DType.float),
+        DBProp("TempThreshold",         42.5,   dtype = DType.float),
         DBProp("TempCalibration",       36.8,   dtype = DType.float),
         DBProp("TempAverage",           0,      dtype = DType.float),
         DBProp("TempDisplay",           True,   dtype = DType.bool),
@@ -62,10 +61,10 @@ class DB:
 
     def _init(self):
         home_dir = get_home_dir()
-        db_file = home_dir + "/db.sqlite3"
+        db_file = home_dir + "/config/db.sqlite3"
         created = False
         if not os.path.exists(db_file):
-            shutil.copyfile(get_project_dir() + "/db.sqlite3.tmpl", db_file)
+            shutil.copyfile(get_home_dir() + "/config/db.sqlite3.tmpl", db_file)
             created = True
 
         self._config = {}

@@ -10,6 +10,7 @@ import os
 import pickle
 import socket
 from turbojpeg import TJPF_BGRA
+import threading
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -71,6 +72,11 @@ from gui.preview import PreviewScreen
 from gui.alarm import Alarm
 from gui.param import gParam
 from api.taskal_api_client import TaskalApiClient
+from gui.manager.body_temp_manager import BodyTempManager
+
+# 定期的に体温を送信するJOB
+def send_body_temp_job(manager):
+    print(f"送信の時がきた。。。: {manager.current_body_temp_info()}" )
 
 class BodyTemp(App):
     LABEL_NONE = 0
@@ -182,9 +188,16 @@ class BodyTemp(App):
 
         # APIクライアント
         self.api = TaskalApiClient(self.environment.BASE_URL, self.environment.SERVER_SUBSCRIPTION_KEY, self.environment.UUID)
-        # TESTCODE
-        self.sending = False
 
+        # 体温を管理するクラス
+        self.body_tmp_manager = BodyTempManager()
+
+        # 体温の定期送信スケジューラーを起動 (Mainスレッドと同期的に終了)
+        self.schedule_thread = threading.Thread(target=self.send_body_temp_schedule, args=(self.body_tmp_manager,))
+        self.schedule_thread.daemon = True
+        self.schedule_thread.start()
+
+        # 内部パラメータ
         self.ow = None
         self.fc0 = 0
         self.eid0 = 0
@@ -240,27 +253,27 @@ class BodyTemp(App):
                     # 発見した人から体温を検出しました
                     print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
-                    
+                    self.manager.update_body_temp(meta, OwhMeta.EV_BODY_TEMP)
                     # TESTCODE
-                    if not self.sending:
-                        self.api.post_thermometer_output(meta.body_temp, meta.distance, 1)
-                        self.sending = True
+                    #if not self.sending:
+                    #    self.api.post_thermometer_output(math.floor(Mathmeta.body_temp * 10) / 10, meta.distance, )
+                    #    self.sending = True
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
-                    print("補正処理中に検出しました")
                     self.event_correct(meta)
+                    self.manager.update_body_temp(meta, OwhMeta.EV_CORRECT)
                 if (evt & OwhMeta.EV_LOST) != 0:
                     # 人が消えた
-                    print("人が消えた")
                     self.event_lost(meta)
+                    self.manager.update_body_temp(meta, OwhMeta.EV_LOST)
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
-                    print("人を検出しました")
                     self.event_dist(meta, True)
+                    self.manager.update_body_temp(meta, OwhMeta.EV_DIST_VALID)
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
-                    print("計測範囲外に出ました")
                     self.event_dist(meta, False)
+                    self.manager.update_body_temp(meta, OwhMeta.EV_DIST_INVALID)
 
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
@@ -460,65 +473,41 @@ class BodyTemp(App):
             print(e)
             self.ow = None
 
+    # 撮影した情報をサーバに送信する(別threadでの利用を想定しています)
+    def send_body_temp_schedule(self, manager):
+        import schedule
+        import time
+
+        # スケジュールを作成
+        schedule.every(1).second.do(send_body_temp_job, manager=manager)
+
+        # jobの実行監視、指定時間になったらjob関数を実行
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+
+    # アラーム
     def start_alarm_service(self):
         self.alarm = Alarm()
         self.alarm.start()
 
+    # アラーム
     def stop_alarm_service(self):
         if hasattr(self, "alarm"):
             self.alarm.stop()
 
+    # アラーム
     def start_alarm(self, pattern):
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             return
         if hasattr(self, "alarm"):
             self.alarm.trigger(pattern)
 
+    # アラーム
     def stop_alarm(self):
         if hasattr(self, "alarm"):
             self.alarm.cancel()
-
-    def client_request(self, url):
-        UrlRequest(url = url,
-            on_success = self.client_success,
-            on_failure = self.client_failure,
-            on_error = self.client_error,
-            )
-
-    def client_success(self, request, result):
-        self.connection = True
-        if request.url == self.url_capture:
-            img, meta = self.client_get_frame(request, result)
-            self.update_frame(img, meta)
-            self.client_request(request.url)
-        elif request.url == self.url_settings:
-            self.set_label(BodyTemp.LABEL_NONE)
-            gParam.TempThreshold = result['TempThreshold']
-            gParam.TempCalibration = result['TempCalibration']
-            self.previewScreen.labelThreshold.text = '[b]{:.1f}[/b]'.format(gParam.TempThreshold)
-            self.client_request(self.url_capture)
-
-    def client_failure(self, request, result):
-        self.set_label(BodyTemp.LABEL_COMMUNICATION_ERR)
-        print('failure: ', result)
-
-    def client_error(self, request, error):
-        self.set_label(BodyTemp.LABEL_CONNECT_ERR)
-        self.connection = False
-        if request.url == self.url_capture:
-            self.fc0 = 0
-            self.eid0 = 0
-            self.client_request(request.url)
-        elif request.url == self.url_settings:
-            self.client_request(request.url)
-
-    def client_get_frame(self, request, result):
-        resp_headers = request.resp_headers
-        meta = pickle.loads(base64.b64decode(resp_headers['OwhMeta']))
-        img = self.jpeg.decode(result, pixel_format = TJPF_BGRA)
-        img_buf = img.tobytes()
-
-        return (img_buf, meta)
 
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # buildの実行直後に呼び出されるハンドラー
