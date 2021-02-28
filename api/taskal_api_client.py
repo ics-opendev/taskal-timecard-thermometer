@@ -33,7 +33,7 @@ class TaskalApiClient():
     def post_thermometer_output(self, measuredTemperature=-1, measuredDistance=-1, status=ThermoStatus.ERROR):
         try:
             dt_now = datetime.datetime.now()
-            measured_at = dt_now.strftime('%Y-%m-%dT%H:%M:%S')
+            measured_at = dt_now.strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
             request_url = f'{self.base_url}/api/v1/thermometeroutput'
             
