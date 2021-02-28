@@ -253,7 +253,7 @@ class BodyTemp(App):
                     # 発見した人から体温を検出しました
                     print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
-                    self.manager.update_body_temp(meta, OwhMeta.EV_BODY_TEMP)
+                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_BODY_TEMP)
                     # TESTCODE
                     #if not self.sending:
                     #    self.api.post_thermometer_output(math.floor(Mathmeta.body_temp * 10) / 10, meta.distance, )
@@ -261,19 +261,19 @@ class BodyTemp(App):
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
-                    self.manager.update_body_temp(meta, OwhMeta.EV_CORRECT)
+                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_CORRECT)
                 if (evt & OwhMeta.EV_LOST) != 0:
                     # 人が消えた
                     self.event_lost(meta)
-                    self.manager.update_body_temp(meta, OwhMeta.EV_LOST)
+                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_LOST)
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
                     self.event_dist(meta, True)
-                    self.manager.update_body_temp(meta, OwhMeta.EV_DIST_VALID)
+                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_VALID)
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
                     self.event_dist(meta, False)
-                    self.manager.update_body_temp(meta, OwhMeta.EV_DIST_INVALID)
+                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_INVALID)
 
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
