@@ -1,9 +1,19 @@
 # coding: utf-8
+from enum import Enum
 import requests
 import json
 import datetime
 from concurrent.futures import ThreadPoolExecutor
-from gui.manager.body_temp_manager import ThermoStatus
+
+# enumの速度が遅いとの情報があるため、処理速度が遅い場合は要確認
+# 測定端末の状態(sails-ttcと共通)
+class ThermoStatus(Enum):
+    # 0:カメラ準備中
+    PREPARATION = 0
+    # 1:動作中
+    OK = 1
+    # 99:エラー
+    ERROR = 99
 
 class TaskalApiClient():
     

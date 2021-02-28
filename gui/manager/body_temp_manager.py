@@ -1,20 +1,9 @@
 # coding: utf-8
-from enum import Enum
 import threading
 
 from api.taskal_api_client import TaskalApiClient
-from gui.manager.body_temp_manager import ThermoStatus
+from api.taskal_api_client import ThermoStatus
 from owlifttypeh import OwhMeta
-
-# enumの速度が遅いとの情報があるため、処理速度が遅い場合は要確認
-# 測定端末の状態(sails-ttcと共通)
-class ThermoStatus(Enum):
-    # 0:カメラ準備中
-    PREPARATION = 0
-    # 1:動作中
-    OK = 1
-    # 99:エラー
-    ERROR = 99
 
 # 測定値(不変クラス)
 class BodyTempInfo:
