@@ -35,6 +35,8 @@ class ApplicationEnvironment:
         self.LOG_LEVEL = app_env['log']['level']
         self.LOG_FILE_PATH = app_env['log']['file_path']
         self.UUID = app_env['UUID']
+        self.SERVER_SUBSCRIPTION_KEY = app_env['serverSubscriptionKey']
+        self.BASE_URL = app_env['baseUrl']
 
 # Main関数
 if __name__ == '__main__':
@@ -58,7 +60,7 @@ if __name__ == '__main__':
     from gui.body_temp import BodyTemp
     app = None
     try:
-        app = BodyTemp()
+        app = BodyTemp(app_env)
         app.run()
     except:
         import traceback
