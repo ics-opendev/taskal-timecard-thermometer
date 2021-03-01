@@ -72,6 +72,16 @@ from gui.alarm import Alarm
 from gui.param import gParam
 from gui.manager.body_temp_manager import BodyTempManager
 
+# argsのデフォルト値
+class MockArgs:
+    def __init__(self):
+        self.read = False
+        self.write = False
+        self.interval = 0.116
+        self.file0 = "cam0.owi"
+        self.file1 = "cam1.owi"
+        self.skip = 0
+
 # 定期的に体温を送信するJOB
 def send_body_temp_job(manager):
     manager.try_send_current_body_temp()
@@ -127,16 +137,16 @@ class BodyTemp(App):
         pass
 
     def build(self):
-        ap = argparse.ArgumentParser()
-        ap.add_argument("-f0", "--file0", default = "cam0.owi", type = str)
-        ap.add_argument("-f1", "--file1", default = "cam1.owi", type = str)
-        ap.add_argument("-r", "--read", dest = "read",
-                action = "store_const", const = True, default = False)
-        ap.add_argument("-w", "--write", dest = "write",
-                action = "store_const", const = True, default = False)
-        ap.add_argument("-s", "--skip", default = 0, type = int)
-        ap.add_argument("-i", "--interval", default = 0.116, type = float)
-        self.args = ap.parse_args()
+        #ap = argparse.ArgumentParser()
+        #ap.add_argument("-f0", "--file0", default = "cam0.owi", type = str)
+        #ap.add_argument("-f1", "--file1", default = "cam1.owi", type = str)
+        #ap.add_argument("-r", "--read", dest = "read",
+        #        action = "store_const", const = True, default = False)
+        #ap.add_argument("-w", "--write", dest = "write",
+        #        action = "store_const", const = True, default = False)
+        #ap.add_argument("-s", "--skip", default = 0, type = int)
+        #ap.add_argument("-i", "--interval", default = 0.116, type = float)
+        self.args = MockArgs()
 
         if os.path.exists("config.txt"):
             with open("config.txt", encoding = "utf-8") as f:
@@ -423,6 +433,7 @@ class BodyTemp(App):
     def start_owhdev(self):
         try:
             try:
+                print(self.args.read)
                 if self.args.read:
                     self.ow = OwhDevice.open(self.args.file0, self.args.file1)
                 else:
