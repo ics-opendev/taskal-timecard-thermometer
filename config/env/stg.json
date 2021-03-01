@@ -1,0 +1,9 @@
+{
+    "log": {
+        "file_path": "logs/log_file.txt",
+        "level" : 10
+    },
+    "UUID": "795f4ced-1590-45a9-8d2a-ee39a94ebcfc",
+    "baseUrl": "https://api-stg.taskaltc.jp",
+    "serverSubscriptionKey": "2f258c6138e641b99d11537d1e31f570"
+}
