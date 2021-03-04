@@ -5,7 +5,7 @@ from bleno.echo_characteristic import EchoCharacteristic
 
 class BlenoManager:
 
-    def __init(self, environment):
+    def __init__(self, environment):
         self.inner_bleno = Bleno()
         self.environment = environment
         self.inner_bleno.on('stateChange', self.onStateChange)
