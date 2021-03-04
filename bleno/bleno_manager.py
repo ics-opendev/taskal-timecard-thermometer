@@ -1,7 +1,7 @@
 from pybleno import *
 import sys
 import signal
-from bluetooth.echo_characteristic import EchoCharacteristic
+from bleno.echo_characteristic import EchoCharacteristic
 
 class BlenoManager:
 

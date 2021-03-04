@@ -70,7 +70,7 @@ from gui.preview import PreviewScreen
 from gui.alarm import Alarm
 from gui.param import gParam
 from gui.manager.body_temp_manager import BodyTempManager
-from bluetooth.bleno_manager import BlenoManager
+from bleno.bleno_manager import BlenoManager
 
 # argsのデフォルト値
 class MockArgs:
