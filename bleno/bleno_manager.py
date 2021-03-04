@@ -24,15 +24,15 @@ class BlenoManager:
         print('on -> stateChange: ' + state);
 
         if (state == 'poweredOn'):
-            bleno.startAdvertising('echo', ['ec00'])
+            self.bleno.startAdvertising('echo', ['ec00'])
         else:
-            bleno.stopAdvertising()
+            self.bleno.stopAdvertising()
 
     def onAdvertisingStart(self, error):
         print('on -> advertisingStart: ' + ('error ' + error if error else 'success'));
 
         if not error:
-            bleno.setServices([
+            self.bleno.setServices([
                 BlenoPrimaryService({
                     'uuid': self.environment.UUID,
                     'characteristics': [ 
