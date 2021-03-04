@@ -11,11 +11,11 @@ class BlenoManager:
         self.bleno.on('stateChange', self.onStateChange)
         self.bleno.on('advertisingStart', self.onAdvertisingStart)
 
-    def start():
+    def start(self):
         print('start bleno')
         self.bleno.start()
     
-    def stop():
+    def stop(self):
         print('stop bleno')
         self.bleno.stopAdvertising()
         self.bleno.disconnect()
