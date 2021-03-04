@@ -71,6 +71,16 @@ from gui.alarm import Alarm
 from gui.param import gParam
 from gui.manager.body_temp_manager import BodyTempManager
 
+# argsのデフォルト値
+class MockArgs:
+    def __init__(self):
+        self.read = False
+        self.write = False
+        self.interval = 0.116
+        self.file0 = "cam0.owi"
+        self.file1 = "cam1.owi"
+        self.skip = 0
+
 # 定期的に体温を送信するJOB
 def send_body_temp_job(manager):
     manager.try_send_current_body_temp()
@@ -126,6 +136,8 @@ class BodyTemp(App):
         pass
 
     def build(self):
+
+        self.args = MockArgs()
 
         if os.path.exists("config.txt"):
             with open("config.txt", encoding = "utf-8") as f:
