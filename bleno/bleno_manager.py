@@ -24,7 +24,7 @@ class BlenoManager:
         print('on -> stateChange: ' + state);
 
         if (state == 'poweredOn'):
-            self.inner_bleno.startAdvertising('echo', ['ec00'])
+            self.inner_bleno.startAdvertising('thermometer', ['ec00'])
         else:
             self.inner_bleno.stopAdvertising()
 
@@ -34,7 +34,7 @@ class BlenoManager:
         if not error:
             self.inner_bleno.setServices([
                 BlenoPrimaryService({
-                    'uuid': self.environment.UUID,
+                    'uuid': 'ec00',
                     'characteristics': [ 
                         EchoCharacteristic('thermometer')
                         ]
