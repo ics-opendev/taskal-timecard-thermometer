@@ -132,7 +132,7 @@ class BodyTemp(App):
     def __init__(self, environment):
         super().__init__()
         self.environment = environment
-        self.bleno_manager = BlenoManager()
+        self.bleno_manager = BlenoManager(environment)
 
     def open_settings(self, *largs):
         pass

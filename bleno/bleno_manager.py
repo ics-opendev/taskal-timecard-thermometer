@@ -6,33 +6,33 @@ from bleno.echo_characteristic import EchoCharacteristic
 class BlenoManager:
 
     def __init(self, environment):
-        self.bleno = Bleno()
+        self.inner_bleno = Bleno()
         self.environment = environment
-        self.bleno.on('stateChange', self.onStateChange)
-        self.bleno.on('advertisingStart', self.onAdvertisingStart)
+        self.inner_bleno.on('stateChange', self.onStateChange)
+        self.inner_bleno.on('advertisingStart', self.onAdvertisingStart)
 
     def start(self):
         print('start bleno')
-        self.bleno.start()
+        self.inner_bleno.start()
     
     def stop(self):
         print('stop bleno')
-        self.bleno.stopAdvertising()
-        self.bleno.disconnect()
+        self.inner_bleno.stopAdvertising()
+        self.inner_bleno.disconnect()
 
     def onStateChange(self, state):
         print('on -> stateChange: ' + state);
 
         if (state == 'poweredOn'):
-            self.bleno.startAdvertising('echo', ['ec00'])
+            self.inner_bleno.startAdvertising('echo', ['ec00'])
         else:
-            self.bleno.stopAdvertising()
+            self.inner_bleno.stopAdvertising()
 
     def onAdvertisingStart(self, error):
         print('on -> advertisingStart: ' + ('error ' + error if error else 'success'));
 
         if not error:
-            self.bleno.setServices([
+            self.inner_bleno.setServices([
                 BlenoPrimaryService({
                     'uuid': self.environment.UUID,
                     'characteristics': [ 
