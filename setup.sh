@@ -37,3 +37,6 @@ sudo make install
 sudo pip3 install pybluez
 cd ..
 cd taskal-timecard-thermometer
+
+# bluetooth LE peripheral (python)
+pip3 install pybleno
