@@ -70,6 +70,7 @@ from gui.preview import PreviewScreen
 from gui.alarm import Alarm
 from gui.param import gParam
 from gui.manager.body_temp_manager import BodyTempManager
+from bluetooth.bleno_manager import BlenoManager
 
 # argsのデフォルト値
 class MockArgs:
@@ -131,6 +132,7 @@ class BodyTemp(App):
     def __init__(self, environment):
         super().__init__()
         self.environment = environment
+        self.bleno_manager = BlenoManager()
 
     def open_settings(self, *largs):
         pass
@@ -484,11 +486,16 @@ class BodyTemp(App):
         if hasattr(self, "alarm"):
             self.alarm.cancel()
 
+    # Bluetooth BLE peripheralを起動
+    def start_ble_peripheral(self):
+        self.bleno_manager.start()
+
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # buildの実行直後に呼び出されるハンドラー
     # デバイスの開始とサウンドサービスの開始を行っている
     def on_start(self):
         if self.operating_mode == gParam.OPE_MODE_ALONE:
+            self.start_ble_peripheral()
             self.start_owhdev()
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_STAFF:
@@ -500,3 +507,4 @@ class BodyTemp(App):
     # Windowがクローズされる前に呼び出される
     def on_stop(self):
         self.stop_alarm_service()
+        self.bleno_manager.stop()
