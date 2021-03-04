@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import argparse
 import base64
 import json
 import numpy as np
@@ -137,15 +136,7 @@ class BodyTemp(App):
         pass
 
     def build(self):
-        #ap = argparse.ArgumentParser()
-        #ap.add_argument("-f0", "--file0", default = "cam0.owi", type = str)
-        #ap.add_argument("-f1", "--file1", default = "cam1.owi", type = str)
-        #ap.add_argument("-r", "--read", dest = "read",
-        #        action = "store_const", const = True, default = False)
-        #ap.add_argument("-w", "--write", dest = "write",
-        #        action = "store_const", const = True, default = False)
-        #ap.add_argument("-s", "--skip", default = 0, type = int)
-        #ap.add_argument("-i", "--interval", default = 0.116, type = float)
+
         self.args = MockArgs()
 
         if os.path.exists("config.txt"):
@@ -317,20 +308,16 @@ class BodyTemp(App):
 
         fc = self.ow.frame_counter
 
-        if not self.args.read and fc == self.fc0:
-            return
-
         self.fc0 = fc
         # フレームと詳細の取得
         img, meta = self.ow.get_frame()
 
         self.update_frame(img, meta)
 
-        if self.args.read:
-            if not self.ow.alive:
-                # カメラの切断が切れた場合の対応
-                self.set_label(LABEL_DEV_CONNECT_ERR)
-                self.stop()
+        if not self.ow.alive:
+            # カメラの切断が切れた場合の対応
+            self.set_label(LABEL_DEV_CONNECT_ERR)
+            self.stop()
 
     def enable_shortcut(self):
         """
@@ -433,15 +420,11 @@ class BodyTemp(App):
     def start_owhdev(self):
         try:
             try:
-                print(self.args.read)
-                if self.args.read:
-                    self.ow = OwhDevice.open(self.args.file0, self.args.file1)
-                else:
-                    self.ow = OwhDevice.connect(get_connect_opts())
-                    if not self.ow.has_multi_devs:
-                        self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-                        self.ow = None
-                        return
+                self.ow = OwhDevice.connect(get_connect_opts())
+                if not self.ow.has_multi_devs:
+                    self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
+                    self.ow = None
+                    return
             except:
                 import traceback
                 traceback.print_exc()
@@ -460,15 +443,6 @@ class BodyTemp(App):
             self.ow.set_options(options)
 
             self.ow.capture_start()
-            if self.args.write:
-                self.ow.write_start(self.args.file0, self.args.file1)
-            if self.args.skip > 0: 
-                print("Skipping...")
-                skip_ms = self.args.skip * 1000
-                while self.ow.alive:
-                    _, meta = self.ow.get_frame()
-                    if meta.file_time_ofs > skip_ms:
-                        break
 
             Clock.schedule_interval(self.update, self.args.interval)
         except Exception as e:
