@@ -2,7 +2,6 @@ from pybleno import *
 import sys
 import signal
 from bleno.characteristic import BodyTempCharacteristic
-from api.taskal_api_client import ThermoStatus
 
 # 体温測定情報
 class BodyTempInfo:
