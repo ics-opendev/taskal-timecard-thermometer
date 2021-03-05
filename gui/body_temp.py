@@ -122,6 +122,12 @@ class BodyTemp(App):
     ALARM_CNT = 26
     INFO_DISP_CNT = 26
 
+    # サーモメータのステータス
+    READY = 0 # 準備完了
+    PREPARATION = 1 # 準備中
+    DISSCONNECTE = 100 # 切断
+
+
     # コンストラクター
     def __init__(self, environment):
         super().__init__()
@@ -241,20 +247,17 @@ class BodyTemp(App):
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
-                    #self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_CORRECT)
                 if (evt & OwhMeta.EV_LOST) != 0:
                     # 人が消えた
                     self.event_lost(meta)
-                    #self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_LOST)
+                    self.bleno_manager.updateHumanDetection(str(False))
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
                     self.event_dist(meta, True)
-                    #self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_VALID)
+                    self.bleno_manager.updateHumanDetection(str(True))
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
                     self.event_dist(meta, False)
-                    #self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_INVALID)
-
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
@@ -292,6 +295,7 @@ class BodyTemp(App):
         # TODO: 再接続処理を実装
         if self.ow.disconnected:
             self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
+            self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE, '接続エラー')
             return
 
         fc = self.ow.frame_counter
@@ -303,7 +307,7 @@ class BodyTemp(App):
         self.update_frame(img, meta)
 
         if not self.ow.alive:
-            # カメラの切断が切れた場合の対応
+            # カメラの接続が切れた場合の対応
             self.set_label(LABEL_DEV_CONNECT_ERR)
             self.stop()
 
@@ -416,6 +420,7 @@ class BodyTemp(App):
             except:
                 import traceback
                 traceback.print_exc()
+                self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                 return
 
@@ -431,24 +436,12 @@ class BodyTemp(App):
             self.ow.set_options(options)
 
             self.ow.capture_start()
+            self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION, '準備中')
 
             Clock.schedule_interval(self.update, self.args.interval)
         except Exception as e:
             print(e)
             self.ow = None
-
-    # 撮影した情報をサーバに送信する(別threadでの利用を想定しています)
-    def send_body_temp_schedule(self, manager):
-        import schedule
-        import time
-
-        # スケジュールを作成
-        schedule.every(1).second.do(send_body_temp_job, manager=manager)
-
-        # jobの実行監視、指定時間になったらjob関数を実行
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
 
     # アラーム
     def start_alarm_service(self):
