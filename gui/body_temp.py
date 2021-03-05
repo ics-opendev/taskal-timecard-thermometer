@@ -80,10 +80,6 @@ class MockArgs:
         self.file1 = "cam1.owi"
         self.skip = 0
 
-# 定期的に体温を送信するJOB
-def send_body_temp_job(manager):
-    manager.try_send_current_body_temp()
-
 class BodyTemp(App):
     LABEL_NONE = 0
     LABEL_NOT_READY = 1
@@ -130,6 +126,7 @@ class BodyTemp(App):
     def __init__(self, environment):
         super().__init__()
         self.environment = environment
+        self.bleno_manager = BlenoManager(environment)
 
     def open_settings(self, *largs):
         pass

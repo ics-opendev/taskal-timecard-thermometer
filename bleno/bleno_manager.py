@@ -3,21 +3,6 @@ import sys
 import signal
 from bleno.characteristic import BodyTempCharacteristic
 
-# 体温測定情報
-class BodyTempInfo:
-
-    def __init__(self, measured_temperature, measured_distance):
-        # 送信するデータ
-        self.measured_temperature = measured_temperature
-        self.measured_distance = measured_distance
-
-    def __deepcopy__(self):
-        deepcopy_obj = BodyTempInfo()
-        deepcopy_obj.measured_temperature = self.measured_temperature
-        deepcopy_obj.measured_distance = self.measured_distance
-        return deepcopy_obj
-
-
 class BlenoManager:
 
     def __init__(self, environment):
