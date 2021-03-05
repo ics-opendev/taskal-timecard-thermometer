@@ -38,7 +38,7 @@ class BlenoManager:
         if not error:
             self.inner_bleno.setServices([
                 BlenoPrimaryService({
-                    'uuid': 'ec100001-9999-9999-9999-000000000001',
+                    'uuid': 'ec100001-9999-9999-9999-000000000000',
                     'characteristics': [self.body_temp_chara, self.human_detection, self.thermometer_status]
                 })
             ])
