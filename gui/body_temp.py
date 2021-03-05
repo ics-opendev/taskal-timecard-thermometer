@@ -262,6 +262,7 @@ class BodyTemp(App):
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
+            print(st)
 
         if not self.detected and self.temp_disp_cnt > 0:
             self.temp_disp_cnt -= 1

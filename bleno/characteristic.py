@@ -18,12 +18,12 @@ class BodyTempCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
-        print('onSubscribe')
+        print('onSubscribe:BodyTemp')
         
         self._updateValueCallback = updateValueCallback
 
     def onUnsubscribe(self):
-        print('onUnsubscribe');
+        print('onUnsubscribe:BodyTemp');
         
         self._updateValueCallback = None
 
@@ -49,12 +49,12 @@ class HumanDetectionCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
-        print('onSubscribe')
+        print('onSubscribe:HumanDetection')
         
         self._updateValueCallback = updateValueCallback
 
     def onUnsubscribe(self):
-        print('onUnsubscribe');
+        print('onUnsubscribe:HumanDetection');
         
         self._updateValueCallback = None
 
@@ -80,12 +80,12 @@ class ThermometerStatusCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
-        print('onSubscribe')
+        print('onSubscribe:ThermometerStatus')
         
         self._updateValueCallback = updateValueCallback
 
     def onUnsubscribe(self):
-        print('onUnsubscribe');
+        print('onUnsubscribe:ThermometerStatus');
         
         self._updateValueCallback = None
 
