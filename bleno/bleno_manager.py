@@ -2,6 +2,7 @@ from pybleno import *
 import sys
 import signal
 from bleno.characteristic import BodyTempCharacteristic
+import math
 
 class BlenoManager:
 
