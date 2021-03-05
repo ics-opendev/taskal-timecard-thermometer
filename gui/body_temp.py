@@ -8,7 +8,6 @@ import os
 import pickle
 import socket
 from turbojpeg import TJPF_BGRA
-import threading
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -69,7 +68,6 @@ from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
 from gui.alarm import Alarm
 from gui.param import gParam
-from gui.manager.body_temp_manager import BodyTempManager
 from bleno.bleno_manager import BlenoManager
 
 # argsのデフォルト値
@@ -132,7 +130,6 @@ class BodyTemp(App):
     def __init__(self, environment):
         super().__init__()
         self.environment = environment
-        self.bleno_manager = BlenoManager(environment)
 
     def open_settings(self, *largs):
         pass
@@ -186,14 +183,6 @@ class BodyTemp(App):
         self.screenManager.add_widget(SystemResetSettingsScreen(name = 'SystemResetSettings'))
         if is_raspbian():
             self.screenManager.add_widget(SystemRebootScreen(name = 'SystemReboot'))
-
-        # 体温を管理するクラス
-        self.body_tmp_manager = BodyTempManager(self.environment)
-
-        # 体温の定期送信スケジューラーを起動 (Mainスレッドと同期的に終了)
-        self.schedule_thread = threading.Thread(target=self.send_body_temp_schedule, args=(self.body_tmp_manager,))
-        self.schedule_thread.daemon = True
-        self.schedule_thread.start()
 
         # 内部パラメータ
         self.ow = None
@@ -251,23 +240,23 @@ class BodyTemp(App):
                     # 発見した人から体温を検出しました
                     print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_BODY_TEMP)
+                    self.bleno_manager.updateBodyTemp(meta)
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_CORRECT)
+                    #self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_CORRECT)
                 if (evt & OwhMeta.EV_LOST) != 0:
                     # 人が消えた
                     self.event_lost(meta)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_LOST)
+                    #self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_LOST)
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
                     self.event_dist(meta, True)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_VALID)
+                    #self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_VALID)
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
                     self.event_dist(meta, False)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_INVALID)
+                    #self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_INVALID)
 
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
@@ -501,6 +490,7 @@ class BodyTemp(App):
         elif self.operating_mode == gParam.OPE_MODE_STAFF:
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_GUEST:
+            self.start_ble_peripheral()
             self.start_owhdev()
     
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
