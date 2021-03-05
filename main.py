@@ -35,6 +35,7 @@ class ApplicationEnvironment:
         self.LOG_LEVEL = app_env['log']['level']
         self.LOG_FILE_PATH = app_env['log']['file_path']
         self.UUID = app_env['UUID']
+        self.DEVICE_NAME = app_env['deviceName']
         self.SERVER_SUBSCRIPTION_KEY = app_env['serverSubscriptionKey']
         self.BASE_URL = app_env['baseUrl']
 
