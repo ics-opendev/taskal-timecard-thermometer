@@ -203,6 +203,7 @@ class BodyTemp(App):
         self.last_frame = None
         self.server_fc = 0
         self.client_fc = 0
+        self.thermometer_preparation = False
 
         return self.screenManager
 
@@ -213,6 +214,11 @@ class BodyTemp(App):
 
     # フレーム情報の解析
     def update_frame(self, img, meta):
+        if self.thermometer_preparation:
+            # 準備が完了していることを通知
+            self.thermometer_preparation = False
+            self.bleno_manager.updateThermometerStatus(BodyTemp.READY, '準備完了')
+
         st = meta.status
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
@@ -258,11 +264,19 @@ class BodyTemp(App):
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
                     self.event_dist(meta, False)
+        elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
+            # カメラを暖気運転中
+            self.set_label(BodyTemp.LABEL_NOT_READY)
+            
+            # 準備中を通知
+            if not self.thermometer_preparation:
+                # 準備が完了していることを通知
+                self.thermometer_preparation = True
+                self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION, '準備完了')
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
-            print(st)
 
         if not self.detected and self.temp_disp_cnt > 0:
             self.temp_disp_cnt -= 1

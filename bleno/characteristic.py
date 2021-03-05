@@ -72,12 +72,15 @@ class ThermometerStatusCharacteristic(Characteristic):
     def __init__(self, uuid):
         Characteristic.__init__(self, {
             'uuid': uuid,
-            'properties': ['notify'],
+            'properties': ['read', 'notify'],
             'value': None
           })
           
         self._value = array.array('B', [0] * 0)
         self._updateValueCallback = None
+
+    def onReadRequest(self, offset, callback):
+        callback(Characteristic.RESULT_SUCCESS, self._value[offset:])
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
         print('onSubscribe:ThermometerStatus')
