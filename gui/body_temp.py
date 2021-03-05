@@ -214,15 +214,16 @@ class BodyTemp(App):
 
     # フレーム情報の解析
     def update_frame(self, img, meta):
-        if self.thermometer_preparation:
-            # 準備が完了していることを通知
-            self.thermometer_preparation = False
-            self.bleno_manager.updateThermometerStatus(BodyTemp.READY, '準備完了')
-
+        # ステータスを取得
         st = meta.status
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
+            if self.thermometer_preparation:
+                # 準備が完了していることを通知
+                self.thermometer_preparation = False
+                self.bleno_manager.updateThermometerStatus(BodyTemp.READY, '準備完了')
+
             if self.info_disp_cnt > 0:
                 self.info_disp_cnt -= 1
             elif self.correct_cnt == 0:
