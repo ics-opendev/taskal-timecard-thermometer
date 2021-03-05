@@ -8,7 +8,6 @@ import os
 import pickle
 import socket
 from turbojpeg import TJPF_BGRA
-import threading
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -69,7 +68,7 @@ from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
 from gui.alarm import Alarm
 from gui.param import gParam
-from gui.manager.body_temp_manager import BodyTempManager
+from bleno.bleno_manager import BlenoManager
 
 # argsのデフォルト値
 class MockArgs:
@@ -80,10 +79,6 @@ class MockArgs:
         self.file0 = "cam0.owi"
         self.file1 = "cam1.owi"
         self.skip = 0
-
-# 定期的に体温を送信するJOB
-def send_body_temp_job(manager):
-    manager.try_send_current_body_temp()
 
 class BodyTemp(App):
     LABEL_NONE = 0
@@ -127,10 +122,17 @@ class BodyTemp(App):
     ALARM_CNT = 26
     INFO_DISP_CNT = 26
 
+    # サーモメータのステータス
+    READY = 0 # 準備完了
+    PREPARATION = 1 # 準備中
+    DISSCONNECTE = 100 # 切断
+
+
     # コンストラクター
     def __init__(self, environment):
         super().__init__()
         self.environment = environment
+        self.bleno_manager = BlenoManager(environment)
 
     def open_settings(self, *largs):
         pass
@@ -185,14 +187,6 @@ class BodyTemp(App):
         if is_raspbian():
             self.screenManager.add_widget(SystemRebootScreen(name = 'SystemReboot'))
 
-        # 体温を管理するクラス
-        self.body_tmp_manager = BodyTempManager(self.environment)
-
-        # 体温の定期送信スケジューラーを起動 (Mainスレッドと同期的に終了)
-        self.schedule_thread = threading.Thread(target=self.send_body_temp_schedule, args=(self.body_tmp_manager,))
-        self.schedule_thread.daemon = True
-        self.schedule_thread.start()
-
         # 内部パラメータ
         self.ow = None
         self.fc0 = 0
@@ -209,6 +203,7 @@ class BodyTemp(App):
         self.last_frame = None
         self.server_fc = 0
         self.client_fc = 0
+        self.thermometer_preparation = False
 
         return self.screenManager
 
@@ -219,10 +214,16 @@ class BodyTemp(App):
 
     # フレーム情報の解析
     def update_frame(self, img, meta):
+        # ステータスを取得
         st = meta.status
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
+            if self.thermometer_preparation:
+                # 準備が完了していることを通知
+                self.thermometer_preparation = False
+                self.bleno_manager.updateThermometerStatus(BodyTemp.READY)
+
             if self.info_disp_cnt > 0:
                 self.info_disp_cnt -= 1
             elif self.correct_cnt == 0:
@@ -249,24 +250,30 @@ class BodyTemp(App):
                     # 発見した人から体温を検出しました
                     print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_BODY_TEMP)
+                    self.bleno_manager.updateBodyTemp(meta)
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_CORRECT)
                 if (evt & OwhMeta.EV_LOST) != 0:
                     # 人が消えた
                     self.event_lost(meta)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_LOST)
+                    self.bleno_manager.updateHumanDetection(str(False))
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
                     self.event_dist(meta, True)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_VALID)
+                    self.bleno_manager.updateHumanDetection(str(True))
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
                     self.event_dist(meta, False)
-                    self.body_tmp_manager.update_body_temp(meta, OwhMeta.EV_DIST_INVALID)
-
+        elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
+            # カメラを暖気運転中
+            self.set_label(BodyTemp.LABEL_NOT_READY)
+            
+            # 準備中を通知
+            if not self.thermometer_preparation:
+                # 準備が完了していることを通知
+                self.thermometer_preparation = True
+                self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION)
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
@@ -304,6 +311,9 @@ class BodyTemp(App):
         # TODO: 再接続処理を実装
         if self.ow.disconnected:
             self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
+            self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
+            # フレームの更新を停止する
+            self.update_event.cancel()
             return
 
         fc = self.ow.frame_counter
@@ -311,11 +321,11 @@ class BodyTemp(App):
         self.fc0 = fc
         # フレームと詳細の取得
         img, meta = self.ow.get_frame()
-
+        # フレーム単位の更新処理
         self.update_frame(img, meta)
 
         if not self.ow.alive:
-            # カメラの切断が切れた場合の対応
+            # カメラの接続が切れた場合の対応
             self.set_label(LABEL_DEV_CONNECT_ERR)
             self.stop()
 
@@ -428,6 +438,7 @@ class BodyTemp(App):
             except:
                 import traceback
                 traceback.print_exc()
+                self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                 return
 
@@ -444,23 +455,10 @@ class BodyTemp(App):
 
             self.ow.capture_start()
 
-            Clock.schedule_interval(self.update, self.args.interval)
+            self.update_event = Clock.schedule_interval(self.update, self.args.interval)
         except Exception as e:
             print(e)
             self.ow = None
-
-    # 撮影した情報をサーバに送信する(別threadでの利用を想定しています)
-    def send_body_temp_schedule(self, manager):
-        import schedule
-        import time
-
-        # スケジュールを作成
-        schedule.every(1).second.do(send_body_temp_job, manager=manager)
-
-        # jobの実行監視、指定時間になったらjob関数を実行
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
 
     # アラーム
     def start_alarm_service(self):
@@ -484,19 +482,26 @@ class BodyTemp(App):
         if hasattr(self, "alarm"):
             self.alarm.cancel()
 
+    # Bluetooth BLE peripheralを起動
+    def start_ble_peripheral(self):
+        self.bleno_manager.start()
+
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # buildの実行直後に呼び出されるハンドラー
     # デバイスの開始とサウンドサービスの開始を行っている
     def on_start(self):
         if self.operating_mode == gParam.OPE_MODE_ALONE:
+            self.start_ble_peripheral()
             self.start_owhdev()
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_STAFF:
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_GUEST:
+            self.start_ble_peripheral()
             self.start_owhdev()
     
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # Windowがクローズされる前に呼び出される
     def on_stop(self):
         self.stop_alarm_service()
+        self.bleno_manager.stop()
