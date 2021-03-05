@@ -296,6 +296,8 @@ class BodyTemp(App):
         if self.ow.disconnected:
             self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
             self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE, '接続エラー')
+            # フレームの更新を停止する
+            self.update_event.cancel()
             return
 
         fc = self.ow.frame_counter
@@ -438,7 +440,7 @@ class BodyTemp(App):
             self.ow.capture_start()
             self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION, '準備中')
 
-            Clock.schedule_interval(self.update, self.args.interval)
+            self.update_event = Clock.schedule_interval(self.update, self.args.interval)
         except Exception as e:
             print(e)
             self.ow = None
