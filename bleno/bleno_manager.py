@@ -36,7 +36,7 @@ class BlenoManager:
                 BlenoPrimaryService({
                     'uuid': 'ec00',
                     'characteristics': [ 
-                        EchoCharacteristic('thermometer')
+                        EchoCharacteristic('ec00')
                         ]
                 })
             ])
