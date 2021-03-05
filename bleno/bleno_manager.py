@@ -24,7 +24,7 @@ class BlenoManager:
         print('on -> stateChange: ' + state);
 
         if (state == 'poweredOn'):
-            self.inner_bleno.startAdvertising(self.environment.DEVICE_NAME, ['typeH'])
+            self.inner_bleno.startAdvertising(self.environment.DEVICE_NAME, ['ec00'])
         else:
             self.inner_bleno.stopAdvertising()
 
@@ -34,9 +34,9 @@ class BlenoManager:
         if not error:
             self.inner_bleno.setServices([
                 BlenoPrimaryService({
-                    'uuid': 'typeH',
+                    'uuid': 'ec00',
                     'characteristics': [ 
-                        EchoCharacteristic('typeH')
+                        EchoCharacteristic('ec00')
                         ]
                 })
             ])
