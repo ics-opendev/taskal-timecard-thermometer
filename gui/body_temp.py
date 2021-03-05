@@ -222,7 +222,7 @@ class BodyTemp(App):
             if self.thermometer_preparation:
                 # 準備が完了していることを通知
                 self.thermometer_preparation = False
-                self.bleno_manager.updateThermometerStatus(BodyTemp.READY, '準備完了')
+                self.bleno_manager.updateThermometerStatus(BodyTemp.READY)
 
             if self.info_disp_cnt > 0:
                 self.info_disp_cnt -= 1
@@ -273,7 +273,7 @@ class BodyTemp(App):
             if not self.thermometer_preparation:
                 # 準備が完了していることを通知
                 self.thermometer_preparation = True
-                self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION, '準備完了')
+                self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION)
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
@@ -311,7 +311,7 @@ class BodyTemp(App):
         # TODO: 再接続処理を実装
         if self.ow.disconnected:
             self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-            self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE, '接続エラー')
+            self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
             # フレームの更新を停止する
             self.update_event.cancel()
             return
@@ -321,7 +321,7 @@ class BodyTemp(App):
         self.fc0 = fc
         # フレームと詳細の取得
         img, meta = self.ow.get_frame()
-
+        # フレーム単位の更新処理
         self.update_frame(img, meta)
 
         if not self.ow.alive:
@@ -454,7 +454,6 @@ class BodyTemp(App):
             self.ow.set_options(options)
 
             self.ow.capture_start()
-            self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION, '準備中')
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
         except Exception as e:

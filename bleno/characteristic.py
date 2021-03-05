@@ -45,7 +45,7 @@ class HumanDetectionCharacteristic(Characteristic):
             'value': None
           })
           
-        self._value = array.array('B', [0] * 0)
+        self._value = bytes(str(False), encoding='utf-8', errors='replace')
         self._updateValueCallback = None
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
@@ -93,8 +93,8 @@ class ThermometerStatusCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     # 体温計が温度を取得した際はここが更新される
-    def updateStatus(self, status_code, message):
-        self._value = bytes(f'{status_code} {message}', encoding='utf-8', errors='replace')
+    def updateStatus(self, status_code):
+        self._value = bytes(f'{status_code}', encoding='utf-8', errors='replace')
 
         if self._updateValueCallback:
             print('updateStatus: notifying'); 
