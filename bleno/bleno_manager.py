@@ -1,7 +1,7 @@
 from pybleno import *
 import sys
 import signal
-from bleno.echo_characteristic import EchoCharacteristic
+from bleno.characteristic import BodyTempCharacteristic
 
 class BlenoManager:
 
@@ -24,7 +24,7 @@ class BlenoManager:
         print('on -> stateChange: ' + state);
 
         if (state == 'poweredOn'):
-            self.inner_bleno.startAdvertising(self.environment.DEVICE_NAME, ['ec00'])
+            self.inner_bleno.startAdvertising(self.environment.DEVICE_NAME, ['ec100001-9999-9999-9999-000000000001'])
         else:
             self.inner_bleno.stopAdvertising()
 
@@ -34,9 +34,9 @@ class BlenoManager:
         if not error:
             self.inner_bleno.setServices([
                 BlenoPrimaryService({
-                    'uuid': 'ec00',
+                    'uuid': 'ec100001-9999-9999-9999-000000000001',
                     'characteristics': [ 
-                        EchoCharacteristic('ec00')
+                        BodyTempCharacteristic('ec100001-9999-9999-9999-000000000001')
                         ]
                 })
             ])

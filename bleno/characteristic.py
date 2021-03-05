@@ -4,7 +4,7 @@ import struct
 import sys
 import traceback
 
-class EchoCharacteristic(Characteristic):
+class BodyTempCharacteristic(Characteristic):
     
     def __init__(self, uuid):
         Characteristic.__init__(self, {
@@ -24,6 +24,7 @@ class EchoCharacteristic(Characteristic):
         self._value = data
         
         print(data)
+        print(offset)
 
         print('onWriteRequest: value = %s' % ([hex(c) for c in self._value]))
 
