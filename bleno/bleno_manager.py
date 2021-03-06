@@ -57,6 +57,6 @@ class BlenoManager:
         self.human_detection.updateHumanDetection(human_is_detection)
     
     # カメラの状態に変化があったことを通知
-    def updateThermometerStatus(self, status_code, message):
-        self.thermometer_status.updateStatus(status_code, message)
+    def updateThermometerStatus(self, status_code):
+        self.thermometer_status.updateStatus(status_code)
 
