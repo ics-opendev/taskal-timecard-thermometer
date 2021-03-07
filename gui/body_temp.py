@@ -279,6 +279,9 @@ class BodyTemp(App):
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
 
+            if st == OwhMeta.CE_TOO_HIGH or st == OwhMeta.CE_TOO_LOW:
+                print("low or high")
+
         if not self.detected and self.temp_disp_cnt > 0:
             self.temp_disp_cnt -= 1
             if self.temp_disp_cnt == 0:
