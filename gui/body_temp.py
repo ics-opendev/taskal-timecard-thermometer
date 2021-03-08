@@ -216,6 +216,8 @@ class BodyTemp(App):
     def update_frame(self, img, meta):
         # ステータスを取得
         st = meta.status
+
+        if meta.correct_error
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
@@ -278,9 +280,6 @@ class BodyTemp(App):
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
-
-            if st == OwhMeta.CE_TOO_HIGH or st == OwhMeta.CE_TOO_LOW:
-                print("low or high")
 
         if not self.detected and self.temp_disp_cnt > 0:
             self.temp_disp_cnt -= 1
