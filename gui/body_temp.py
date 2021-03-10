@@ -98,6 +98,8 @@ class BodyTemp(App):
     LABEL_COMMUNICATION_ERR = 17
     LABEL_DEV_CONNECT_ERR = 18
     LABEL_DIST_VALID = 19
+    LABEL_RECONNECT = 20
+    LABEL_RECONNECT_WAIT = 21
 
     LABELS = {
         LABEL_NONE: '',
@@ -115,6 +117,8 @@ class BodyTemp(App):
         LABEL_COMMUNICATION_ERR: '通信ｴﾗｰ',
         LABEL_DEV_CONNECT_ERR: 'ｶﾒﾗの\n接続ｴﾗｰ',
         LABEL_DIST_VALID: '計測中',
+        LABEL_RECONNECT: '再接続実施中',
+        LABEL_RECONNECT_WAIT: '60秒後に再接続を行います',
     }
 
     CORRECT_CNT = 4
@@ -309,12 +313,13 @@ class BodyTemp(App):
             return
 
         # デバイスの接続が切れた場合はエラー表示
-        # TODO: 再接続処理を実装
         if self.ow.disconnected:
             self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
             self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
             # フレームの更新を停止する
             self.update_event.cancel()
+            # デバイス再接続処理の開始
+            self.reconnect_event = Clock.schedule_interval(self.restart_owhdev, 60)
             return
 
         fc = self.ow.frame_counter
@@ -435,13 +440,13 @@ class BodyTemp(App):
                 if not self.ow.has_multi_devs:
                     self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                     self.ow = None
-                    return
+                    return False
             except:
                 import traceback
                 traceback.print_exc()
                 self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-                return
+                return False
 
             options = {}
             if "options" in self.config:
@@ -457,9 +462,21 @@ class BodyTemp(App):
             self.ow.capture_start()
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
+            return True
         except Exception as e:
             print(e)
             self.ow = None
+            return False
+    
+    # カメラの再接続処理
+    def restart_owhdev(self):
+        self.set_label(BodyTemp.LABEL_RECONNECT)
+        if self.start_owhdev():
+            self.reconnect_event.cancel()
+            self.set_label(BodyTemp.LABEL_NONE)
+            return
+
+        self.set_label(BodyTemp.LABEL_RECONNECT_WAIT)
 
     # アラーム
     def start_alarm_service(self):
