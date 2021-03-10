@@ -309,34 +309,38 @@ class BodyTemp(App):
 
     # フレームの更新
     def update(self, dt):
-        currentScreen = self.screenManager.current_screen
-        if currentScreen != self.previewScreen:
-            return
+        try:
+            currentScreen = self.screenManager.current_screen
+            if currentScreen != self.previewScreen:
+                return
 
-        # デバイスの接続が切れた場合はエラー表示
-        if self.ow.disconnected:
-            self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-            self.bleno_manager.updateThermometerStatus(BodyTemp.THERMO_LOST)
-            # フレームの更新を停止する
-            self.update_event.cancel()
-            # デバイス再接続処理の開始
-            self.reconnect_event = Clock.schedule_interval(self.restart_owhdev, 60)
-            print("切断検知、再起動モード")
-            return
+            # デバイスの接続が切れた場合はエラー表示
+            if self.ow.disconnected:
+                self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
+                self.bleno_manager.updateThermometerStatus(BodyTemp.THERMO_LOST)
+                # フレームの更新を停止する
+                self.update_event.cancel()
+                # デバイス再接続処理の開始
+                self.reconnect_event = Clock.schedule_interval(self.restart_owhdev, 60)
+                print("切断検知、再起動モード")
+                return
 
-        fc = self.ow.frame_counter
+            fc = self.ow.frame_counter
 
-        self.fc0 = fc
-        # フレームと詳細の取得
-        img, meta = self.ow.get_frame()
-        # フレーム単位の更新処理
-        self.update_frame(img, meta)
+            self.fc0 = fc
+            # フレームと詳細の取得
+            img, meta = self.ow.get_frame()
+            # フレーム単位の更新処理
+            self.update_frame(img, meta)
 
-        if not self.ow.alive:
-            # カメラの接続が切れた場合の対応
-            self.set_label(LABEL_DEV_CONNECT_ERR)
-            self.stop()
-            print("ストップ！")
+            if not self.ow.alive:
+                # カメラの接続が切れた場合の対応
+                self.set_label(LABEL_DEV_CONNECT_ERR)
+                self.stop()
+                print("ストップ！")
+        except:
+            pass
+
 
     def enable_shortcut(self):
         """
