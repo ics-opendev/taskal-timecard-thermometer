@@ -321,6 +321,7 @@ class BodyTemp(App):
             self.update_event.cancel()
             # デバイス再接続処理の開始
             self.reconnect_event = Clock.schedule_interval(self.restart_owhdev, 60)
+            print("切断検知、再起動モード")
             return
 
         fc = self.ow.frame_counter
@@ -335,6 +336,7 @@ class BodyTemp(App):
             # カメラの接続が切れた場合の対応
             self.set_label(LABEL_DEV_CONNECT_ERR)
             self.stop()
+            print("ストップ！")
 
     def enable_shortcut(self):
         """
@@ -463,6 +465,7 @@ class BodyTemp(App):
             self.ow.capture_start()
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
+            print("接続成功")
             return True
         except Exception as e:
             print(e)
@@ -471,6 +474,7 @@ class BodyTemp(App):
     
     # カメラの再接続処理
     def restart_owhdev(self):
+        print("再接続処理の開始")
         self.set_label(BodyTemp.LABEL_RECONNECT)
         if self.start_owhdev():
             self.reconnect_event.cancel()
@@ -478,6 +482,7 @@ class BodyTemp(App):
             return
 
         self.set_label(BodyTemp.LABEL_RECONNECT_WAIT)
+        print("再接続処理の失敗")
 
     # アラーム
     def start_alarm_service(self):
