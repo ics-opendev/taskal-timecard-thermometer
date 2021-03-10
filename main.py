@@ -62,7 +62,7 @@ if __name__ == '__main__':
         bleno_manager = BlenoManager(app_env)
         bleno_manager.start()
         while True:
-            app = BodyTemp(app_env)
+            app = BodyTemp(app_env, bleno_manager)
             app.run()
             if not app.restart:
                 bleno_manager.stop()
