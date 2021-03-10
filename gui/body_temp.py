@@ -117,8 +117,8 @@ class BodyTemp(App):
         LABEL_COMMUNICATION_ERR: '通信ｴﾗｰ',
         LABEL_DEV_CONNECT_ERR: 'ｶﾒﾗの\n接続ｴﾗｰ',
         LABEL_DIST_VALID: '計測中',
-        LABEL_RECONNECT: '再接続実施中',
-        LABEL_RECONNECT_WAIT: '60秒後に再接続を行います',
+        LABEL_RECONNECT: '再接続中',
+        LABEL_RECONNECT_WAIT: 'ｶﾒﾗの\n接続ｴﾗｰ\n再接続待ち',
     }
 
     CORRECT_CNT = 4
@@ -316,7 +316,7 @@ class BodyTemp(App):
 
             # デバイスの接続が切れた場合はエラー表示
             if self.ow.disconnected:
-                self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
+                self.set_label(BodyTemp.LABEL_RECONNECT_WAIT)
                 self.bleno_manager.updateThermometerStatus(BodyTemp.THERMO_LOST)
                 # フレームの更新を停止する
                 self.update_event.cancel()
@@ -335,7 +335,7 @@ class BodyTemp(App):
 
             if not self.ow.alive:
                 # カメラの接続が切れた場合の対応
-                self.set_label(LABEL_DEV_CONNECT_ERR)
+                self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                 self.stop()
                 print("ストップ！")
         except:
@@ -477,7 +477,7 @@ class BodyTemp(App):
             return False
     
     # カメラの再接続処理
-    def restart_owhdev(self):
+    def restart_owhdev(self, dt):
         print("再接続処理の開始")
         self.set_label(BodyTemp.LABEL_RECONNECT)
         if self.start_owhdev():
