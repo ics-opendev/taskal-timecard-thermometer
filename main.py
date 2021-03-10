@@ -58,8 +58,11 @@ if __name__ == '__main__':
     from gui.body_temp import BodyTemp
     app = None
     try:
-        app = BodyTemp(app_env)
-        app.run()
+        while True:
+            app = BodyTemp(app_env)
+            app.run()
+            if not app.restart:
+                break
     except:
         import traceback
         logger.critical(traceback.format_exc())

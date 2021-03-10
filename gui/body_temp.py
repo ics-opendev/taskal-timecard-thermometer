@@ -138,6 +138,7 @@ class BodyTemp(App):
         super().__init__()
         self.environment = environment
         self.bleno_manager = BlenoManager(environment)
+        self.restart = False
 
     def open_settings(self, *largs):
         pass
@@ -321,7 +322,7 @@ class BodyTemp(App):
                 # フレームの更新を停止する
                 self.update_event.cancel()
                 # デバイス再接続処理の開始
-                self.reconnect_event = Clock.schedule_interval(self.restart_owhdev, 60)
+                self.reconnect_event = Clock.schedule_once(self.reset_kivy, 30)
                 print("切断検知、再起動モード")
                 return
 
@@ -332,12 +333,6 @@ class BodyTemp(App):
             img, meta = self.ow.get_frame()
             # フレーム単位の更新処理
             self.update_frame(img, meta)
-
-            if not self.ow.alive:
-                # カメラの接続が切れた場合の対応
-                self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-                self.stop()
-                print("ストップ！")
         except:
             pass
 
@@ -475,18 +470,10 @@ class BodyTemp(App):
             print(e)
             self.ow = None
             return False
-    
-    # カメラの再接続処理
-    def restart_owhdev(self, dt):
-        print("再接続処理の開始")
-        self.set_label(BodyTemp.LABEL_RECONNECT)
-        if self.start_owhdev():
-            self.reconnect_event.cancel()
-            self.set_label(BodyTemp.LABEL_NONE)
-            return
 
-        self.set_label(BodyTemp.LABEL_RECONNECT_WAIT)
-        print("再接続処理の失敗")
+    def reset_kivy(self, dt):
+        self.restart = True
+        self.stop()
 
     # アラーム
     def start_alarm_service(self):
