@@ -129,6 +129,7 @@ class BodyTemp(App):
     # サーモメータのステータス
     READY = 0 # 準備完了
     PREPARATION = 1 # 準備中
+    THERMO_LOST = 99 #サーモとの接続が切れました
     DISSCONNECTE = 100 # 切断
 
 
@@ -315,7 +316,7 @@ class BodyTemp(App):
         # デバイスの接続が切れた場合はエラー表示
         if self.ow.disconnected:
             self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-            self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
+            self.bleno_manager.updateThermometerStatus(BodyTemp.THERMO_LOST)
             # フレームの更新を停止する
             self.update_event.cancel()
             # デバイス再接続処理の開始
