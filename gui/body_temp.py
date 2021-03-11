@@ -98,8 +98,6 @@ class BodyTemp(App):
     LABEL_COMMUNICATION_ERR = 17
     LABEL_DEV_CONNECT_ERR = 18
     LABEL_DIST_VALID = 19
-    LABEL_RECONNECT = 20
-    LABEL_RECONNECT_WAIT = 21
 
     LABELS = {
         LABEL_NONE: '',
@@ -115,10 +113,8 @@ class BodyTemp(App):
         LABEL_CONNECTING: '接続中',
         LABEL_CONNECT_ERR: '接続ｴﾗｰ',
         LABEL_COMMUNICATION_ERR: '通信ｴﾗｰ',
-        LABEL_DEV_CONNECT_ERR: 'ｶﾒﾗの\n接続ｴﾗｰ',
+        LABEL_DEV_CONNECT_ERR: 'ｶﾒﾗの\n接続ｴﾗｰ\n再起動してください',
         LABEL_DIST_VALID: '計測中',
-        LABEL_RECONNECT: '再接続中',
-        LABEL_RECONNECT_WAIT: 'ｶﾒﾗの\n接続ｴﾗｰ\n再接続待ち',
     }
 
     CORRECT_CNT = 4
@@ -317,13 +313,10 @@ class BodyTemp(App):
 
             # デバイスの接続が切れた場合はエラー表示
             if self.ow.disconnected:
-                self.set_label(BodyTemp.LABEL_RECONNECT_WAIT)
+                self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                 self.bleno_manager.updateThermometerStatus(BodyTemp.THERMO_LOST)
                 # フレームの更新を停止する
                 self.update_event.cancel()
-                # デバイス再接続処理の開始
-                self.reconnect_event = Clock.schedule_once(self.reset_kivy, 30)
-                print("切断検知、再起動モード")
                 return
 
             fc = self.ow.frame_counter
@@ -335,7 +328,6 @@ class BodyTemp(App):
             self.update_frame(img, meta)
         except:
             pass
-
 
     def enable_shortcut(self):
         """
@@ -470,10 +462,6 @@ class BodyTemp(App):
             print(e)
             self.ow = None
             return False
-
-    def reset_kivy(self, dt):
-        self.restart = True
-        self.stop()
 
     # アラーム
     def start_alarm_service(self):

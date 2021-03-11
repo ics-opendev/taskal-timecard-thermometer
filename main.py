@@ -57,7 +57,6 @@ if __name__ == '__main__':
     # GUIを起動
     from gui.body_temp import BodyTemp
     from bleno.bleno_manager import BlenoManager
-    from kivy.config import Config
     app = None
     try:
         bleno_manager = BlenoManager(app_env)
@@ -65,10 +64,6 @@ if __name__ == '__main__':
         while True:
             app = BodyTemp(app_env, bleno_manager)
             app.run()
-            if not app.restart:
-                bleno_manager.stop()
-                break
-            Config._named_configs.pop('app', None)
     except:
         import traceback
         logger.critical(traceback.format_exc())
