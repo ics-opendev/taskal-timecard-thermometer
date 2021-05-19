@@ -200,7 +200,7 @@ class BodyTemp(App):
         self.detected = False
         self.temp_disp_cnt = 0
         self.alarm_cnt = 0
-        self.disp_temp = True
+        self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
         self.server_fc = 0
