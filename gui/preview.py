@@ -66,10 +66,10 @@ class PreviewScreen(Screen):
                 size_hint = (1, 1/3), on_release = self.callback_correct)
         settingsButton = Button(text = '設定', font_size = '24sp',
                 size_hint = (1, 1/3), on_release = self.callback_next)
-        layoutSideBar.add_widget(layoutThreshold)
+        #layoutSideBar.add_widget(layoutThreshold)
         layoutSideBar.add_widget(correctButton)
-        if self.operating_mode == gParam.OPE_MODE_ALONE:
-            layoutSideBar.add_widget(settingsButton)
+        #if self.operating_mode == gParam.OPE_MODE_ALONE:
+        #    layoutSideBar.add_widget(settingsButton)
 
         layoutScreen = None
 
