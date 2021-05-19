@@ -29,7 +29,7 @@ class DB:
     PROPS = [ \
         DBProp("Server",                "192.168.221.1"),
         DBProp("TempThreshold",         42.5,   dtype = DType.float),
-        DBProp("TempCalibration",       36.8,   dtype = DType.float),
+        DBProp("TempCalibration",       36.6,   dtype = DType.float),
         DBProp("TempAverage",           0,      dtype = DType.float),
         DBProp("TempDisplay",           True,   dtype = DType.bool),
         DBProp("AlarmPattern",          0,      dtype = DType.int),

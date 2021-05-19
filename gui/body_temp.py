@@ -113,7 +113,7 @@ class BodyTemp(App):
         LABEL_CONNECTING: '接続中',
         LABEL_CONNECT_ERR: '接続ｴﾗｰ',
         LABEL_COMMUNICATION_ERR: '通信ｴﾗｰ',
-        LABEL_DEV_CONNECT_ERR: 'ｶﾒﾗの\n接続ｴﾗｰ',
+        LABEL_DEV_CONNECT_ERR: 'ｶﾒﾗの\n接続ｴﾗｰ\n再起動してください',
         LABEL_DIST_VALID: '計測中',
     }
 
@@ -125,14 +125,16 @@ class BodyTemp(App):
     # サーモメータのステータス
     READY = 0 # 準備完了
     PREPARATION = 1 # 準備中
+    THERMO_LOST = 99 #サーモとの接続が切れました
     DISSCONNECTE = 100 # 切断
 
 
     # コンストラクター
-    def __init__(self, environment):
+    def __init__(self, environment, bleno_manager):
         super().__init__()
         self.environment = environment
-        self.bleno_manager = BlenoManager(environment)
+        self.bleno_manager = bleno_manager
+        self.restart = False
 
     def open_settings(self, *largs):
         pass
@@ -198,7 +200,7 @@ class BodyTemp(App):
         self.detected = False
         self.temp_disp_cnt = 0
         self.alarm_cnt = 0
-        self.disp_temp = True
+        self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
         self.server_fc = 0
@@ -216,6 +218,7 @@ class BodyTemp(App):
     def update_frame(self, img, meta):
         # ステータスを取得
         st = meta.status
+
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
@@ -303,31 +306,28 @@ class BodyTemp(App):
 
     # フレームの更新
     def update(self, dt):
-        currentScreen = self.screenManager.current_screen
-        if currentScreen != self.previewScreen:
-            return
+        try:
+            currentScreen = self.screenManager.current_screen
+            if currentScreen != self.previewScreen:
+                return
 
-        # デバイスの接続が切れた場合はエラー表示
-        # TODO: 再接続処理を実装
-        if self.ow.disconnected:
-            self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-            self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
-            # フレームの更新を停止する
-            self.update_event.cancel()
-            return
+            # デバイスの接続が切れた場合はエラー表示
+            if self.ow.disconnected:
+                self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
+                self.bleno_manager.updateThermometerStatus(BodyTemp.THERMO_LOST)
+                # フレームの更新を停止する
+                self.update_event.cancel()
+                return
 
-        fc = self.ow.frame_counter
+            fc = self.ow.frame_counter
 
-        self.fc0 = fc
-        # フレームと詳細の取得
-        img, meta = self.ow.get_frame()
-        # フレーム単位の更新処理
-        self.update_frame(img, meta)
-
-        if not self.ow.alive:
-            # カメラの接続が切れた場合の対応
-            self.set_label(LABEL_DEV_CONNECT_ERR)
-            self.stop()
+            self.fc0 = fc
+            # フレームと詳細の取得
+            img, meta = self.ow.get_frame()
+            # フレーム単位の更新処理
+            self.update_frame(img, meta)
+        except:
+            pass
 
     def enable_shortcut(self):
         """
@@ -434,13 +434,13 @@ class BodyTemp(App):
                 if not self.ow.has_multi_devs:
                     self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                     self.ow = None
-                    return
+                    return False
             except:
                 import traceback
                 traceback.print_exc()
                 self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-                return
+                return False
 
             options = {}
             if "options" in self.config:
@@ -456,9 +456,12 @@ class BodyTemp(App):
             self.ow.capture_start()
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
+            print("接続成功")
+            return True
         except Exception as e:
             print(e)
             self.ow = None
+            return False
 
     # アラーム
     def start_alarm_service(self):
@@ -482,26 +485,19 @@ class BodyTemp(App):
         if hasattr(self, "alarm"):
             self.alarm.cancel()
 
-    # Bluetooth BLE peripheralを起動
-    def start_ble_peripheral(self):
-        self.bleno_manager.start()
-
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # buildの実行直後に呼び出されるハンドラー
     # デバイスの開始とサウンドサービスの開始を行っている
     def on_start(self):
         if self.operating_mode == gParam.OPE_MODE_ALONE:
-            self.start_ble_peripheral()
             self.start_owhdev()
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_STAFF:
             self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_GUEST:
-            self.start_ble_peripheral()
             self.start_owhdev()
     
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # Windowがクローズされる前に呼び出される
     def on_stop(self):
         self.stop_alarm_service()
-        self.bleno_manager.stop()

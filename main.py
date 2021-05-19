@@ -56,10 +56,14 @@ if __name__ == '__main__':
 
     # GUIを起動
     from gui.body_temp import BodyTemp
+    from bleno.bleno_manager import BlenoManager
     app = None
     try:
-        app = BodyTemp(app_env)
-        app.run()
+        bleno_manager = BlenoManager(app_env)
+        bleno_manager.start()
+        while True:
+            app = BodyTemp(app_env, bleno_manager)
+            app.run()
     except:
         import traceback
         logger.critical(traceback.format_exc())
