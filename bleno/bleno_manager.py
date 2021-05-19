@@ -28,6 +28,7 @@ class BlenoManager:
         print('on -> stateChange: ' + state);
 
         if (state == 'poweredOn'):
+            print(self.environment.DEVICE_NAME)
             self.inner_bleno.startAdvertising(self.environment.DEVICE_NAME, ['ec100001-9999-9999-9999-000000000000'])
         else:
             self.inner_bleno.stopAdvertising()
