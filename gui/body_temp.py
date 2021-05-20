@@ -344,8 +344,9 @@ class BodyTemp(App):
     def event_body_temp(self, meta):
         self.set_label2(BodyTemp.LABEL_NONE)
         body_temp = int((meta.body_temp + 0.05) * 10) / 10
-        if gParam.TempDisplay and self.operating_mode != gParam.OPE_MODE_GUEST:
-            self.previewScreen.labelTemp.text = self.get_temp_text(body_temp)
+        # NOTE: 体温表示は行わない
+        #if gParam.TempDisplay and self.operating_mode != gParam.OPE_MODE_GUEST:
+        #    self.previewScreen.labelTemp.text = self.get_temp_text(body_temp)
         if body_temp >= gParam.TempThreshold:
             if self.alarm_cnt == 0:
                 self.start_alarm(gParam.AlarmPattern)
