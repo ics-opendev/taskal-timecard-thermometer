@@ -219,8 +219,6 @@ class BodyTemp(App):
         # ステータスを取得
         st = meta.status
 
-        print("distance = {:4d}".format(meta.distance)) 
-
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
@@ -266,6 +264,7 @@ class BodyTemp(App):
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
                     self.event_dist(meta, True)
+                    print("人を検出しました")
                     self.bleno_manager.updateHumanDetection(str(True))
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
