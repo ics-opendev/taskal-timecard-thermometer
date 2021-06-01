@@ -219,6 +219,8 @@ class BodyTemp(App):
         # ステータスを取得
         st = meta.status
 
+        print("distance = {:4d}".format(meta.distance)) 
+
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
