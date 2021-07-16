@@ -55,8 +55,9 @@ $ sudo passwd -l root
 
 アプリのインストール
 ```
-git clone https://github.com/ics-opendev/taskal-timecard-thermometer.git
-cd taskal-timecard-thermometer
-sudo chmod 777 *
-./setup.sh
+$ git clone https://github.com/ics-opendev/taskal-timecard-thermometer.git
+$ cd taskal-timecard-thermometer
+$ sudo chmod 777 *
+$ ./setup.sh
+$ sudo cp start.sh /home/pi/Desktop
 ```
