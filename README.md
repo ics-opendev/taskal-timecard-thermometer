@@ -59,7 +59,10 @@ https://github.com/waveshare/LCD-show/issues/43
 $ git clone https://github.com/ics-opendev/taskal-timecard-thermometer.git
 $ cd taskal-timecard-thermometer
 $ sudo chmod 777 *
-$ ./setup.sh
+$ sudo ./setup.sh
 $ sudo cp start.sh /home/pi/Desktop
 $ reboot
 ```
+
+# 警告が邪魔な場合（非推奨）
+https://qiita.com/nayuki_eng/items/3180da7ea0e4adab4e6c

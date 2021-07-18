@@ -1,1 +1,1 @@
-sudo python3 /home/pi/taskal-timecard-thermometer/main.py
+sudo python3 "/home/pi/taskal-timecard-thermometer/main.py"
