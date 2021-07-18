@@ -7,8 +7,8 @@ TTC(ios) の 体温測定拡張 アプリケーションです。
 
 [Raspberry Pi OS with desktop](https://www.raspberrypi.org/software/)をダウンロード
 
-Win32DiskImagerをインストールして、
-Raspberry Pi OS with desktopをインストールする
+balenaEtcherをインストールして、
+Raspberry Pi OS with desktop and recommended softwareをインストールする
 
 ## os setup
 
@@ -35,12 +35,11 @@ TeamViewerのダウンロード (Raspiberry Version)
 
 LCD-show.tar.gz をdownloadに配置
 
-
 ```
 $ cd /home/pi/Downloads
 $ sudo cp LCD-show.tar.gz /boot
 $ sudo passwd root
-$ su -
+$ sudo su -
 $ cd /boot
 $ sudo tar zxvf LCD-show.tar.gz
 # backup
@@ -50,6 +49,8 @@ $ ./MPI3508-show
 # 再起動とインストールが入ります
 $ sudo passwd -l root
 ```
+# bluetoothが一時的に利用できなくなるため、この修正を追加
+https://github.com/waveshare/LCD-show/issues/43
 
 ## app install
 
@@ -60,4 +61,5 @@ $ cd taskal-timecard-thermometer
 $ sudo chmod 777 *
 $ ./setup.sh
 $ sudo cp start.sh /home/pi/Desktop
+$ reboot
 ```
