@@ -460,6 +460,7 @@ class BodyTemp(App):
                 "manual_body_temp": gParam.TempCalibration,
                 "manu_corr": gParam.ManuCorr,
                 "manu_corr_ref": gParam.ManuCorrRef,
+                "temp_tab": True,
             })
             self.ow.set_options(options)
 
