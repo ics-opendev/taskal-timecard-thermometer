@@ -251,12 +251,12 @@ class BodyTemp(App):
                 evt = meta.event_type
                 if (evt & OwhMeta.EV_BODY_TEMP) != 0:
                     # 発見した人から体温を検出しました
-                    print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
                     self.bleno_manager.updateBodyTemp(meta)
                     # 実体温を表示
                     max_temp = np.max(meta.temp_tab)
-                    print("{:.1f}".format(max_temp - 273.15))
+                    print(meta.temp_tab)
+                    #print("{:.1f}".format(max_temp - 273.15))
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
@@ -453,8 +453,8 @@ class BodyTemp(App):
                 options.update(self.config["options"])
 
             options.update({
-                "manual_body_temp": gParam.TempCalibration,
-                "manu_corr": gParam.ManuCorr,
+                "manual_body_temp": gParam.TempCalibration, # 補正設定値
+                "manu_corr": gParam.ManuCorr,# 補正値
                 "manu_corr_ref": gParam.ManuCorrRef,
                 "temp_tab": True,
             })
