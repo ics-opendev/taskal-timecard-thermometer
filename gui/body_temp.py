@@ -458,6 +458,9 @@ class BodyTemp(App):
                 "manu_corr_ref": gParam.ManuCorrRef,
                 "temp_tab": True,
             })
+
+            print(options)
+
             self.ow.set_options(options)
 
             self.ow.capture_start()
