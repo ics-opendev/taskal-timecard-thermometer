@@ -327,9 +327,11 @@ class BodyTemp(App):
             img, meta = self.ow.get_frame()
             # フレーム単位の更新処理
             self.update_frame(img, meta)
-
+            
+            # データがなければ終了
             if meta.temp_tab is None:
-                continue
+                return
+            # 温度表を出力
             max_temp = np.max(meta.temp_tab)
             print("{:.2f}".format(max_temp - 273.15))
 
