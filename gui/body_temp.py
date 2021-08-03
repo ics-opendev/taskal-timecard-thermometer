@@ -254,6 +254,9 @@ class BodyTemp(App):
                     print("発見した人から体温を検出しました")
                     self.event_body_temp(meta)
                     self.bleno_manager.updateBodyTemp(meta)
+                    # 実体温を表示
+                    max_temp = np.max(meta.temp_tab)
+                    print("{:.1f}".format(max_temp - 273.15))
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
@@ -328,13 +331,6 @@ class BodyTemp(App):
             # フレーム単位の更新処理
             self.update_frame(img, meta)
             
-            # データがなければ終了
-            if meta.temp_tab is None:
-                return
-            # 温度表を出力
-            max_temp = np.max(meta.temp_tab)
-            print("{:.2f}".format(max_temp - 273.15))
-
         except:
             pass
 

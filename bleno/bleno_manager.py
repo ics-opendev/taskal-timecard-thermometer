@@ -51,6 +51,8 @@ class BlenoManager:
         distance = meta.distance
         # 購読者に展開
         self.body_temp_chara.updateBodyTemp(body_temp, distance)
+        
+        print('測定温度 :' + str(body_temp))
 
     # 人の検出状況に変更があったことを通知
     def updateHumanDetection(self, human_is_detection):
