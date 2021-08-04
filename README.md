@@ -52,7 +52,6 @@ $ ./MPI3508-show
 https://github.com/waveshare/LCD-show/issues/43
 
 ```
-
 # 再起動とインストールが入ります
 $ sudo passwd -l root
 ```
