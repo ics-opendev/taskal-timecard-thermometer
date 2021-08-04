@@ -45,12 +45,18 @@ $ sudo tar zxvf LCD-show.tar.gz
 # backup
 $ sudo cp config.txt ./LCD-show/boot
 $ cd LCD-show/
+```
+
+# bluetoothが一時的に利用できなくなるため、この修正を追加
+https://github.com/waveshare/LCD-show/issues/43
+
+```
+
 $ ./MPI3508-show
 # 再起動とインストールが入ります
 $ sudo passwd -l root
 ```
-# bluetoothが一時的に利用できなくなるため、この修正を追加
-https://github.com/waveshare/LCD-show/issues/43
+
 
 ## app install
 
