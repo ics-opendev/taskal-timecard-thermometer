@@ -198,7 +198,6 @@ class BodyTemp(App):
         self.label_id2 = BodyTemp.LABEL_NONE
         self.detected = False
         self.temp_disp_cnt = 0
-        self.alarm_cnt = 0
         self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
@@ -291,11 +290,6 @@ class BodyTemp(App):
                 self.previewScreen.labelTemp.text = ''
                 self.previewScreen.set_color_bar((0, 0, 0, 1))
 
-        if self.alarm_cnt > 0:
-            self.alarm_cnt -= 1
-            if self.alarm_cnt == 0:
-                pass
-
         self.texture_idx = 1 - self.texture_idx
         texture = self.textures[self.texture_idx]
         texture.blit_buffer(img, \
@@ -352,9 +346,7 @@ class BodyTemp(App):
         #if gParam.TempDisplay and self.operating_mode != gParam.OPE_MODE_GUEST:
         #    self.previewScreen.labelTemp.text = self.get_temp_text(body_temp)
         if body_temp >= gParam.TempThreshold:
-            if self.alarm_cnt == 0:
-                self.start_alarm(gParam.AlarmPattern)
-            self.alarm_cnt = BodyTemp.ALARM_CNT
+            pass
         else:
             self.previewScreen.set_color_bar((0, 1, 0, 1))
             if self.detected == False and gParam.AlarmPattern != 0:
