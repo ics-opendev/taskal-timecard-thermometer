@@ -411,7 +411,7 @@ class AlarmScreen(Screen):
         if self.AlarmPattern != gParam.AlarmPattern:
             gParam.AlarmPattern = self.AlarmPattern
             gParam.save()
-        get_app().stop_alarm()
+        # get_app().stop_alarm()
         self.manager.transition = SlideTransition(direction = 'right')
         self.manager.current = 'Settings'
 

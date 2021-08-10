@@ -111,7 +111,7 @@ class PreviewScreen(Screen):
 
     def on_touch_up(self, touch):
         super(PreviewScreen, self).on_touch_up(touch)
-        get_app().stop_alarm()
+        # get_app().stop_alarm()
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             self.manager.transition = SlideTransition(direction = 'left')
             self.manager.current = 'Settings'
