@@ -171,7 +171,6 @@ class BodyTemp(App):
         # 設定画面
         self.screenManager.add_widget(SettingsScreen(name = 'Settings'))
         self.screenManager.add_widget(TemperatureScreen(name = 'Temperature'))
-        self.screenManager.add_widget(AlarmScreen(name = 'Alarm'))
         self.screenManager.add_widget(SystemScreen(name = 'System'))
 
         # 温度
