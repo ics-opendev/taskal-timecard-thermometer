@@ -66,7 +66,6 @@ from gui.settings import SystemOperatingModeScreen
 from gui.settings import SystemResetSettingsScreen
 from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
-from gui.alarm import Alarm
 from gui.param import gParam
 from bleno.bleno_manager import BlenoManager
 
@@ -295,7 +294,7 @@ class BodyTemp(App):
         if self.alarm_cnt > 0:
             self.alarm_cnt -= 1
             if self.alarm_cnt == 0:
-                self.stop_alarm()
+                pass
 
         self.texture_idx = 1 - self.texture_idx
         texture = self.textures[self.texture_idx]
@@ -359,7 +358,7 @@ class BodyTemp(App):
         else:
             self.previewScreen.set_color_bar((0, 1, 0, 1))
             if self.detected == False and gParam.AlarmPattern != 0:
-                self.alarm.passed()
+                pass
         self.detected = True
 
     def event_correct(self, meta):
@@ -473,41 +472,18 @@ class BodyTemp(App):
             self.ow = None
             return False
 
-    # アラーム
-    def start_alarm_service(self):
-        self.alarm = Alarm()
-        self.alarm.start()
-
-    # アラーム
-    def stop_alarm_service(self):
-        if hasattr(self, "alarm"):
-            self.alarm.stop()
-
-    # アラーム
-    def start_alarm(self, pattern):
-        if self.operating_mode == gParam.OPE_MODE_GUEST:
-            return
-        if hasattr(self, "alarm"):
-            self.alarm.trigger(pattern)
-
-    # アラーム
-    def stop_alarm(self):
-        if hasattr(self, "alarm"):
-            self.alarm.cancel()
-
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # buildの実行直後に呼び出されるハンドラー
     # デバイスの開始とサウンドサービスの開始を行っている
     def on_start(self):
         if self.operating_mode == gParam.OPE_MODE_ALONE:
             self.start_owhdev()
-            self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_STAFF:
-            self.start_alarm_service()
+            pass            
         elif self.operating_mode == gParam.OPE_MODE_GUEST:
             self.start_owhdev()
     
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # Windowがクローズされる前に呼び出される
     def on_stop(self):
-        self.stop_alarm_service()
+        pass
