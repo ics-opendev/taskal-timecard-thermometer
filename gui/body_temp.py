@@ -54,7 +54,6 @@ elif is_linux():
 
 from gui.settings import SettingsScreen
 from gui.settings import TemperatureScreen
-from gui.settings import AlarmScreen
 from gui.settings import SystemScreen
 from gui.settings import TempThresholdScreen
 from gui.settings import TempCalibrationScreen
