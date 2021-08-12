@@ -316,8 +316,8 @@ class BodyTemp(App):
 
             # フレーム単位の更新処理
             self.update_frame(img, meta)
-        except:
-            pass
+        except ex:
+            print("サーモループでエラー", ex)
 
     # デバイスステータス更新
     def update_owlift_h_status(self, meta, current_status):
