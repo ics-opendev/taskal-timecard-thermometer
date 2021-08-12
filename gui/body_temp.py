@@ -149,7 +149,7 @@ class BodyTemp(App):
         self.operating_mode = gParam.OperatingMode
 
         # 体表温度の演算を行う
-        self.body_surface_temparature_calculation = BodySurfaceTemperatureCalculationService()
+        #self.body_surface_temparature_calculation = BodySurfaceTemperatureCalculationService()
 
         # フルスクリーン
         # Window.fullscreen = 'auto'
