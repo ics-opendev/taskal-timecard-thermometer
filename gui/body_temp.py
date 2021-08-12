@@ -300,10 +300,11 @@ class BodyTemp(App):
             img, meta = self.ow.get_frame()
 
             # サーモデバイスのステータス更新
-            old_status, self.owlift_h_status = self.update_owlift_h_status(meta, self.owlift_h_status)
-            
+            old_status, new_status = self.update_owlift_h_status(meta, self.owlift_h_status)
+
             # 必要であればステータス更新を通知
-            self.update_device_status_if_necessary(old_status, self.owlift_h_status)
+            self.update_device_status_if_necessary(old_status, new_status)
+            self.owlift_h_status = new_status
 
             # 取得した情報を元に体温を演算
             #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate)
@@ -314,8 +315,6 @@ class BodyTemp(App):
 
             # フレーム単位の更新処理
             self.update_frame(img, meta)
-
-            
         except:
             pass
 
