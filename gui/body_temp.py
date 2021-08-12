@@ -324,7 +324,7 @@ class BodyTemp(App):
             pass
 
     # デバイスステータス更新
-    def update_owlift_h_preparation(self, meta, current_status):
+    def update_owlift_h_status(self, meta, current_status):
         if meta.status == OwhMeta.S_OK or self.force_observe:
             if current_status.preparation:
                 current_status.preparation = False
