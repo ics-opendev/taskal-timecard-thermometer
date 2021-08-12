@@ -316,7 +316,7 @@ class BodyTemp(App):
 
             # フレーム単位の更新処理
             self.update_frame(img, meta)
-        except ex:
+        except Exception as ex:
             print("サーモループでエラー", ex)
 
     # デバイスステータス更新
