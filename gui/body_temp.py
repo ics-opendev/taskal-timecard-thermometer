@@ -196,7 +196,6 @@ class BodyTemp(App):
         self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
-        self.owlift_h_status = OwliftHStatus()
 
         return self.screenManager
 
@@ -213,9 +212,6 @@ class BodyTemp(App):
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
-            if self.owlift_h_status.preparation:
-                self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.READY)
-
             if self.info_disp_cnt > 0:
                 self.info_disp_cnt -= 1
             elif self.correct_cnt == 0:
@@ -264,10 +260,6 @@ class BodyTemp(App):
         elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
             # カメラを暖気運転中
             self.set_label(BodyTemp.LABEL_NOT_READY)
-            
-            # 準備中を通知
-            if not self.owlift_h_status.preparation:
-                self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.PREPARATION)
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
@@ -308,7 +300,10 @@ class BodyTemp(App):
             img, meta = self.ow.get_frame()
 
             # サーモデバイスのステータス更新
-            self.update_owlift_h_status(meta, self.owlift_h_status)
+            old_status, self.owlift_h_status = self.update_owlift_h_status(meta, self.owlift_h_status)
+            
+            # 必要であればステータス更新を通知
+            self.update_device_status_if_necessary(old_status, self.owlift_h_status)
 
             # 取得した情報を元に体温を演算
             #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate)
@@ -319,19 +314,33 @@ class BodyTemp(App):
 
             # フレーム単位の更新処理
             self.update_frame(img, meta)
+
             
         except:
             pass
 
     # デバイスステータス更新
     def update_owlift_h_status(self, meta, current_status):
+        preparation = False
+        new_status = current_status.status
+
+        # 準備状態のチェック
         if meta.status == OwhMeta.S_OK or self.force_observe:
             if current_status.preparation:
-                current_status.preparation = False
+                preparation = False
+                new_status = OwliftHDeviceStatus.READY
         elif meta.status == OwhMeta.S_NO_TEMP or meta.status == OwhMeta.S_INVALID_TEMP:
             if not current_status.preparation:
-                current_status.preparation = True
+                preparation = True
+                new_status = OwliftHDeviceStatus.PREPARATION
 
+        return current_status, OwliftHStatus(preparation, new_status)
+
+    # サーモデバイスのステータス更新を通知する
+    def update_device_status_if_necessary(old, new):
+        if old.status is not new.status:
+            print("サーモデイバスのステータス更新を通知しました")
+            self.bleno_manager.updateThermometerStatus(new.status)
 
     def enable_shortcut(self):
         """
@@ -438,13 +447,13 @@ class BodyTemp(App):
                 if not self.ow.has_multi_devs:
                     self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                     self.ow = None
-                    return False
+                    return
             except:
                 import traceback
                 traceback.print_exc()
                 self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.DISSCONNECTE)
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-                return False
+                return
 
             options = {}
             if "options" in self.config:
@@ -458,16 +467,15 @@ class BodyTemp(App):
             })
 
             self.ow.set_options(options)
-
+            self.owlift_h_status = OwliftHStatus(False, OwliftHDeviceStatus.PREPARATION)
             self.ow.capture_start()
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
             print("接続成功")
-            return True
         except Exception as e:
             print(e)
             self.ow = None
-            return False
+            return
 
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # buildの実行直後に呼び出されるハンドラー
