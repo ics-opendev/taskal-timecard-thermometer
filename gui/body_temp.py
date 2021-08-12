@@ -308,7 +308,7 @@ class BodyTemp(App):
             img, meta = self.ow.get_frame()
 
             # サーモデバイスのステータス更新
-            self.update_owlift_h_status(self.owlift_h_status)
+            self.update_owlift_h_status(meta, self.owlift_h_status)
 
             # 取得した情報を元に体温を演算
             #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate)
@@ -324,11 +324,11 @@ class BodyTemp(App):
             pass
 
     # デバイスステータス更新
-    def update_owlift_h_preparation(self, current_status):
-        if st == OwhMeta.S_OK or self.force_observe:
+    def update_owlift_h_preparation(self, meta, current_status):
+        if meta.status == OwhMeta.S_OK or self.force_observe:
             if current_status.preparation:
                 current_status.preparation = False
-        elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
+        elif meta.status == OwhMeta.S_NO_TEMP or meta.status == OwhMeta.S_INVALID_TEMP:
             if not current_status.preparation:
                 current_status.preparation = True
 
