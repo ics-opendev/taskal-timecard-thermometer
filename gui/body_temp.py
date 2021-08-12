@@ -259,6 +259,7 @@ class BodyTemp(App):
                     self.event_dist(meta, False)
         elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
             # カメラを暖気運転中
+            print("暖気なう")
             self.set_label(BodyTemp.LABEL_NOT_READY)
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
