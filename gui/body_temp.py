@@ -8,7 +8,7 @@ import os
 import pickle
 import socket
 from turbojpeg import TJPF_BGRA
-from entity.enum import OwliftHDeviceStatus
+from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
