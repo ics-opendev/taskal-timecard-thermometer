@@ -8,6 +8,7 @@ import os
 import pickle
 import socket
 from turbojpeg import TJPF_BGRA
+from entity.enum import OwliftHDeviceStatus
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -120,13 +121,6 @@ class BodyTemp(App):
     ALARM_CNT = 26
     INFO_DISP_CNT = 26
 
-    # サーモメータのステータス
-    READY = 0 # 準備完了
-    PREPARATION = 1 # 準備中
-    THERMO_LOST = 99 #サーモとの接続が切れました
-    DISSCONNECTE = 100 # 切断
-
-
     # コンストラクター
     def __init__(self, environment, bleno_manager):
         super().__init__()
@@ -153,6 +147,9 @@ class BodyTemp(App):
         gParam.load()
 
         self.operating_mode = gParam.OperatingMode
+
+        # 体表温度の演算を行う
+        self.body_surface_temparature_calculation = BodySurfaceTemperatureCalculationService()
 
         # フルスクリーン
         # Window.fullscreen = 'auto'
@@ -188,7 +185,6 @@ class BodyTemp(App):
 
         # 内部パラメータ
         self.ow = None
-        self.fc0 = 0
         self.eid0 = 0
         self.shortcut = False
         self.correct_cnt = 0
@@ -199,8 +195,6 @@ class BodyTemp(App):
         self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
-        self.server_fc = 0
-        self.client_fc = 0
         self.thermometer_preparation = False
 
         return self.screenManager
@@ -221,7 +215,7 @@ class BodyTemp(App):
             if self.thermometer_preparation:
                 # 準備が完了していることを通知
                 self.thermometer_preparation = False
-                self.bleno_manager.updateThermometerStatus(BodyTemp.READY)
+                self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.READY)
 
             if self.info_disp_cnt > 0:
                 self.info_disp_cnt -= 1
@@ -276,7 +270,7 @@ class BodyTemp(App):
             if not self.thermometer_preparation:
                 # 準備が完了していることを通知
                 self.thermometer_preparation = True
-                self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION)
+                self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.PREPARATION)
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
@@ -295,7 +289,6 @@ class BodyTemp(App):
 
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             self.last_frame = (img, meta)
-            self.server_fc = self.fc0
 
         self.previewScreen.preview.texture = texture
 
@@ -309,16 +302,20 @@ class BodyTemp(App):
             # デバイスの接続が切れた場合はエラー表示
             if self.ow.disconnected:
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-                self.bleno_manager.updateThermometerStatus(BodyTemp.THERMO_LOST)
+                self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.THERMO_LOST)
                 # フレームの更新を停止する
                 self.update_event.cancel()
                 return
 
-            fc = self.ow.frame_counter
-
-            self.fc0 = fc
             # フレームと詳細の取得
             img, meta = self.ow.get_frame()
+            # 取得した情報を元に体温を演算
+            #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate)
+
+            # Buletoothの情報を更新
+            
+            # UIの内容を更新
+
             # フレーム単位の更新処理
             self.update_frame(img, meta)
             
@@ -403,6 +400,7 @@ class BodyTemp(App):
     def start_correct_mode(self):
         self.correct_cnt = BodyTemp.CORRECT_CNT
         if self.ow is not None and self.operating_mode != gParam.OPE_MODE_STAFF:
+            # マニュアル補正の開始
             self.ow.set_options({"correct_mode": self.correct_cnt})
         self.set_label(BodyTemp.LABEL_CORRECT_0 + self.correct_cnt)
         for i in range(0, 3):
@@ -433,7 +431,7 @@ class BodyTemp(App):
             except:
                 import traceback
                 traceback.print_exc()
-                self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
+                self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.DISSCONNECTE)
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                 return False
 
@@ -447,8 +445,6 @@ class BodyTemp(App):
                 "manu_corr_ref": gParam.ManuCorrRef,
                 "temp_tab": True,
             })
-
-            print(options)
 
             self.ow.set_options(options)
 
