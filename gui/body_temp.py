@@ -195,7 +195,7 @@ class BodyTemp(App):
         self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
-        self.thermometer_preparation = False
+        self.owlift_h_status = OwliftHStatus()
 
         return self.screenManager
 
@@ -212,9 +212,7 @@ class BodyTemp(App):
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
-            if self.thermometer_preparation:
-                # 準備が完了していることを通知
-                self.thermometer_preparation = False
+            if self.owlift_h_status.preparation:
                 self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.READY)
 
             if self.info_disp_cnt > 0:
@@ -267,9 +265,7 @@ class BodyTemp(App):
             self.set_label(BodyTemp.LABEL_NOT_READY)
             
             # 準備中を通知
-            if not self.thermometer_preparation:
-                # 準備が完了していることを通知
-                self.thermometer_preparation = True
+            if not self.owlift_h_status.preparation:
                 self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.PREPARATION)
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
@@ -309,6 +305,10 @@ class BodyTemp(App):
 
             # フレームと詳細の取得
             img, meta = self.ow.get_frame()
+
+            # サーモデバイスのステータス更新
+            self.update_owlift_h_status(self.owlift_h_status)
+
             # 取得した情報を元に体温を演算
             #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate)
 
@@ -321,6 +321,16 @@ class BodyTemp(App):
             
         except:
             pass
+
+    # デバイスステータス更新
+    def update_owlift_h_preparation(self, current_status):
+        if st == OwhMeta.S_OK or self.force_observe:
+            if current_status.preparation:
+                current_status.preparation = False
+        elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
+            if not current_status.preparation:
+                current_status.preparation = True
+
 
     def enable_shortcut(self):
         """
