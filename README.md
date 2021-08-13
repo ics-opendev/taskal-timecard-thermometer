@@ -66,3 +66,9 @@ $ reboot
 
 # 警告が邪魔な場合（非推奨）
 https://qiita.com/nayuki_eng/items/3180da7ea0e4adab4e6c
+
+gitのパスワード一時保存
+
+```
+git config --global credential.helper cache
+```
