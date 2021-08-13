@@ -307,7 +307,7 @@ class BodyTemp(App):
             self.owlift_h_status = new_status
 
             # 取得した情報を元に体温を演算
-            #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate)
+            #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate, gParam.ManuCorr)
             
             # UIの内容を更新
 
@@ -462,6 +462,8 @@ class BodyTemp(App):
                 "manu_corr_ref": gParam.ManuCorrRef,
                 "temp_tab": True,
             })
+
+            print(options)
 
             self.ow.set_options(options)
             self.owlift_h_status = OwliftHStatus(False, OwliftHDeviceStatus.PREPARATION)
