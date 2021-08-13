@@ -2,7 +2,7 @@ from owlifttypeh import OwhMeta
 
 # metaデータからイベントタイプを生成
 def get_event_type(meta):
-    if meta is None:
+    if meta == None:
         return OwhMeta.EV_NONE
     
     event_type = meta.event_type

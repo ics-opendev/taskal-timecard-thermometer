@@ -4,6 +4,7 @@ from owlifth.util import get_event_type
 from entity.enum.measurement_type import MeasurementType
 from entity.body_surface_temperature import BodySurfaceTemperature
 import random
+import math
 
 # 体温温度演算サービス
 class BodySurfaceTemperatureCalculationService:
@@ -45,6 +46,8 @@ class BodySurfaceTemperatureCalculationService:
 
         # 最後のイベント状況を保存
         self.old_event_id = new_event_id
+
+        print(self.human_detected, self.human_detection_range)
 
         # サーモ側で測定できた場合は処理を終了
         if measurement_type is MeasurementType.RAW_OWLIFT_H:
