@@ -1,5 +1,5 @@
 # coding: UTF-8
-from entity.enum import MeasurementType
+from entity.enum.measurement_type import MeasurementType
 
 # 測定結果クラス
 class BodySurfaceTemperature:
