@@ -1,103 +1,59 @@
 # coding: UTF-8
-import sys
-import argparse
-import json
-import logging
-import logging.handlers
-import os
+from owlifttypeh import OwhMeta
+from owlifth.util import get_event_type
+from entity.enum.measurement_type import MeasurementType
+from entity.body_surface_temperature import BodySurfaceTemperature
 
 # 体温温度演算サービス
 class BodySurfaceTemperatureCalculationService:
     def __init__(self):
-        pass
+        self.old_event_id = None
+        # 人検出
+        self.human_detected = False
+        # 測定範囲内
+        self.human_detection_range = False
     
     # 体表温度の演算を行う（演算結果、UIの変更箇所)
     def execute(self, img, meta):
-        # ステータスを取得
-        current_status = meta.status
+        if meta.status is not OwhMeta.S_OK:
+            return
+
         # 生の測定情報
         temp_table = meta.temp_tab
 
-        # NOTE: カメラステータスのステータスをチェック
-        # 正常の場合はカメラで検出したイベントを処理
-        if current_status == OwhMeta.S_OK or self.force_observe:
-            if self.thermometer_preparation:
-                # 準備が完了していることを通知
-                self.thermometer_preparation = False
-                self.bleno_manager.updateThermometerStatus(BodyTemp.READY)
+        # イベントを取得
+        new_event_id = meta.event_id
 
-            if self.info_disp_cnt > 0:
-                self.info_disp_cnt -= 1
-            elif self.correct_cnt == 0:
-                self.set_label(BodyTemp.LABEL_NONE)
+        # 測定結果
+        body_temp = -1
+        measurement_type = MeasurementType.NO_MEASUREMENT
+        
+        # イベントに応じた処理
+        if new_event_id is not self.old_event_id:
+            if get_event_type(meta) is OwhMeta.EV_LOST:
+                self.human_detected = False
+            if get_event_type(meta) is OwhMeta.EV_DIST_VALID:
+                self.human_detected = True
+                self.human_detection_range = True
+            if get_event_type(meta) is OwhMeta.EV_DIST_INVALID:
+                self.human_detection_range = False
+            if get_event_type(meta) is OwhMeta.EV_BODY_TEMP:
+                body_temp = math.floor(meta.body_temp * 10) / 10
+                measurement_type = MeasurementType.RAW_OWLIFT_H
 
-            # 人を検出した場合は、取得箇所の温度を表示
-            if self.correct_cnt == 0 and self.disp_temp and not self.detected \
-                and meta.obs_temps is not None \
-                and self.operating_mode != gParam.OPE_MODE_GUEST:
-                i = 0
-                for t in meta.obs_temps:
-                    self.previewScreen.labelObsTemps[i].text = self.get_temp_text(t) if t > 0 else ''
-                    i += 1
-            else:
-                for i in range(0, 3):
-                    self.previewScreen.labelObsTemps[i].text = ''
+        # 最後のイベント状況を保存
+        self.old_event_id = new_event_id
 
-            # イベントに応じた処理
-            eid = meta.event_id
-            if eid != self.eid0:
-                self.eid0 = eid
-                evt = meta.event_type
-                if (evt & OwhMeta.EV_BODY_TEMP) != 0:
-                    # 発見した人から体温を検出しました
-                    self.event_body_temp(meta)
-                    self.bleno_manager.updateBodyTemp(meta)
-                    # 実体温を表示
-                    max_temp = np.max(meta.temp_tab)
-                    print(meta.temp_tab)
-                    #print("{:.1f}".format(max_temp - 273.15))
-                if (evt & OwhMeta.EV_CORRECT) != 0:
-                    # 補正処理中に検出しました
-                    self.event_correct(meta)
-                if (evt & OwhMeta.EV_LOST) != 0:
-                    # 人が消えた
-                    self.event_lost(meta)
-                    self.bleno_manager.updateHumanDetection(str(False))
-                if (evt & OwhMeta.EV_DIST_VALID) != 0:
-                    # 人を検出しました
-                    self.event_dist(meta, True)
-                    print("人を検出しました")
-                    self.bleno_manager.updateHumanDetection(str(True))
-                if (evt & OwhMeta.EV_DIST_INVALID) != 0:
-                    # 計測範囲外に出ました
-                    self.event_dist(meta, False)
-        elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
-            # カメラを暖気運転中
-            self.set_label(BodyTemp.LABEL_NOT_READY)
-            
-            # 準備中を通知
-            if not self.thermometer_preparation:
-                # 準備が完了していることを通知
-                self.thermometer_preparation = True
-                self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION)
-        else:
-            # なんらかのイレギュラーが発生した場合は「準備中」を表示
-            # ステータスについては ドキュメント class OwhMetaを参照
-            self.set_label(BodyTemp.LABEL_NOT_READY)
+        # サーモ側で測定できた場合は処理を終了
+        if measurement_type is MeasurementType.RAW_OWLIFT_H:
+            return BodySurfaceTemperature(measurement_type, body_temp)
 
-        if not self.detected and self.temp_disp_cnt > 0:
-            self.temp_disp_cnt -= 1
-            if self.temp_disp_cnt == 0:
-                self.previewScreen.labelTemp.text = ''
-                self.previewScreen.set_color_bar((0, 0, 0, 1))
+        # 人検出事体が行われていない場合
+        if not self.human_detected:
+            return BodySurfaceTemperature(measurement_type, body_temp) 
 
-        self.texture_idx = 1 - self.texture_idx
-        texture = self.textures[self.texture_idx]
-        texture.blit_buffer(img, \
-                colorfmt = 'bgra', bufferfmt = 'ubyte')
+        # システム側で温度を演算
+        if self.human_detection_range:
+            pass
 
-        if self.operating_mode == gParam.OPE_MODE_GUEST:
-            self.last_frame = (img, meta)
-            self.server_fc = self.fc0
-
-        self.previewScreen.preview.texture = texture
+        return BodySurfaceTemperature(measurement_type, body_temp)

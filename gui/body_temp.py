@@ -259,7 +259,6 @@ class BodyTemp(App):
                     self.event_dist(meta, False)
         elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
             # カメラを暖気運転中
-            print("暖気なう")
             self.set_label(BodyTemp.LABEL_NOT_READY)
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
@@ -309,8 +308,6 @@ class BodyTemp(App):
 
             # 取得した情報を元に体温を演算
             #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate)
-
-            # Buletoothの情報を更新
             
             # UIの内容を更新
 
