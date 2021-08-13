@@ -309,7 +309,8 @@ class BodyTemp(App):
 
             # 取得した情報を元に体温を演算
             body_temp = self.body_surface_temparature_calculation.execute(img, meta, gParam.ManuCorr)
-            print(body_temp)
+            if body_temp is not None:
+                print(body_temp.temperature, body_temp.measurement_type)
             
             # UIの内容を更新
 
