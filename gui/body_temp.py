@@ -307,7 +307,8 @@ class BodyTemp(App):
             self.owlift_h_status = new_status
 
             # 取得した情報を元に体温を演算
-            #ui_result, body_temp = self.body_surface_temparature_calculation.execute(img, mate, gParam.ManuCorr)
+            body_temp = self.body_surface_temparature_calculation.execute(img, mate, gParam.ManuCorr)
+            print(body_temp)
             
             # UIの内容を更新
 

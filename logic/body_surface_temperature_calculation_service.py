@@ -3,6 +3,7 @@ from owlifttypeh import OwhMeta
 from owlifth.util import get_event_type
 from entity.enum.measurement_type import MeasurementType
 from entity.body_surface_temperature import BodySurfaceTemperature
+import random
 
 # 体温温度演算サービス
 class BodySurfaceTemperatureCalculationService:
@@ -53,7 +54,77 @@ class BodySurfaceTemperatureCalculationService:
             return BodySurfaceTemperature(measurement_type, body_temp) 
 
         # システム側で温度を演算
-        if self.human_detection_range:
-            pass
+        
+        # 最大温度の取得
+        max_temp = self.get_max_temp(temp_table) + manu_corr
+        range_result = self.range_check(max_temp)
+        if range_result == 0:
+            return BodySurfaceTemperature(MeasurementType.MAX_TEMPERATURE, max_temp)
+        elif range_result == -1:
+            min_value = self.min_random_value(max_temp)
+            return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, min_value)
+
+        # 範囲外（上限）の場合の演算を実施
+        mean_temp = mean_max_temp() + manu_corr
+        range_result = self.range_check(mean_temp)
+        if range_result == 0:
+            return BodySurfaceTemperature(MeasurementType.PERIPHERAL_TEMPERATURE, mean_temp)
+        
+        # NOTE: 高温ばかりでるなら出現頻度から演算を実施を検討
+
+        # 高温用乱数で演算を実施
+        body_temp = max_random_value(max_temp)
+        measurement_type = MeasurementType.RANDOM_GENERATION
 
         return BodySurfaceTemperature(measurement_type, body_temp)
+
+    # 最大値の取得
+    def get_max_temp(self, temp_table):
+        return np.max(meta.temp_tab)
+    
+    # -1 なら範囲より小さい, 0なら範囲内, 1なら範囲より大きい
+    def range_check(self, temp):
+        if 35.9 > temp:
+            return -1
+        if 37.1 < temp:
+            return 1
+
+        return 0
+
+    # 最小値のランダム生成    
+    def min_random_value(self, temp):
+        r = 35.9 - max(35.7, temp)
+        return random.uniform(0, r) + temp
+    
+    # 最大値のランダム生成
+    def max_random_value(self, temp):
+        r = 37.2 - min(37.6, temp)
+        return random.uniform(0, r) + 36.7  
+
+    # 周囲5px(中心と上下左右)の平均値
+    def mean_max_temp(self, temp_table):
+        flatten_temps = temp_table.flatten()
+        max_index = np.argmax(flatten_temps)
+        # 中央
+        count = 0
+        sum_temp = 0
+        sum_temp += flatten_temps[max_index]
+        count += 1
+        # 左
+        if 0 < (max_index) <= len(flatten_temps):
+            sum_temp += flatten_temps[max_index-1]
+            count += 1
+        # 右
+        if 0 < (max_index+1) <= len(flatten_temps):
+            sum_temp += flatten_temps[max_index+1]
+            count += 1
+        # 上
+        if 0 < (max_index-120) <= len(flatten_temps):
+            sum_temp += flatten_temps[max_index-120]
+            count += 1
+        # 下
+        if 0 < (max_index+120) <= len(flatten_temps):
+            sum_temp += flatten_temps[max_index+120]
+            count += 1
+        
+        return sum_temp/count
