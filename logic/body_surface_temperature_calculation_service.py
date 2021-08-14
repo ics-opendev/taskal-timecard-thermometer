@@ -19,7 +19,7 @@ class BodySurfaceTemperatureCalculationService:
     def execute(self, img, meta, manu_corr):
         if meta.status != OwhMeta.S_OK:
             print("ステータスがOKではない")
-            return None
+            return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1) 
 
         # 生の測定情報
         temp_table = meta.temp_tab
