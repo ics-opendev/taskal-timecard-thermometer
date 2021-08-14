@@ -5,6 +5,7 @@ from entity.enum.measurement_type import MeasurementType
 from entity.body_surface_temperature import BodySurfaceTemperature
 import random
 import math
+import numpy as np
 
 # 体温温度演算サービス
 class BodySurfaceTemperatureCalculationService:
