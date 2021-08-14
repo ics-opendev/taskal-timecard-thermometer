@@ -250,7 +250,6 @@ class BodyTemp(App):
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
                     self.event_dist(meta, True)
-                    print("人を検出しました")
                     self.bleno_manager.updateHumanDetection(str(True))
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました

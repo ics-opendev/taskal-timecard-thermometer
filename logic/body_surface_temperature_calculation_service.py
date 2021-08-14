@@ -35,11 +35,14 @@ class BodySurfaceTemperatureCalculationService:
         if new_event_id is not self.old_event_id:
             if get_event_type(meta) is OwhMeta.EV_LOST:
                 self.human_detected = False
+                print("人を見失いました")
             if get_event_type(meta) is OwhMeta.EV_DIST_VALID:
                 self.human_detected = True
                 self.human_detection_range = True
+                print("人を検出しました")
             if get_event_type(meta) is OwhMeta.EV_DIST_INVALID:
                 self.human_detection_range = False
+                print("人が測定範囲外に出ました")
             if get_event_type(meta) is OwhMeta.EV_BODY_TEMP:
                 body_temp = math.floor(meta.body_temp * 10) / 10
                 measurement_type = MeasurementType.RAW_OWLIFT_H
@@ -53,6 +56,7 @@ class BodySurfaceTemperatureCalculationService:
 
         # 人検出事体が行われていない場合
         if not self.human_detected:
+            print("人がおらんです")
             return BodySurfaceTemperature(measurement_type, body_temp) 
 
         # システム側で温度を演算
