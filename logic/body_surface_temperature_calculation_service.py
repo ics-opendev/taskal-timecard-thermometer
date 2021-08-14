@@ -79,7 +79,7 @@ class BodySurfaceTemperatureCalculationService:
 
     # 最大値の取得
     def get_max_temp(self, temp_table):
-        return np.max(meta.temp_tab)
+        return np.max(temp_table)
     
     # -1 なら範囲より小さい, 0なら範囲内, 1なら範囲より大きい
     def range_check(self, temp):
