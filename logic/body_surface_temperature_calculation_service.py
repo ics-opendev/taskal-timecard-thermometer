@@ -47,8 +47,6 @@ class BodySurfaceTemperatureCalculationService:
         # 最後のイベント状況を保存
         self.old_event_id = new_event_id
 
-        print(self.human_detected, self.human_detection_range)
-
         # サーモ側で測定できた場合は処理を終了
         if measurement_type is MeasurementType.RAW_OWLIFT_H:
             return BodySurfaceTemperature(measurement_type, body_temp)

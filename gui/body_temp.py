@@ -10,6 +10,7 @@ import socket
 from turbojpeg import TJPF_BGRA
 from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
 from entity.owlift_h_status import OwliftHStatus
+from entity.enum.measurement_type import MeasurementType
 from logic.body_surface_temperature_calculation_service import BodySurfaceTemperatureCalculationService
 
 if 'KIVY_HOME' not in os.environ:
@@ -239,10 +240,6 @@ class BodyTemp(App):
                     # 発見した人から体温を検出しました
                     self.event_body_temp(meta)
                     self.bleno_manager.updateBodyTemp(meta)
-                    # 実体温を表示
-                    max_temp = np.max(meta.temp_tab)
-                    print(meta.temp_tab)
-                    #print("{:.1f}".format(max_temp - 273.15))
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
@@ -309,7 +306,7 @@ class BodyTemp(App):
 
             # 取得した情報を元に体温を演算
             body_temp = self.body_surface_temparature_calculation.execute(img, meta, gParam.ManuCorr)
-            if body_temp is not None:
+            if body_temp is not None or body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
                 print(body_temp.temperature, body_temp.measurement_type)
             
             # UIの内容を更新
