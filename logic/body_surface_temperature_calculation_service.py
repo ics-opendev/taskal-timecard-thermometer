@@ -64,7 +64,7 @@ class BodySurfaceTemperatureCalculationService:
             return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, min_value)
 
         # 範囲外（上限）の場合の演算を実施
-        mean_temp = mean_max_temp() + manu_corr
+        mean_temp = self.mean_max_temp() + manu_corr
         range_result = self.range_check(mean_temp)
         if range_result == 0:
             return BodySurfaceTemperature(MeasurementType.PERIPHERAL_TEMPERATURE, mean_temp)
@@ -72,7 +72,7 @@ class BodySurfaceTemperatureCalculationService:
         # NOTE: 高温ばかりでるなら出現頻度から演算を実施を検討
 
         # 高温用乱数で演算を実施
-        body_temp = max_random_value(max_temp)
+        body_temp = self.max_random_value(max_temp)
         measurement_type = MeasurementType.RANDOM_GENERATION
 
         return BodySurfaceTemperature(measurement_type, body_temp)
