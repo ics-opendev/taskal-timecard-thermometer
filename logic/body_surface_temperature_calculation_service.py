@@ -10,10 +10,6 @@ import math
 class BodySurfaceTemperatureCalculationService:
     def __init__(self):
         self.old_event_id = None
-        # 人検出
-        self.human_detected = False
-        # 測定範囲内
-        self.human_detection_range = False
     
     # 体表温度の演算を行う（演算結果、UIの変更箇所)
     def execute(self, img, meta, manu_corr):
@@ -34,14 +30,10 @@ class BodySurfaceTemperatureCalculationService:
         # イベントに応じた処理
         if new_event_id is not self.old_event_id:
             if get_event_type(meta) is OwhMeta.EV_LOST:
-                self.human_detected = False
                 print("人を見失いました")
             if get_event_type(meta) is OwhMeta.EV_DIST_VALID:
-                self.human_detected = True
-                self.human_detection_range = True
                 print("人を検出しました")
             if get_event_type(meta) is OwhMeta.EV_DIST_INVALID:
-                self.human_detection_range = False
                 print("人が測定範囲外に出ました")
             if get_event_type(meta) is OwhMeta.EV_BODY_TEMP:
                 body_temp = math.floor(meta.body_temp * 10) / 10
@@ -55,7 +47,7 @@ class BodySurfaceTemperatureCalculationService:
             return BodySurfaceTemperature(measurement_type, body_temp)
 
         # 人検出事体が行われていない場合
-        if not self.human_detected:
+        if not (300 < meta.distance < 1400):
             print("人がおらんです")
             return BodySurfaceTemperature(measurement_type, body_temp) 
 
