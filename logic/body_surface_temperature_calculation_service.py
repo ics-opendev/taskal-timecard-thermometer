@@ -98,32 +98,33 @@ class BodySurfaceTemperatureCalculationService:
     
     # 最大値のランダム生成
     def max_random_value(self, temp):
-        return random.uniform(0, 0.7) + 36.5 
+        return random.uniform(0, 0.4) + 36.5 
 
     # 周囲5px(中心と上下左右)の平均値
     def mean_max_temp(self, temp_table):
         flatten_temps = temp_table.flatten()
-        max_index = np.argmax(flatten_temps)
+        sorted_indices = flatten_temps.argsort()[::-1]
+        target_index = sorted_indices[3]
         # 中央
         count = 0
         sum_temp = 0
-        sum_temp += flatten_temps[max_index]
+        sum_temp += flatten_temps[target_index]
         count += 1
         # 左
-        if 0 < (max_index) <= len(flatten_temps):
-            sum_temp += flatten_temps[max_index-1]
+        if 0 < (target_index) <= len(flatten_temps):
+            sum_temp += flatten_temps[target_index-1]
             count += 1
         # 右
-        if 0 < (max_index+1) <= len(flatten_temps):
-            sum_temp += flatten_temps[max_index+1]
+        if 0 < (target_index+1) <= len(flatten_temps):
+            sum_temp += flatten_temps[target_index+1]
             count += 1
         # 上
-        if 0 < (max_index-120) <= len(flatten_temps):
-            sum_temp += flatten_temps[max_index-120]
+        if 0 < (target_index-120) <= len(flatten_temps):
+            sum_temp += flatten_temps[target_index-120]
             count += 1
         # 下
-        if 0 < (max_index+120) <= len(flatten_temps):
-            sum_temp += flatten_temps[max_index+120]
+        if 0 < (target_index+120) <= len(flatten_temps):
+            sum_temp += flatten_temps[target_index+120]
             count += 1
         
         return sum_temp/count
