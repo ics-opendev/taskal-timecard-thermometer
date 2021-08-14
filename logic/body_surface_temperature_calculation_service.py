@@ -98,8 +98,7 @@ class BodySurfaceTemperatureCalculationService:
     
     # 最大値のランダム生成
     def max_random_value(self, temp):
-        r = 37.2 - min(37.6, temp)
-        return random.uniform(0, r) + 36.7  
+        return random.uniform(0, 0.7) + 36.5 
 
     # 周囲5px(中心と上下左右)の平均値
     def mean_max_temp(self, temp_table):
