@@ -13,7 +13,7 @@ class BodySurfaceTemperatureCalculationService:
         self.old_event_id = None
     
     # 体表温度の演算を行う（演算結果、UIの変更箇所)
-    def execute(self, img, meta, manu_corr):
+    def execute(self, meta, manu_corr):
         if meta.status != OwhMeta.S_OK:
             print("ステータスがOKではない")
             return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1) 
@@ -48,7 +48,7 @@ class BodySurfaceTemperatureCalculationService:
             return BodySurfaceTemperature(measurement_type, body_temp)
 
         # 人検出事体が行われていない場合
-        if not (300 < meta.distance < 1400):
+        if not (200 < meta.distance < 1400):
             print("人がおらんです")
             return BodySurfaceTemperature(measurement_type, body_temp) 
 
@@ -74,6 +74,7 @@ class BodySurfaceTemperatureCalculationService:
         # 高温用乱数で演算を実施
         body_temp = self.max_random_value(max_temp)
         measurement_type = MeasurementType.RANDOM_GENERATION
+        print(max_temp, mean_temp, body_temp)
 
         return BodySurfaceTemperature(measurement_type, body_temp)
 
