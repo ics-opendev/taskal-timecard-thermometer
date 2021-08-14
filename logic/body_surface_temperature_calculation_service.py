@@ -64,7 +64,7 @@ class BodySurfaceTemperatureCalculationService:
             return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, min_value)
 
         # 範囲外（上限）の場合の演算を実施
-        mean_temp = self.mean_max_temp() + manu_corr
+        mean_temp = self.mean_max_temp(temp_table) + manu_corr
         range_result = self.range_check(mean_temp)
         if range_result == 0:
             return BodySurfaceTemperature(MeasurementType.PERIPHERAL_TEMPERATURE, mean_temp)
