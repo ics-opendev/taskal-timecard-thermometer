@@ -64,7 +64,7 @@ class BodySurfaceTemperatureCalculationService:
             return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, min_value)
 
         # 範囲外（上限）の場合の演算を実施
-        mean_temp = self.mean_max_temp(temp_table) + manu_corr - 273.15
+        mean_temp = self.optimal_mean_temp(temp_table) + manu_corr - 273.15
         range_result = self.range_check(mean_temp)
         if range_result == 0:
             return BodySurfaceTemperature(MeasurementType.PERIPHERAL_TEMPERATURE, mean_temp)
@@ -101,11 +101,24 @@ class BodySurfaceTemperatureCalculationService:
         return random.uniform(0, 0.4) + 36.5 
 
     # 周囲5px(中心と上下左右)の平均値
-    def mean_max_temp(self, temp_table):
+    def optimal_mean_temp(self, temp_table):
         flatten_temps = temp_table.flatten()
         sorted_indices = flatten_temps.argsort()[::-1]
-        target_index = sorted_indices[3]
-        # 中央
+
+        temps = []
+        for index in sorted_indices[:10]:
+            temp = self.get_mean_temp(index, flatten_temps)
+            temps.append(temp)
+
+        for temp in temps:
+            if self.range_check(temp) == 0:
+                return temp
+
+        return sum(temps)/len(temps)
+        
+
+    def get_mean_temp(self, target_index, flatten_temps):
+                # 中央
         count = 0
         sum_temp = 0
         sum_temp += flatten_temps[target_index]
