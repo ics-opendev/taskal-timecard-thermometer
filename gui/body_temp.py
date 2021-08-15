@@ -341,13 +341,6 @@ class BodyTemp(App):
 
     def event_body_temp(self, meta):
         self.set_label2(BodyTemp.LABEL_NONE)
-        #body_temp = int((meta.body_temp + 0.05) * 10) / 10
-        # NOTE: 体温表示は行わない
-        #if gParam.TempDisplay and self.operating_mode != gParam.OPE_MODE_GUEST:
-        #    self.previewScreen.labelTemp.text = self.get_temp_text(body_temp)
-        #if body_temp >= gParam.TempThreshold:
-        #    pass
-        #else:
         self.previewScreen.set_color_bar((0, 1, 0, 1))
         if self.detected == False and gParam.AlarmPattern != 0:
             pass
@@ -449,6 +442,7 @@ class BodyTemp(App):
                 "manu_corr": gParam.ManuCorr,# 補正値
                 "manu_corr_ref": gParam.ManuCorrRef,
                 "temp_tab": True,
+                "show_target": False,
             })
 
             print(options)
