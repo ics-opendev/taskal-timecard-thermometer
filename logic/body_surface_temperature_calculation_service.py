@@ -73,6 +73,7 @@ class BodySurfaceTemperatureCalculationService:
         # 高温用乱数で演算を実施
         body_temp = self.max_random_value(max_temp)
         measurement_type = MeasurementType.RANDOM_GENERATION
+        print(max_temp, mean_temp, body_temp)
 
         return BodySurfaceTemperature(measurement_type, body_temp)
 
