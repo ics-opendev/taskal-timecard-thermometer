@@ -59,7 +59,7 @@ class HumanDetectionCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
-        print(data)
+        print(data.decode())
 
         callback(self.RESULT_SUCCESS)
 
