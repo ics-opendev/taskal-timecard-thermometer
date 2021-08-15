@@ -1,6 +1,7 @@
 # coding: UTF-8
 from entity.enum.measurement_type import MeasurementType
 import time
+import math
 
 # 測定結果クラス
 class BodySurfaceTemperature:
@@ -16,4 +17,4 @@ class BodySurfaceTemperature:
         if measurement_type == MeasurementType.NO_MEASUREMENT:
             self.temperature = -1
         else:
-            self.temperature = temperature
+            self.temperature = math.floor(temperature * 10) / 10
