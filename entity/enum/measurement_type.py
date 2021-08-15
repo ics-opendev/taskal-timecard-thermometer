@@ -15,4 +15,4 @@ class MeasurementType(Enum):
     # 乱数による生成
     RANDOM_GENERATION = 5
     # 測定なし
-    NO_MEASUREMENT = -1
+    NO_MEASUREMENT = 6

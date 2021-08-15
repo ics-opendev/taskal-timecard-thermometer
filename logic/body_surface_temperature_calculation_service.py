@@ -15,7 +15,6 @@ class BodySurfaceTemperatureCalculationService:
     # 体表温度の演算を行う（演算結果、UIの変更箇所)
     def execute(self, meta, manu_corr):
         if meta.status != OwhMeta.S_OK:
-            print("ステータスがOKではない")
             return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1) 
 
         # 生の測定情報

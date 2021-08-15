@@ -1,7 +1,7 @@
 from pybleno import *
 import sys
 import signal
-from bleno.characteristic import BodyTempCharacteristic, HumanDetectionCharacteristic, ThermometerStatusCharacteristic
+from bleno.characteristic import BodyTempCharacteristic, ThermometerStatusCharacteristic
 import math
 
 class BlenoManager:
@@ -10,7 +10,6 @@ class BlenoManager:
         self.inner_bleno = Bleno()
         self.environment = environment
         self.body_temp_chara = BodyTempCharacteristic('ec100001-9999-9999-9999-000000000001')
-        self.human_detection = HumanDetectionCharacteristic('ec100001-9999-9999-9999-000000000002')
         self.thermometer_status = ThermometerStatusCharacteristic('ec100001-9999-9999-9999-000000000003')
         self.inner_bleno.on('stateChange', self.onStateChange)
         self.inner_bleno.on('advertisingStart', self.onAdvertisingStart)
@@ -39,24 +38,14 @@ class BlenoManager:
             self.inner_bleno.setServices([
                 BlenoPrimaryService({
                     'uuid': 'ec100001-9999-9999-9999-000000000000',
-                    'characteristics': [self.body_temp_chara, self.human_detection, self.thermometer_status]
+                    'characteristics': [self.body_temp_chara, self.thermometer_status]
                 })
             ])
 
     # 測定に変更があったことを通知
-    def updateBodyTemp(self, meta):
-        # 測定体温
-        body_temp = math.floor(meta.body_temp * 10) / 10
-        # 測定距離
-        distance = meta.distance
-        # 購読者に展開
-        self.body_temp_chara.updateBodyTemp(body_temp, distance)
-        
-        print('測定温度 :' + str(body_temp))
-
-    # 人の検出状況に変更があったことを通知
-    def updateHumanDetection(self, human_is_detection):
-        self.human_detection.updateHumanDetection(human_is_detection)
+    def updateBodyTemp(self, body_temp):
+        # キャラクタステック内で温度情報を確定する
+        self.body_temp_chara.updateBodyTemp(body_temp)
     
     # カメラの状態に変化があったことを通知
     def updateThermometerStatus(self, status_code):

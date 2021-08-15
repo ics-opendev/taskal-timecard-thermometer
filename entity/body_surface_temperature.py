@@ -1,5 +1,6 @@
 # coding: UTF-8
 from entity.enum.measurement_type import MeasurementType
+import time
 
 # 測定結果クラス
 class BodySurfaceTemperature:
@@ -7,6 +8,9 @@ class BodySurfaceTemperature:
     def __init__(self, measurement_type, temperature):
         # 測定方式
         self.measurement_type = measurement_type
+
+        # 測定時刻
+        self.created_at = time.time()
         
         # 測定温度
         if measurement_type == MeasurementType.NO_MEASUREMENT:

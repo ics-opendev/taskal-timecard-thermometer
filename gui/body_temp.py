@@ -239,7 +239,6 @@ class BodyTemp(App):
                 if (evt & OwhMeta.EV_BODY_TEMP) != 0:
                     # 発見した人から体温を検出しました
                     self.event_body_temp(meta)
-                    self.bleno_manager.updateBodyTemp(meta)
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
@@ -306,6 +305,7 @@ class BodyTemp(App):
             # 取得した情報を元に体温を演算
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
+                self.bleno_manager.updateBodyTemp(body_temp)
                 print(body_temp.temperature, body_temp.measurement_type)
 
             # 体温情報の更新
