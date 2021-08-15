@@ -52,7 +52,7 @@ class BodyTempCharacteristic(Characteristic):
             print('updateBodyTemp: notifying'); 
             self._updateValueCallback(value)
     
-    def best_body_temp(a, b):
+    def best_body_temp(self, a, b):
         if a is None:
             return b
         
