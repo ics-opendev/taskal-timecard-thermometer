@@ -51,30 +51,18 @@ class HumanDetectionCharacteristic(Characteristic):
     def __init__(self, uuid):
         Characteristic.__init__(self, {
             'uuid': uuid,
-            'properties': ['notify'],
+            'properties': ['write'],
             'value': None
           })
-          
-        self._value = bytes(str(False), encoding='utf-8', errors='replace')
+        
+        self.detected = False
         self._updateValueCallback = None
 
-    def onSubscribe(self, maxValueSize, updateValueCallback):
-        print('onSubscribe:HumanDetection')
-        
-        self._updateValueCallback = updateValueCallback
+    def onWriteRequest(self, data, offset, withoutResponse, callback):
+        a = readUInt16BE(data, 0)
+        print(a)
 
-    def onUnsubscribe(self):
-        print('onUnsubscribe:HumanDetection');
-        
-        self._updateValueCallback = None
-
-    # 人を検出した場合に通知する
-    def updateHumanDetection(self, human_detection):
-        self._value = bytes(human_detection, encoding='utf-8', errors='replace')
-
-        if self._updateValueCallback:
-            print('updateHumanDetection: notifying'); 
-            self._updateValueCallback(self._value)
+        callback(self.RESULT_SUCCESS)
 
 # サーモカメラのステータスを管理する
 class ThermometerStatusCharacteristic(Characteristic):

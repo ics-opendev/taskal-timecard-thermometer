@@ -307,6 +307,8 @@ class BodyTemp(App):
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
                 print(body_temp.temperature, body_temp.measurement_type)
+
+            # 体温情報の更新
             
             # UIの内容を更新
 
