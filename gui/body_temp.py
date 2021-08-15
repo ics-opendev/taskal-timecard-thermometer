@@ -245,6 +245,9 @@ class BodyTemp(App):
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             self.last_frame = (img, meta)
 
+        self.texture_idx = 1 - self.texture_idx
+        texture = self.textures[self.texture_idx]
+        texture.blit_buffer(img, colorfmt = 'bgra', bufferfmt = 'ubyte')
         self.previewScreen.preview.texture = texture
 
     # フレームの更新
