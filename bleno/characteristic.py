@@ -23,7 +23,7 @@ class BodyTempCharacteristic(Characteristic):
     # リクエストの1秒前から最高品質の温度を取得する
     def onReadRequest(self, offset, callback):
         now_current_body_temp = self.current_body_temp
-        if self.is_expiration(now_current_body_temp):
+        if now_current_body_temp is None or self.is_expiration(now_current_body_temp):
             time_out = bytes(f'-1', encoding='utf-8', errors='replace')
             callback(Characteristic.RESULT_SUCCESS, time_out[offset:])
 

@@ -5,3 +5,6 @@ __pycache__/
 
 # log
 logs/
+
+# config
+config/env/local.json
