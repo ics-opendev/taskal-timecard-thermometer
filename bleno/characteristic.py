@@ -48,7 +48,6 @@ class BodyTempCharacteristic(Characteristic):
             self.current_body_temp = new_body_temp
             value = bytes(f'{self.current_body_temp.temperature}', encoding='utf-8', errors='replace')
             if self._updateValueCallback:
-                print('updateBodyTemp: notifying'); 
                 self._updateValueCallback(value)
     
     def best_body_temp(self, a, b):

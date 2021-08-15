@@ -219,7 +219,6 @@ class BodyTemp(App):
             elif self.correct_cnt == 0:
                 self.set_label(BodyTemp.LABEL_NONE)
 
-            # イベントに応じた処理
             
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
                 self.event_dist(meta, True)
@@ -227,24 +226,14 @@ class BodyTemp(App):
             else:
                 self.event_lost(meta)
                 self.event_dist(meta, False)
-            #if eid != self.eid0:
-            #    self.eid0 = eid
-            #    evt = meta.event_type
-            #    if (evt & OwhMeta.EV_BODY_TEMP) != 0:
-            #        # 発見した人から体温を検出しました
-            #        self.event_body_temp(meta)
-            #    if (evt & OwhMeta.EV_CORRECT) != 0:
-            #        # 補正処理中に検出しました
-            #        self.event_correct(meta)
-            #    if (evt & OwhMeta.EV_LOST) != 0:
-            #        # 人が消えた
-            #        self.event_lost(meta)
-            #    if (evt & OwhMeta.EV_DIST_VALID) != 0:
-            #        # 人を検出しました
-            #        self.event_dist(meta, True)
-            #    if (evt & OwhMeta.EV_DIST_INVALID) != 0:
-            #        # 計測範囲外に出ました
-            #        self.event_dist(meta, False)
+            
+            # イベントに応じた処理
+            if eid != self.eid0:
+                self.eid0 = eid
+                evt = meta.event_type
+                if (evt & OwhMeta.EV_CORRECT) != 0:
+                    # 補正処理中に検出しました
+                    self.event_correct(meta)
         elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
             # カメラを暖気運転中
             self.set_label(BodyTemp.LABEL_NOT_READY)
@@ -252,17 +241,6 @@ class BodyTemp(App):
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
-
-        if not self.detected and self.temp_disp_cnt > 0:
-            self.temp_disp_cnt -= 1
-            if self.temp_disp_cnt == 0:
-                self.previewScreen.labelTemp.text = ''
-                self.previewScreen.set_color_bar((0, 0, 0, 1))
-
-        self.texture_idx = 1 - self.texture_idx
-        texture = self.textures[self.texture_idx]
-        texture.blit_buffer(img, \
-                colorfmt = 'bgra', bufferfmt = 'ubyte')
 
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             self.last_frame = (img, meta)
