@@ -1,9 +1,12 @@
-from pybleno import Characteristic
+from pybleno import *
 import array
 import struct
 import sys
 import traceback
 import time
+import datetime
+from entity.body_surface_temperature import BodySurfaceTemperature
+from entity.enum.measurement_type import MeasurementType
 
 # 体温が検出できたことを管理する
 class BodyTempCharacteristic(Characteristic):
@@ -14,17 +17,17 @@ class BodyTempCharacteristic(Characteristic):
             'properties': ['read', 'notify'],
             'value': None
           })
-          
-        self._value = array.array('B', [0] * 0)
         self._updateValueCallback = None
-        self.latestUpdateTime = time.time()
+        self.current_body_temp = None
 
+    # リクエストの1秒前から最高品質の温度を取得する
     def onReadRequest(self, offset, callback):
-        if (time.time() - self.latestUpdateTime) > 0.7:
-            time_out = bytes(f'-1 -1', encoding='utf-8', errors='replace')
+        now_current_body_temp = self.current_body_temp
+        if now_current_body_temp is None or self.is_expiration(now_current_body_temp):
+            time_out = bytes(f'-1', encoding='utf-8', errors='replace')
             callback(Characteristic.RESULT_SUCCESS, time_out[offset:])
 
-        callback(Characteristic.RESULT_SUCCESS, self._value[offset:])
+        callback(Characteristic.RESULT_SUCCESS, bytes(f'{now_current_body_temp.temperature}', encoding='utf-8', errors='replace'))
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
         print('onSubscribe:BodyTemp')
@@ -37,44 +40,36 @@ class BodyTempCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     # 体温計が温度を取得した際はここが更新される
-    def updateBodyTemp(self, measured_temperature, measured_distance):
-        self.latestUpdateTime = time.time()
-        self._value = bytes(f'{measured_temperature} {measured_distance}', encoding='utf-8', errors='replace')
+    def updateBodyTemp(self, body_temp):
+        new_body_temp = self.best_body_temp(self.current_body_temp, body_temp)
 
-        if self._updateValueCallback:
-            print('updateBodyTemp: notifying'); 
-            self._updateValueCallback(self._value)
-
-# 人の検出や見失いを管理する
-class HumanDetectionCharacteristic(Characteristic):
+        value = bytes(f'-1', encoding='utf-8', errors='replace')
+        if new_body_temp is not self.current_body_temp and new_body_temp is not None:
+            self.current_body_temp = new_body_temp
+            value = bytes(f'{self.current_body_temp.temperature}', encoding='utf-8', errors='replace')
+            if self._updateValueCallback:
+                self._updateValueCallback(value)
     
-    def __init__(self, uuid):
-        Characteristic.__init__(self, {
-            'uuid': uuid,
-            'properties': ['notify'],
-            'value': None
-          })
-          
-        self._value = bytes(str(False), encoding='utf-8', errors='replace')
-        self._updateValueCallback = None
-
-    def onSubscribe(self, maxValueSize, updateValueCallback):
-        print('onSubscribe:HumanDetection')
+    def best_body_temp(self, a, b):
+        if a is None:
+            return b
         
-        self._updateValueCallback = updateValueCallback
-
-    def onUnsubscribe(self):
-        print('onUnsubscribe:HumanDetection');
+        if self.is_expiration(a):
+            return b
         
-        self._updateValueCallback = None
+        if b is None:
+            return None
+        
+        # 優先度チェック
+        if a.measurement_type.value > b.measurement_type.value:
+            return b
+        else:
+            return a
+        
+    def is_expiration(self, a):
+        t = time.time() - a.created_at
+        return t > 1.09
 
-    # 人を検出した場合に通知する
-    def updateHumanDetection(self, human_detection):
-        self._value = bytes(human_detection, encoding='utf-8', errors='replace')
-
-        if self._updateValueCallback:
-            print('updateHumanDetection: notifying'); 
-            self._updateValueCallback(self._value)
 
 # サーモカメラのステータスを管理する
 class ThermometerStatusCharacteristic(Characteristic):

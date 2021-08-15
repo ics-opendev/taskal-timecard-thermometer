@@ -8,6 +8,10 @@ import os
 import pickle
 import socket
 from turbojpeg import TJPF_BGRA
+from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
+from entity.owlift_h_status import OwliftHStatus
+from entity.enum.measurement_type import MeasurementType
+from logic.body_surface_temperature_calculation_service import BodySurfaceTemperatureCalculationService
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -54,7 +58,6 @@ elif is_linux():
 
 from gui.settings import SettingsScreen
 from gui.settings import TemperatureScreen
-from gui.settings import AlarmScreen
 from gui.settings import SystemScreen
 from gui.settings import TempThresholdScreen
 from gui.settings import TempCalibrationScreen
@@ -66,7 +69,6 @@ from gui.settings import SystemOperatingModeScreen
 from gui.settings import SystemResetSettingsScreen
 from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
-from gui.alarm import Alarm
 from gui.param import gParam
 from bleno.bleno_manager import BlenoManager
 
@@ -122,13 +124,6 @@ class BodyTemp(App):
     ALARM_CNT = 26
     INFO_DISP_CNT = 26
 
-    # サーモメータのステータス
-    READY = 0 # 準備完了
-    PREPARATION = 1 # 準備中
-    THERMO_LOST = 99 #サーモとの接続が切れました
-    DISSCONNECTE = 100 # 切断
-
-
     # コンストラクター
     def __init__(self, environment, bleno_manager):
         super().__init__()
@@ -156,6 +151,9 @@ class BodyTemp(App):
 
         self.operating_mode = gParam.OperatingMode
 
+        # 体表温度の演算を行う
+        self.body_surface_temparature_calculation = BodySurfaceTemperatureCalculationService()
+
         # フルスクリーン
         # Window.fullscreen = 'auto'
 
@@ -172,7 +170,6 @@ class BodyTemp(App):
         # 設定画面
         self.screenManager.add_widget(SettingsScreen(name = 'Settings'))
         self.screenManager.add_widget(TemperatureScreen(name = 'Temperature'))
-        self.screenManager.add_widget(AlarmScreen(name = 'Alarm'))
         self.screenManager.add_widget(SystemScreen(name = 'System'))
 
         # 温度
@@ -191,7 +188,6 @@ class BodyTemp(App):
 
         # 内部パラメータ
         self.ow = None
-        self.fc0 = 0
         self.eid0 = 0
         self.shortcut = False
         self.correct_cnt = 0
@@ -199,13 +195,9 @@ class BodyTemp(App):
         self.label_id2 = BodyTemp.LABEL_NONE
         self.detected = False
         self.temp_disp_cnt = 0
-        self.alarm_cnt = 0
         self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
-        self.server_fc = 0
-        self.client_fc = 0
-        self.thermometer_preparation = False
 
         return self.screenManager
 
@@ -215,94 +207,48 @@ class BodyTemp(App):
         return '{:.1f}'.format(temp)
 
     # フレーム情報の解析
-    def update_frame(self, img, meta):
+    def update_frame(self, img, meta, body_temp):
         # ステータスを取得
         st = meta.status
 
         # NOTE: カメラステータスのステータスをチェック
         # 正常の場合はカメラで検出したイベントを処理
         if st == OwhMeta.S_OK or self.force_observe:
-            if self.thermometer_preparation:
-                # 準備が完了していることを通知
-                self.thermometer_preparation = False
-                self.bleno_manager.updateThermometerStatus(BodyTemp.READY)
-
             if self.info_disp_cnt > 0:
                 self.info_disp_cnt -= 1
             elif self.correct_cnt == 0:
                 self.set_label(BodyTemp.LABEL_NONE)
 
-            # 人を検出した場合は、取得箇所の温度を表示
-            if self.correct_cnt == 0 and self.disp_temp and not self.detected \
-                and meta.obs_temps is not None \
-                and self.operating_mode != gParam.OPE_MODE_GUEST:
-                i = 0
-                for t in meta.obs_temps:
-                    self.previewScreen.labelObsTemps[i].text = self.get_temp_text(t) if t > 0 else ''
-                    i += 1
+            
+            if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
+                self.event_dist(meta, True)
+                self.event_body_temp(meta)
             else:
-                for i in range(0, 3):
-                    self.previewScreen.labelObsTemps[i].text = ''
-
+                self.event_lost(meta)
+                self.event_dist(meta, False)
+            
             # イベントに応じた処理
             eid = meta.event_id
             if eid != self.eid0:
                 self.eid0 = eid
                 evt = meta.event_type
-                if (evt & OwhMeta.EV_BODY_TEMP) != 0:
-                    # 発見した人から体温を検出しました
-                    print("発見した人から体温を検出しました")
-                    self.event_body_temp(meta)
-                    self.bleno_manager.updateBodyTemp(meta)
                 if (evt & OwhMeta.EV_CORRECT) != 0:
                     # 補正処理中に検出しました
                     self.event_correct(meta)
-                if (evt & OwhMeta.EV_LOST) != 0:
-                    # 人が消えた
-                    self.event_lost(meta)
-                    self.bleno_manager.updateHumanDetection(str(False))
-                if (evt & OwhMeta.EV_DIST_VALID) != 0:
-                    # 人を検出しました
-                    self.event_dist(meta, True)
-                    print("人を検出しました")
-                    self.bleno_manager.updateHumanDetection(str(True))
-                if (evt & OwhMeta.EV_DIST_INVALID) != 0:
-                    # 計測範囲外に出ました
-                    self.event_dist(meta, False)
         elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
             # カメラを暖気運転中
             self.set_label(BodyTemp.LABEL_NOT_READY)
-            
-            # 準備中を通知
-            if not self.thermometer_preparation:
-                # 準備が完了していることを通知
-                self.thermometer_preparation = True
-                self.bleno_manager.updateThermometerStatus(BodyTemp.PREPARATION)
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
 
-        if not self.detected and self.temp_disp_cnt > 0:
-            self.temp_disp_cnt -= 1
-            if self.temp_disp_cnt == 0:
-                self.previewScreen.labelTemp.text = ''
-                self.previewScreen.set_color_bar((0, 0, 0, 1))
-
-        if self.alarm_cnt > 0:
-            self.alarm_cnt -= 1
-            if self.alarm_cnt == 0:
-                self.stop_alarm()
+        if self.operating_mode == gParam.OPE_MODE_GUEST:
+            self.last_frame = (img, meta)
 
         self.texture_idx = 1 - self.texture_idx
         texture = self.textures[self.texture_idx]
-        texture.blit_buffer(img, \
-                colorfmt = 'bgra', bufferfmt = 'ubyte')
-
-        if self.operating_mode == gParam.OPE_MODE_GUEST:
-            self.last_frame = (img, meta)
-            self.server_fc = self.fc0
-
+        texture.blit_buffer(img, colorfmt = 'bgra', bufferfmt = 'ubyte')
         self.previewScreen.preview.texture = texture
 
     # フレームの更新
@@ -315,20 +261,53 @@ class BodyTemp(App):
             # デバイスの接続が切れた場合はエラー表示
             if self.ow.disconnected:
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-                self.bleno_manager.updateThermometerStatus(BodyTemp.THERMO_LOST)
+                self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.THERMO_LOST)
                 # フレームの更新を停止する
                 self.update_event.cancel()
                 return
 
-            fc = self.ow.frame_counter
-
-            self.fc0 = fc
             # フレームと詳細の取得
             img, meta = self.ow.get_frame()
+
+            # サーモデバイスのステータス更新
+            old_status, new_status = self.update_owlift_h_status(meta, self.owlift_h_status)
+
+            # 必要であればステータス更新を通知
+            self.update_device_status_if_necessary(old_status, new_status)
+            self.owlift_h_status = new_status
+
+            # 取得した情報を元に体温を演算
+            body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
+            if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
+                self.bleno_manager.updateBodyTemp(body_temp)
+
             # フレーム単位の更新処理
-            self.update_frame(img, meta)
-        except:
-            pass
+            self.update_frame(img, meta, body_temp)
+        except Exception as ex:
+            print("サーモループでエラー", ex)
+
+    # デバイスステータス更新
+    def update_owlift_h_status(self, meta, current_status):
+        preparation = False
+        new_status = current_status.status
+
+        # 準備状態のチェック
+        if meta.status == OwhMeta.S_OK or self.force_observe:
+            if current_status.preparation:
+                preparation = False
+                new_status = OwliftHDeviceStatus.READY
+        elif meta.status == OwhMeta.S_NO_TEMP or meta.status == OwhMeta.S_INVALID_TEMP:
+            if not current_status.preparation:
+                preparation = True
+                new_status = OwliftHDeviceStatus.PREPARATION
+
+        return current_status, OwliftHStatus(preparation, new_status)
+
+    # サーモデバイスのステータス更新を通知する
+    def update_device_status_if_necessary(self, old, new):
+        if old.status is not new.status:
+            print("サーモデイバスのステータス更新を通知しました")
+            self.bleno_manager.updateThermometerStatus(new.status)
 
     def enable_shortcut(self):
         """
@@ -344,18 +323,9 @@ class BodyTemp(App):
 
     def event_body_temp(self, meta):
         self.set_label2(BodyTemp.LABEL_NONE)
-        body_temp = int((meta.body_temp + 0.05) * 10) / 10
-        # NOTE: 体温表示は行わない
-        #if gParam.TempDisplay and self.operating_mode != gParam.OPE_MODE_GUEST:
-        #    self.previewScreen.labelTemp.text = self.get_temp_text(body_temp)
-        if body_temp >= gParam.TempThreshold:
-            if self.alarm_cnt == 0:
-                self.start_alarm(gParam.AlarmPattern)
-            self.alarm_cnt = BodyTemp.ALARM_CNT
-        else:
-            self.previewScreen.set_color_bar((0, 1, 0, 1))
-            if self.detected == False and gParam.AlarmPattern != 0:
-                self.alarm.passed()
+        self.previewScreen.set_color_bar((0, 1, 0, 1))
+        if self.detected == False and gParam.AlarmPattern != 0:
+            pass
         self.detected = True
 
     def event_correct(self, meta):
@@ -410,6 +380,7 @@ class BodyTemp(App):
     def start_correct_mode(self):
         self.correct_cnt = BodyTemp.CORRECT_CNT
         if self.ow is not None and self.operating_mode != gParam.OPE_MODE_STAFF:
+            # マニュアル補正の開始
             self.ow.set_options({"correct_mode": self.correct_cnt})
         self.set_label(BodyTemp.LABEL_CORRECT_0 + self.correct_cnt)
         for i in range(0, 3):
@@ -436,56 +407,38 @@ class BodyTemp(App):
                 if not self.ow.has_multi_devs:
                     self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
                     self.ow = None
-                    return False
+                    return
             except:
                 import traceback
                 traceback.print_exc()
-                self.bleno_manager.updateThermometerStatus(BodyTemp.DISSCONNECTE)
+                self.bleno_manager.updateThermometerStatus(OwliftHDeviceStatus.DISSCONNECTE)
                 self.set_label(BodyTemp.LABEL_DEV_CONNECT_ERR)
-                return False
+                return
 
             options = {}
             if "options" in self.config:
                 options.update(self.config["options"])
 
             options.update({
-                "manual_body_temp": gParam.TempCalibration,
-                "manu_corr": gParam.ManuCorr,
+                "manual_body_temp": gParam.TempCalibration, # 補正設定値
+                "manu_corr": gParam.ManuCorr,# 補正値
                 "manu_corr_ref": gParam.ManuCorrRef,
+                "temp_tab": True,
+                "show_target": False,
             })
-            self.ow.set_options(options)
 
+            print(options)
+
+            self.ow.set_options(options)
+            self.owlift_h_status = OwliftHStatus(False, OwliftHDeviceStatus.PREPARATION)
             self.ow.capture_start()
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
             print("接続成功")
-            return True
         except Exception as e:
             print(e)
             self.ow = None
-            return False
-
-    # アラーム
-    def start_alarm_service(self):
-        self.alarm = Alarm()
-        self.alarm.start()
-
-    # アラーム
-    def stop_alarm_service(self):
-        if hasattr(self, "alarm"):
-            self.alarm.stop()
-
-    # アラーム
-    def start_alarm(self, pattern):
-        if self.operating_mode == gParam.OPE_MODE_GUEST:
             return
-        if hasattr(self, "alarm"):
-            self.alarm.trigger(pattern)
-
-    # アラーム
-    def stop_alarm(self):
-        if hasattr(self, "alarm"):
-            self.alarm.cancel()
 
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # buildの実行直後に呼び出されるハンドラー
@@ -493,13 +446,12 @@ class BodyTemp(App):
     def on_start(self):
         if self.operating_mode == gParam.OPE_MODE_ALONE:
             self.start_owhdev()
-            self.start_alarm_service()
         elif self.operating_mode == gParam.OPE_MODE_STAFF:
-            self.start_alarm_service()
+            pass            
         elif self.operating_mode == gParam.OPE_MODE_GUEST:
             self.start_owhdev()
     
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # Windowがクローズされる前に呼び出される
     def on_stop(self):
-        self.stop_alarm_service()
+        pass
