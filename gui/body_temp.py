@@ -228,6 +228,7 @@ class BodyTemp(App):
                 self.event_dist(meta, False)
             
             # イベントに応じた処理
+            eid = meta.event_id
             if eid != self.eid0:
                 self.eid0 = eid
                 evt = meta.event_type
