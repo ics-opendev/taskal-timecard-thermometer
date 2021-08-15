@@ -47,10 +47,9 @@ class BodyTempCharacteristic(Characteristic):
         if new_body_temp is not self.current_body_temp and new_body_temp is not None:
             self.current_body_temp = new_body_temp
             value = bytes(f'{self.current_body_temp.temperature}', encoding='utf-8', errors='replace')
-
-        if self._updateValueCallback:
-            print('updateBodyTemp: notifying'); 
-            self._updateValueCallback(value)
+            if self._updateValueCallback:
+                print('updateBodyTemp: notifying'); 
+                self._updateValueCallback(value)
     
     def best_body_temp(self, a, b):
         if a is None:

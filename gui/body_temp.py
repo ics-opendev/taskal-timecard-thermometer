@@ -304,7 +304,6 @@ class BodyTemp(App):
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
                 self.bleno_manager.updateBodyTemp(body_temp)
-                print(body_temp.temperature, body_temp.measurement_type)
 
             # フレーム単位の更新処理
             self.update_frame(img, meta)
