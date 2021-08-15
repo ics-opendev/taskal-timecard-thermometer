@@ -59,8 +59,7 @@ class HumanDetectionCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
-        a = readUInt16BE(data, 0)
-        print(a)
+        print(data)
 
         callback(self.RESULT_SUCCESS)
 
