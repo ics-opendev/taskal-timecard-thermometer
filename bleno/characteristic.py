@@ -46,7 +46,7 @@ class BodyTempCharacteristic(Characteristic):
         value = bytes(f'-1', encoding='utf-8', errors='replace')
         if new_body_temp is not self.current_body_temp and new_body_temp is not None:
             self.current_body_temp = new_body_temp
-            value = bytes(f'{current_body_temp.temperature}', encoding='utf-8', errors='replace')
+            value = bytes(f'{self.current_body_temp.temperature}', encoding='utf-8', errors='replace')
 
         if self._updateValueCallback:
             print('updateBodyTemp: notifying'); 
