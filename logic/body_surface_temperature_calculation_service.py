@@ -122,19 +122,19 @@ class BodySurfaceTemperatureCalculationService:
         sum_temp += flatten_temps[target_index]
         count += 1
         # 左
-        if 0 < (target_index) <= len(flatten_temps):
+        if 0 <= (target_index-1) < len(flatten_temps):
             sum_temp += flatten_temps[target_index-1]
             count += 1
         # 右
-        if 0 < (target_index+1) <= len(flatten_temps):
+        if 0 <= (target_index+1) < len(flatten_temps):
             sum_temp += flatten_temps[target_index+1]
             count += 1
         # 上
-        if 0 < (target_index-120) <= len(flatten_temps):
+        if 0 <= (target_index-120) < len(flatten_temps):
             sum_temp += flatten_temps[target_index-120]
             count += 1
         # 下
-        if 0 < (target_index+120) <= len(flatten_temps):
+        if 0 <= (target_index+120) < len(flatten_temps):
             sum_temp += flatten_temps[target_index+120]
             count += 1
         

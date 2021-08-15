@@ -207,7 +207,7 @@ class BodyTemp(App):
         return '{:.1f}'.format(temp)
 
     # フレーム情報の解析
-    def update_frame(self, img, meta):
+    def update_frame(self, img, meta, body_temp):
         # ステータスを取得
         st = meta.status
 
@@ -219,38 +219,32 @@ class BodyTemp(App):
             elif self.correct_cnt == 0:
                 self.set_label(BodyTemp.LABEL_NONE)
 
-            # 人を検出した場合は、取得箇所の温度を表示
-            if self.correct_cnt == 0 and self.disp_temp and not self.detected \
-                and meta.obs_temps is not None \
-                and self.operating_mode != gParam.OPE_MODE_GUEST:
-                i = 0
-                for t in meta.obs_temps:
-                    self.previewScreen.labelObsTemps[i].text = self.get_temp_text(t) if t > 0 else ''
-                    i += 1
-            else:
-                for i in range(0, 3):
-                    self.previewScreen.labelObsTemps[i].text = ''
-
             # イベントに応じた処理
-            eid = meta.event_id
-            if eid != self.eid0:
-                self.eid0 = eid
-                evt = meta.event_type
-                if (evt & OwhMeta.EV_BODY_TEMP) != 0:
-                    # 発見した人から体温を検出しました
-                    self.event_body_temp(meta)
-                if (evt & OwhMeta.EV_CORRECT) != 0:
-                    # 補正処理中に検出しました
-                    self.event_correct(meta)
-                if (evt & OwhMeta.EV_LOST) != 0:
-                    # 人が消えた
-                    self.event_lost(meta)
-                if (evt & OwhMeta.EV_DIST_VALID) != 0:
-                    # 人を検出しました
-                    self.event_dist(meta, True)
-                if (evt & OwhMeta.EV_DIST_INVALID) != 0:
-                    # 計測範囲外に出ました
-                    self.event_dist(meta, False)
+            
+            if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
+                self.event_dist(meta, True)
+                self.event_body_temp(meta)
+            else:
+                self.event_lost(meta)
+                self.event_dist(meta, False)
+            #if eid != self.eid0:
+            #    self.eid0 = eid
+            #    evt = meta.event_type
+            #    if (evt & OwhMeta.EV_BODY_TEMP) != 0:
+            #        # 発見した人から体温を検出しました
+            #        self.event_body_temp(meta)
+            #    if (evt & OwhMeta.EV_CORRECT) != 0:
+            #        # 補正処理中に検出しました
+            #        self.event_correct(meta)
+            #    if (evt & OwhMeta.EV_LOST) != 0:
+            #        # 人が消えた
+            #        self.event_lost(meta)
+            #    if (evt & OwhMeta.EV_DIST_VALID) != 0:
+            #        # 人を検出しました
+            #        self.event_dist(meta, True)
+            #    if (evt & OwhMeta.EV_DIST_INVALID) != 0:
+            #        # 計測範囲外に出ました
+            #        self.event_dist(meta, False)
         elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
             # カメラを暖気運転中
             self.set_label(BodyTemp.LABEL_NOT_READY)
@@ -306,7 +300,7 @@ class BodyTemp(App):
                 self.bleno_manager.updateBodyTemp(body_temp)
 
             # フレーム単位の更新処理
-            self.update_frame(img, meta)
+            self.update_frame(img, meta, body_temp)
         except Exception as ex:
             print("サーモループでエラー", ex)
 
@@ -347,16 +341,16 @@ class BodyTemp(App):
 
     def event_body_temp(self, meta):
         self.set_label2(BodyTemp.LABEL_NONE)
-        body_temp = int((meta.body_temp + 0.05) * 10) / 10
+        #body_temp = int((meta.body_temp + 0.05) * 10) / 10
         # NOTE: 体温表示は行わない
         #if gParam.TempDisplay and self.operating_mode != gParam.OPE_MODE_GUEST:
         #    self.previewScreen.labelTemp.text = self.get_temp_text(body_temp)
-        if body_temp >= gParam.TempThreshold:
+        #if body_temp >= gParam.TempThreshold:
+        #    pass
+        #else:
+        self.previewScreen.set_color_bar((0, 1, 0, 1))
+        if self.detected == False and gParam.AlarmPattern != 0:
             pass
-        else:
-            self.previewScreen.set_color_bar((0, 1, 0, 1))
-            if self.detected == False and gParam.AlarmPattern != 0:
-                pass
         self.detected = True
 
     def event_correct(self, meta):
