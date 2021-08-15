@@ -245,11 +245,9 @@ class BodyTemp(App):
                 if (evt & OwhMeta.EV_LOST) != 0:
                     # 人が消えた
                     self.event_lost(meta)
-                    self.bleno_manager.updateHumanDetection(str(False))
                 if (evt & OwhMeta.EV_DIST_VALID) != 0:
                     # 人を検出しました
                     self.event_dist(meta, True)
-                    self.bleno_manager.updateHumanDetection(str(True))
                 if (evt & OwhMeta.EV_DIST_INVALID) != 0:
                     # 計測範囲外に出ました
                     self.event_dist(meta, False)
@@ -307,10 +305,6 @@ class BodyTemp(App):
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
                 self.bleno_manager.updateBodyTemp(body_temp)
                 print(body_temp.temperature, body_temp.measurement_type)
-
-            # 体温情報の更新
-            
-            # UIの内容を更新
 
             # フレーム単位の更新処理
             self.update_frame(img, meta)
