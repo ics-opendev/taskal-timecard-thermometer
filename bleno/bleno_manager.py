@@ -49,5 +49,6 @@ class BlenoManager:
     
     # カメラの状態に変化があったことを通知
     def updateThermometerStatus(self, status_code):
+        print("更新されました", status_code)
         self.thermometer_status.updateStatus(status_code)
 

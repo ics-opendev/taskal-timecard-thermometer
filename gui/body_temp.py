@@ -219,7 +219,6 @@ class BodyTemp(App):
             elif self.correct_cnt == 0:
                 self.set_label(BodyTemp.LABEL_NONE)
 
-            
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
                 self.event_dist(meta, True)
                 self.event_body_temp(meta)
@@ -305,7 +304,6 @@ class BodyTemp(App):
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
-        print(old.status, new.status)
         if old.status is not new.status:
             print("サーモデイバスのステータス更新を通知しました")
             self.bleno_manager.updateThermometerStatus(new.status)
