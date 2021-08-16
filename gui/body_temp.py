@@ -287,20 +287,15 @@ class BodyTemp(App):
 
     # デバイスステータス更新
     def update_owlift_h_status(self, meta, current_status):
-        preparation = False
         new_status = current_status.status
 
         # 準備状態のチェック
         if meta.status == OwhMeta.S_OK or self.force_observe:
-            if current_status.preparation:
-                preparation = False
                 new_status = OwliftHDeviceStatus.READY
         elif meta.status == OwhMeta.S_NO_TEMP or meta.status == OwhMeta.S_INVALID_TEMP:
-            if not current_status.preparation:
-                preparation = True
                 new_status = OwliftHDeviceStatus.PREPARATION
 
-        return current_status, OwliftHStatus(preparation, new_status)
+        return current_status, OwliftHStatus(new_status)
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
@@ -429,7 +424,7 @@ class BodyTemp(App):
             print(options)
 
             self.ow.set_options(options)
-            self.owlift_h_status = OwliftHStatus(False, OwliftHDeviceStatus.WATING)
+            self.owlift_h_status = OwliftHStatus(OwliftHDeviceStatus.WATING)
             self.ow.capture_start()
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
