@@ -81,7 +81,7 @@ class ThermometerStatusCharacteristic(Characteristic):
             'value': None
           })
           
-        self._value = array.array('B', [0] * 0)
+        self._value = array.array([0] * 0)
         self._updateValueCallback = None
 
     def onReadRequest(self, offset, callback):
@@ -100,7 +100,7 @@ class ThermometerStatusCharacteristic(Characteristic):
 
     # 体温計が温度を取得した際はここが更新される
     def updateStatus(self, status_code):
-        self._value = bytes(f'{status_code}', encoding='utf-8', errors='replace')
+        self._value = bytes(f'{status_code.value}', encoding='utf-8', errors='replace')
 
         if self._updateValueCallback:
             print('updateStatus: notifying')

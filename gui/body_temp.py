@@ -429,7 +429,7 @@ class BodyTemp(App):
             print(options)
 
             self.ow.set_options(options)
-            self.owlift_h_status = OwliftHStatus(False, OwliftHDeviceStatus.PREPARATION)
+            self.owlift_h_status = OwliftHStatus(False, OwliftHDeviceStatus.WATING)
             self.ow.capture_start()
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)

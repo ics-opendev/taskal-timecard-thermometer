@@ -8,6 +8,8 @@ class OwliftHDeviceStatus(Enum):
     READY = 0
     # 準備中
     PREPARATION = 1
+    # サーモの接続待ち
+    WATING = 2
     # サーモとの接続が切れました
     THERMO_LOST = 99
     # 切断
