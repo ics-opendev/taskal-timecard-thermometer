@@ -81,7 +81,7 @@ class ThermometerStatusCharacteristic(Characteristic):
             'value': None
           })
           
-        self._value = array.array([0] * 0)
+        self._value = array.array('B', [0] * 0)
         self._updateValueCallback = None
 
     def onReadRequest(self, offset, callback):
