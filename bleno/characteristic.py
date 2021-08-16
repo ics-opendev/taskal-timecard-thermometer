@@ -85,6 +85,7 @@ class ThermometerStatusCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     def onReadRequest(self, offset, callback):
+        print('onReadRequest', self._value[offset:])
         callback(Characteristic.RESULT_SUCCESS, self._value[offset:])
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
@@ -102,5 +103,5 @@ class ThermometerStatusCharacteristic(Characteristic):
         self._value = bytes(f'{status_code}', encoding='utf-8', errors='replace')
 
         if self._updateValueCallback:
-            print('updateStatus: notifying'); 
+            print('updateStatus: notifying')
             self._updateValueCallback(self._value)
