@@ -70,7 +70,7 @@ class BodySurfaceTemperatureCalculationService:
         if False:
             print(max_temp, mean_temp, body_temp)
 
-        return BodySurfaceTemperature(measurement_type, body_temp)
+        return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1)#BodySurfaceTemperature(measurement_type, body_temp)
 
     # 最大値の取得
     def get_max_temp(self, temp_table):
