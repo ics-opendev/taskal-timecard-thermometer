@@ -14,7 +14,7 @@ class BodyTempCharacteristic(Characteristic):
     def __init__(self, uuid):
         Characteristic.__init__(self, {
             'uuid': uuid,
-            'properties': ['read', 'notify'],
+            'properties': ['read', 'notify', 'write'],
             'value': None
           })
         self._updateValueCallback = None
@@ -31,6 +31,12 @@ class BodyTempCharacteristic(Characteristic):
 
         callback(Characteristic.RESULT_SUCCESS, bytes(f'{now_current_body_temp.temperature}', encoding='utf-8', errors='replace'))
         print('read', now_current_body_temp.temperature)
+
+    def onWriteRequest(self, data, offset, withoutResponse, callback):
+        print(offset, data)
+        value = readUInt16BE(data, 0)
+        print("value", value)
+        callback(Characteristic.RESULT_SUCCESS);
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
         print('onSubscribe:BodyTemp')
