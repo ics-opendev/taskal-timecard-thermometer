@@ -33,10 +33,8 @@ class BodyTempCharacteristic(Characteristic):
         print('read', now_current_body_temp.temperature)
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
-        print(offset, data)
-        value = readUInt16BE(data, 0)
-        print("value", value)
-        callback(Characteristic.RESULT_SUCCESS);
+        print(offset, data, data[0])
+        callback(Characteristic.RESULT_SUCCESS)
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
         print('onSubscribe:BodyTemp')
