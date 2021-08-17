@@ -87,8 +87,8 @@ class BodySurfaceTemperatureCalculationService:
 
     # 最小値のランダム生成    
     def min_random_value(self, temp):
-        r = 35.9 - max(35.7, temp)
-        return random.uniform(0, r) + temp
+        v = max(35.85, temp)
+        return random.uniform(0, 0.25) + v
     
     # 最大値のランダム生成
     def max_random_value(self, temp):
