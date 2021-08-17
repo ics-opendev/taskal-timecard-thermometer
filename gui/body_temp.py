@@ -219,7 +219,6 @@ class BodyTemp(App):
             elif self.correct_cnt == 0:
                 self.set_label(BodyTemp.LABEL_NONE)
 
-            
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
                 self.event_dist(meta, True)
                 self.event_body_temp(meta)
@@ -279,6 +278,7 @@ class BodyTemp(App):
             # 取得した情報を元に体温を演算
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
+                #print(body_temp.measurement_type, body_temp.temperature)
                 self.bleno_manager.updateBodyTemp(body_temp)
 
             # フレーム単位の更新処理
@@ -288,25 +288,19 @@ class BodyTemp(App):
 
     # デバイスステータス更新
     def update_owlift_h_status(self, meta, current_status):
-        preparation = False
         new_status = current_status.status
 
         # 準備状態のチェック
         if meta.status == OwhMeta.S_OK or self.force_observe:
-            if current_status.preparation:
-                preparation = False
                 new_status = OwliftHDeviceStatus.READY
         elif meta.status == OwhMeta.S_NO_TEMP or meta.status == OwhMeta.S_INVALID_TEMP:
-            if not current_status.preparation:
-                preparation = True
                 new_status = OwliftHDeviceStatus.PREPARATION
 
-        return current_status, OwliftHStatus(preparation, new_status)
+        return current_status, OwliftHStatus(new_status)
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
         if old.status is not new.status:
-            print("サーモデイバスのステータス更新を通知しました")
             self.bleno_manager.updateThermometerStatus(new.status)
 
     def enable_shortcut(self):
@@ -430,7 +424,7 @@ class BodyTemp(App):
             print(options)
 
             self.ow.set_options(options)
-            self.owlift_h_status = OwliftHStatus(False, OwliftHDeviceStatus.PREPARATION)
+            self.owlift_h_status = OwliftHStatus(OwliftHDeviceStatus.WATING)
             self.ow.capture_start()
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)

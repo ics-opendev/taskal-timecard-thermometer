@@ -29,12 +29,6 @@ class BodySurfaceTemperatureCalculationService:
         
         # イベントに応じた処理
         if new_event_id is not self.old_event_id:
-            if get_event_type(meta) is OwhMeta.EV_LOST:
-                print("人を見失いました")
-            if get_event_type(meta) is OwhMeta.EV_DIST_VALID:
-                print("人を検出しました")
-            if get_event_type(meta) is OwhMeta.EV_DIST_INVALID:
-                print("人が測定範囲外に出ました")
             if get_event_type(meta) is OwhMeta.EV_BODY_TEMP:
                 body_temp = math.floor(meta.body_temp * 10) / 10
                 measurement_type = MeasurementType.RAW_OWLIFT_H
@@ -48,7 +42,6 @@ class BodySurfaceTemperatureCalculationService:
 
         # 人検出事体が行われていない場合
         if not (200 < meta.distance < 1400):
-            print("人がおらんです")
             return BodySurfaceTemperature(measurement_type, body_temp) 
 
         # システム側で温度を演算
@@ -73,9 +66,11 @@ class BodySurfaceTemperatureCalculationService:
         # 高温用乱数で演算を実施
         body_temp = self.max_random_value(max_temp)
         measurement_type = MeasurementType.RANDOM_GENERATION
-        print(max_temp, mean_temp, body_temp)
 
-        return BodySurfaceTemperature(measurement_type, body_temp)
+        if False:
+            print(max_temp, mean_temp, body_temp)
+
+        return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1)#BodySurfaceTemperature(measurement_type, body_temp)
 
     # 最大値の取得
     def get_max_temp(self, temp_table):
@@ -92,8 +87,8 @@ class BodySurfaceTemperatureCalculationService:
 
     # 最小値のランダム生成    
     def min_random_value(self, temp):
-        r = 35.9 - max(35.7, temp)
-        return random.uniform(0, r) + temp
+        v = max(35.85, temp)
+        return random.uniform(0, 0.25) + v
     
     # 最大値のランダム生成
     def max_random_value(self, temp):
