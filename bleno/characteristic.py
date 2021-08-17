@@ -30,7 +30,7 @@ class BodyTempCharacteristic(Characteristic):
             return
 
         callback(Characteristic.RESULT_SUCCESS, bytes(f'{now_current_body_temp.temperature}', encoding='utf-8', errors='replace'))
-        print('read', now_current_body_temp.temperature)
+        #print('read', now_current_body_temp.temperature)
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
         print('onSubscribe:BodyTemp')
@@ -52,7 +52,7 @@ class BodyTempCharacteristic(Characteristic):
             value = bytes(f'{self.current_body_temp.temperature}', encoding='utf-8', errors='replace')
             if self._updateValueCallback:
                 self._updateValueCallback(value)
-                print('notifiy', self.current_body_temp.temperature)
+                #print('notifiy', self.current_body_temp.temperature)
     
     def best_body_temp(self, a, b):
         if a is None:
@@ -89,7 +89,6 @@ class ThermometerStatusCharacteristic(Characteristic):
         self._updateValueCallback = None
 
     def onReadRequest(self, offset, callback):
-        print('onReadRequest', self._value[offset:])
         callback(Characteristic.RESULT_SUCCESS, self._value[offset:])
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
@@ -107,5 +106,4 @@ class ThermometerStatusCharacteristic(Characteristic):
         self._value = bytes(f'{status_code.value}', encoding='utf-8', errors='replace')
 
         if self._updateValueCallback:
-            print('updateStatus: notifying')
             self._updateValueCallback(self._value)

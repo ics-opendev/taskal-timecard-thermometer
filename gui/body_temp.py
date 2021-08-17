@@ -278,6 +278,7 @@ class BodyTemp(App):
             # 取得した情報を元に体温を演算
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
             if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
+                print(body_temp.measurement_type, body_temp.temperature)
                 self.bleno_manager.updateBodyTemp(body_temp)
 
             # フレーム単位の更新処理
@@ -300,7 +301,6 @@ class BodyTemp(App):
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
         if old.status is not new.status:
-            print("サーモデイバスのステータス更新を通知しました")
             self.bleno_manager.updateThermometerStatus(new.status)
 
     def enable_shortcut(self):
