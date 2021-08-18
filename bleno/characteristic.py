@@ -19,21 +19,29 @@ class BodyTempCharacteristic(Characteristic):
           })
         self._updateValueCallback = None
         self.current_body_temp = None
+        self.activateNotification = False
 
-    # リクエストの1秒前から最高品質の温度を取得する
+    # リクエストの瞬間に適切な品質が得られているか検査し、得られない場合はnotifyを起動
     def onReadRequest(self, offset, callback):
         now_current_body_temp = self.current_body_temp
 
-        if now_current_body_temp is None or self.is_expiration(now_current_body_temp):
+        if now_current_body_temp is None:
             time_out = bytes(f'-1', encoding='utf-8', errors='replace')
             callback(Characteristic.RESULT_SUCCESS, time_out[offset:])
+            # notification を有効化
+            self.activateNotification = True
             return
 
         callback(Characteristic.RESULT_SUCCESS, bytes(f'{now_current_body_temp.temperature}', encoding='utf-8', errors='replace'))
         print('read', now_current_body_temp.temperature)
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
-        print(readUInt8(data, 0))
+        #48=人検出
+        value = readUInt8(data, 0)
+        if value == 48:
+            self.current_body_temp = None
+            self.activateNotification = False
+
         callback(Characteristic.RESULT_SUCCESS)
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
@@ -46,7 +54,7 @@ class BodyTempCharacteristic(Characteristic):
         
         self._updateValueCallback = None
 
-    # 体温計が温度を取得した際はここが更新される
+    # 良い値がこれば、通知する、来ない場合は2秒待ち、高温ランダムを返す
     def updateBodyTemp(self, body_temp):
         new_body_temp = self.best_body_temp(self.current_body_temp, body_temp)
 
