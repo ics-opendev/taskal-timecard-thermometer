@@ -63,10 +63,6 @@ class BodySurfaceTemperatureCalculationService:
         
         # NOTE: 高温ばかりでるなら出現頻度から演算を実施を検討
 
-        # 高温用乱数で演算を実施
-        body_temp = self.max_random_value(max_temp)
-        measurement_type = MeasurementType.RANDOM_GENERATION
-
         if False:
             print(max_temp, mean_temp, body_temp)
 
@@ -89,10 +85,6 @@ class BodySurfaceTemperatureCalculationService:
     def min_random_value(self, temp):
         v = max(35.85, temp)
         return random.uniform(0, 0.25) + v
-    
-    # 最大値のランダム生成
-    def max_random_value(self, temp):
-        return random.uniform(0, 0.4) + 36.5 
 
     # 周囲5px(中心と上下左右)の平均値
     def optimal_mean_temp(self, temp_table):

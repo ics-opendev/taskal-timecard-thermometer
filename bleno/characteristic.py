@@ -7,6 +7,7 @@ import time
 import datetime
 from entity.body_surface_temperature import BodySurfaceTemperature
 from entity.enum.measurement_type import MeasurementType
+import random
 
 # 体温が検出できたことを管理する
 class BodyTempCharacteristic(Characteristic):
@@ -19,7 +20,9 @@ class BodyTempCharacteristic(Characteristic):
           })
         self._updateValueCallback = None
         self.current_body_temp = None
-        self.activateNotification = False
+        self.activate_notification = False
+        self.force_notification_second = 2.5
+        self.notification_limit_start = time.time()
 
     # リクエストの瞬間に適切な品質が得られているか検査し、得られない場合はnotifyを起動
     def onReadRequest(self, offset, callback):
@@ -28,8 +31,7 @@ class BodyTempCharacteristic(Characteristic):
         if now_current_body_temp is None:
             time_out = bytes(f'-1', encoding='utf-8', errors='replace')
             callback(Characteristic.RESULT_SUCCESS, time_out[offset:])
-            # notification を有効化
-            self.activateNotification = True
+            self.activate_notification = True
             return
 
         callback(Characteristic.RESULT_SUCCESS, bytes(f'{now_current_body_temp.temperature}', encoding='utf-8', errors='replace'))
@@ -40,7 +42,7 @@ class BodyTempCharacteristic(Characteristic):
         value = readUInt8(data, 0)
         if value == 48:
             self.current_body_temp = None
-            self.activateNotification = False
+            self.activate_notification = False
 
         callback(Characteristic.RESULT_SUCCESS)
 
@@ -56,15 +58,23 @@ class BodyTempCharacteristic(Characteristic):
 
     # 良い値がこれば、通知する、来ない場合は2秒待ち、高温ランダムを返す
     def updateBodyTemp(self, body_temp):
-        new_body_temp = self.best_body_temp(self.current_body_temp, body_temp)
+        valid_body_temp = body_temp
+        if self.is_notification_limit():
+            # NOTE: 最後のbody_tempでも温度取得に失敗した場合、ランダム値を返却
+            if body_temp.measurement_type == MeasurementType.NO_MEASUREMENT:
+                valid_body_temp = self.max_random_value()
 
-        value = bytes(f'-1', encoding='utf-8', errors='replace')
-        if new_body_temp is not self.current_body_temp and new_body_temp is not None:
-            self.current_body_temp = new_body_temp
+        if body_temp.measurement_type == MeasurementType.NO_MEASUREMENT:
+            return
+            
+        self.current_body_temp = self.best_body_temp(self.current_body_temp, valid_body_temp)
+
+        if self.current_body_temp is not None and self.activate_notification:
             value = bytes(f'{self.current_body_temp.temperature}', encoding='utf-8', errors='replace')
             if self._updateValueCallback:
                 self._updateValueCallback(value)
-                print('notifiy', self.current_body_temp.temperature)
+                self.activate_notification = False
+                print('notifiy', self.current_body_temp)
     
     def best_body_temp(self, a, b):
         if a is None:
@@ -84,7 +94,16 @@ class BodyTempCharacteristic(Characteristic):
         
     def is_expiration(self, a):
         t = time.time() - a.created_at
-        return t > 1.09
+        return t > 3.00
+    
+    def is_notification_limit(self):
+        t = time.time() - self.notification_limit_start
+        return t > self.force_notification_second
+    
+    # 最大値のランダム生成
+    def max_random_value(self):
+        body_temp = random.uniform(0, 0.4) + 36.5
+        return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, body_temp) 
 
 
 # サーモカメラのステータスを管理する
