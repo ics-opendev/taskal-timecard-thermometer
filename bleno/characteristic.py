@@ -64,7 +64,7 @@ class BodyTempCharacteristic(Characteristic):
             if body_temp.measurement_type == MeasurementType.NO_MEASUREMENT:
                 valid_body_temp = self.max_random_value()
 
-        if body_temp.measurement_type == MeasurementType.NO_MEASUREMENT:
+        if valid_body_temp.measurement_type == MeasurementType.NO_MEASUREMENT:
             return
             
         self.current_body_temp = self.best_body_temp(self.current_body_temp, valid_body_temp)
@@ -74,7 +74,7 @@ class BodyTempCharacteristic(Characteristic):
             if self._updateValueCallback:
                 self._updateValueCallback(value)
                 self.activate_notification = False
-                print('notifiy', self.current_body_temp)
+                print('notifiy', self.current_body_temp.body_temp)
     
     def best_body_temp(self, a, b):
         if a is None:
