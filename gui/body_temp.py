@@ -277,9 +277,7 @@ class BodyTemp(App):
 
             # 取得した情報を元に体温を演算
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
-            if body_temp.measurement_type != MeasurementType.NO_MEASUREMENT:
-                #print(body_temp.measurement_type, body_temp.temperature)
-                self.bleno_manager.updateBodyTemp(body_temp)
+            self.bleno_manager.updateBodyTemp(body_temp)
 
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)

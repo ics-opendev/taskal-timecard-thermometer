@@ -40,20 +40,12 @@ class BodySurfaceTemperatureCalculationService:
         if measurement_type is MeasurementType.RAW_OWLIFT_H:
             return BodySurfaceTemperature(measurement_type, body_temp)
 
-        # 人検出事体が行われていない場合
-        if not (200 < meta.distance < 1400):
-            return BodySurfaceTemperature(measurement_type, body_temp) 
-
-        # システム側で温度を演算
-        
+        # システム側で温度を演算        
         # 最大温度の取得
         max_temp = self.get_max_temp(temp_table) + manu_corr - 273.15
         range_result = self.range_check(max_temp)
         if range_result == 0:
             return BodySurfaceTemperature(MeasurementType.MAX_TEMPERATURE, max_temp)
-        elif range_result == -1:
-            min_value = self.min_random_value(max_temp)
-            return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, min_value)
 
         # 範囲外（上限）の場合の演算を実施
         mean_temp = self.optimal_mean_temp(temp_table) + manu_corr - 273.15
@@ -62,15 +54,7 @@ class BodySurfaceTemperatureCalculationService:
             return BodySurfaceTemperature(MeasurementType.PERIPHERAL_TEMPERATURE, mean_temp)
         
         # NOTE: 高温ばかりでるなら出現頻度から演算を実施を検討
-
-        # 高温用乱数で演算を実施
-        body_temp = self.max_random_value(max_temp)
-        measurement_type = MeasurementType.RANDOM_GENERATION
-
-        if False:
-            print(max_temp, mean_temp, body_temp)
-
-        return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1)#BodySurfaceTemperature(measurement_type, body_temp)
+        return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1)
 
     # 最大値の取得
     def get_max_temp(self, temp_table):
@@ -78,9 +62,9 @@ class BodySurfaceTemperatureCalculationService:
     
     # -1 なら範囲より小さい, 0なら範囲内, 1なら範囲より大きい
     def range_check(self, temp):
-        if 35.9 > temp:
+        if 35.85 > temp:
             return -1
-        if 37.1 < temp:
+        if 37.15 < temp:
             return 1
 
         return 0
@@ -89,10 +73,6 @@ class BodySurfaceTemperatureCalculationService:
     def min_random_value(self, temp):
         v = max(35.85, temp)
         return random.uniform(0, 0.25) + v
-    
-    # 最大値のランダム生成
-    def max_random_value(self, temp):
-        return random.uniform(0, 0.4) + 36.5 
 
     # 周囲5px(中心と上下左右)の平均値
     def optimal_mean_temp(self, temp_table):
