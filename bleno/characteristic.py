@@ -109,7 +109,7 @@ class BodyTempCharacteristic(Characteristic):
     
     # 最大値のランダム生成
     def max_random_value(self):
-        body_temp = random.uniform(0, 0.4) + 36.5
+        body_temp = random.uniform(0, 0.5) + 36.45
         return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, body_temp) 
 
 
