@@ -61,6 +61,7 @@ class BodyTempCharacteristic(Characteristic):
 
     # 良い値がこれば、通知する、来ない場合は2秒待ち、高温ランダムを返す
     def updateBodyTemp(self, body_temp):
+        print(body_temp.measurement_type, body_temp.temperature)
         valid_body_temp = body_temp
         if self.is_notification_limit():
             # NOTE: 最後のbody_tempでも温度取得に失敗した場合、ランダム値を返却
@@ -101,7 +102,7 @@ class BodyTempCharacteristic(Characteristic):
     
     def is_notification_limit(self):
         if self.notification_limit_start is None:
-            return
+            return False
 
         t = time.time() - self.notification_limit_start
         return t > self.force_notification_second

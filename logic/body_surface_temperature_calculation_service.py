@@ -17,6 +17,8 @@ class BodySurfaceTemperatureCalculationService:
         if meta.status != OwhMeta.S_OK:
             return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1) 
 
+        print('距離: ', meta.distance)
+
         # 生の測定情報
         temp_table = meta.temp_tab
 
@@ -63,8 +65,6 @@ class BodySurfaceTemperatureCalculationService:
         
         # NOTE: 高温ばかりでるなら出現頻度から演算を実施を検討
 
-        if False:
-            print(max_temp, mean_temp, body_temp)
 
         return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1)#BodySurfaceTemperature(measurement_type, body_temp)
 
