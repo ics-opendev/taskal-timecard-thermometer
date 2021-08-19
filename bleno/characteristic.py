@@ -22,7 +22,7 @@ class BodyTempCharacteristic(Characteristic):
         self.current_body_temp = None
         self.activate_notification = False
         self.force_notification_second = 2.5
-        self.notification_limit_start = time.time()
+        self.notification_limit_start = None
 
     # リクエストの瞬間に適切な品質が得られているか検査し、得られない場合はnotifyを起動
     def onReadRequest(self, offset, callback):
@@ -32,6 +32,7 @@ class BodyTempCharacteristic(Characteristic):
             time_out = bytes(f'-1', encoding='utf-8', errors='replace')
             callback(Characteristic.RESULT_SUCCESS, time_out[offset:])
             self.activate_notification = True
+            self.notification_limit_start = time.time()
             return
 
         callback(Characteristic.RESULT_SUCCESS, bytes(f'{now_current_body_temp.temperature}', encoding='utf-8', errors='replace'))
@@ -43,6 +44,7 @@ class BodyTempCharacteristic(Characteristic):
         if value == 48:
             self.current_body_temp = None
             self.activate_notification = False
+            self.notification_limit_start = None
 
         callback(Characteristic.RESULT_SUCCESS)
         print('write', value)
@@ -98,6 +100,9 @@ class BodyTempCharacteristic(Characteristic):
         return t > 3.00
     
     def is_notification_limit(self):
+        if self.notification_limit_start is None:
+            return
+
         t = time.time() - self.notification_limit_start
         return t > self.force_notification_second
     
