@@ -74,7 +74,7 @@ class BodyTempCharacteristic(Characteristic):
             if self._updateValueCallback:
                 self._updateValueCallback(value)
                 self.activate_notification = False
-                print('notifiy', self.current_body_temp.body_temp)
+                print('notifiy', self.current_body_temp.temperature)
     
     def best_body_temp(self, a, b):
         if a is None:
