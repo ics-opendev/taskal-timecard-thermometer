@@ -21,7 +21,7 @@ class BodyTempCharacteristic(Characteristic):
         self._updateValueCallback = None
         self.current_body_temp = None
         self.activate_notification = False
-        self.force_notification_second = 2.5
+        self.force_notification_second = 1.5
         self.notification_limit_start = None
 
     # リクエストの瞬間に適切な品質が得られているか検査し、得られない場合はnotifyを起動
