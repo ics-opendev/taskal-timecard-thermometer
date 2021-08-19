@@ -35,7 +35,7 @@ class BodyTempCharacteristic(Characteristic):
             return
 
         callback(Characteristic.RESULT_SUCCESS, bytes(f'{now_current_body_temp.temperature}', encoding='utf-8', errors='replace'))
-        print('read', now_current_body_temp.temperature)
+        print('read', now_current_body_temp.temperature, now_current_body_temp.measurement_type)
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
         #48=人検出
@@ -45,6 +45,7 @@ class BodyTempCharacteristic(Characteristic):
             self.activate_notification = False
 
         callback(Characteristic.RESULT_SUCCESS)
+        print('write', value)
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
         print('onSubscribe:BodyTemp')
