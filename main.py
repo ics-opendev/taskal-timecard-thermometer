@@ -5,7 +5,7 @@ import json
 import logging
 import logging.handlers
 import os
-import entity.enum.application_mode from ApplicationMode
+from entity.enum.application_mode import ApplicationMode
 
 # ロガーを設定 log_levelについては下記を参照
 # NOTE: https://docs.python.org/ja/3/library/logging.html#levels
