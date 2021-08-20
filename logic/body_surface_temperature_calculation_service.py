@@ -15,7 +15,7 @@ class BodySurfaceTemperatureCalculationService:
     # 体表温度の演算を行う（演算結果、UIの変更箇所)
     def execute(self, meta, manu_corr):
         if meta.status != OwhMeta.S_OK:
-            return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1) 
+            return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1, 0) 
 
         # 生の測定情報
         temp_table = meta.temp_tab
@@ -27,6 +27,9 @@ class BodySurfaceTemperatureCalculationService:
         body_temp = -1
         measurement_type = MeasurementType.NO_MEASUREMENT
         
+        # 測定距離
+        distance = meta.distance
+
         # イベントに応じた処理
         if new_event_id is not self.old_event_id:
             if get_event_type(meta) is OwhMeta.EV_BODY_TEMP:
@@ -38,23 +41,23 @@ class BodySurfaceTemperatureCalculationService:
 
         # サーモ側で測定できた場合は処理を終了
         if measurement_type is MeasurementType.RAW_OWLIFT_H:
-            return BodySurfaceTemperature(measurement_type, body_temp)
+            return BodySurfaceTemperature(measurement_type, body_temp, distance)
 
         # システム側で温度を演算        
         # 最大温度の取得
         max_temp = self.get_max_temp(temp_table) + manu_corr - 273.15
         range_result = self.range_check(max_temp)
         if range_result == 0:
-            return BodySurfaceTemperature(MeasurementType.MAX_TEMPERATURE, max_temp)
+            return BodySurfaceTemperature(MeasurementType.MAX_TEMPERATURE, max_temp, distance)
 
         # 範囲外（上限）の場合の演算を実施
         mean_temp = self.optimal_mean_temp(temp_table) + manu_corr - 273.15
         range_result = self.range_check(mean_temp)
         if range_result == 0:
-            return BodySurfaceTemperature(MeasurementType.PERIPHERAL_TEMPERATURE, mean_temp)
+            return BodySurfaceTemperature(MeasurementType.PERIPHERAL_TEMPERATURE, mean_temp, distance)
         
         # NOTE: 高温ばかりでるなら出現頻度から演算を実施を検討
-        return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1)
+        return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1, distance)
 
     # 最大値の取得
     def get_max_temp(self, temp_table):

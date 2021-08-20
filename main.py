@@ -5,6 +5,7 @@ import json
 import logging
 import logging.handlers
 import os
+import entity.enum.application_mode from ApplicationMode
 
 # ロガーを設定 log_levelについては下記を参照
 # NOTE: https://docs.python.org/ja/3/library/logging.html#levels
@@ -35,7 +36,7 @@ class ApplicationEnvironment:
         self.LOG_LEVEL = app_env['log']['level']
         self.LOG_FILE_PATH = app_env['log']['file_path']
         self.DEVICE_NAME = app_env['deviceName']
-        self.APP_MODE = app_env['appMode']
+        self.APP_MODE = ApplicationMode(app_env['appMode'])
 
 # Main関数
 if __name__ == '__main__':

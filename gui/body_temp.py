@@ -11,6 +11,7 @@ from turbojpeg import TJPF_BGRA
 from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
 from entity.owlift_h_status import OwliftHStatus
 from entity.enum.measurement_type import MeasurementType
+from entity.enum.application_mode import ApplicationMode
 from logic.body_surface_temperature_calculation_service import BodySurfaceTemperatureCalculationService
 
 if 'KIVY_HOME' not in os.environ:
@@ -279,6 +280,10 @@ class BodyTemp(App):
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
             self.bleno_manager.updateBodyTemp(body_temp)
 
+            # 体温表示
+            if self.environment.APP_MODE == ApplicationMode.STANDALONE:
+                self.check_and_view_body_temp()
+
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)
         except Exception as ex:
@@ -295,6 +300,11 @@ class BodyTemp(App):
                 new_status = OwliftHDeviceStatus.PREPARATION
 
         return current_status, OwliftHStatus(new_status)
+
+    def check_and_view_body_temp(body_temp):
+        print(body_temp.distance)
+        if 0 < body_temp.distance and body_temp.distance < 1000:
+            print("範囲内です")
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
