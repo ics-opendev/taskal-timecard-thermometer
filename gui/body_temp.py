@@ -282,7 +282,7 @@ class BodyTemp(App):
 
             # 体温表示
             if self.environment.APP_MODE == ApplicationMode.STANDALONE:
-                self.check_and_view_body_temp()
+                self.check_and_view_body_temp(body_temp)
 
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)
@@ -301,7 +301,7 @@ class BodyTemp(App):
 
         return current_status, OwliftHStatus(new_status)
 
-    def check_and_view_body_temp(body_temp):
+    def check_and_view_body_temp(self, body_temp):
         print(body_temp.distance)
         if 0 < body_temp.distance and body_temp.distance < 1000:
             print("範囲内です")
