@@ -304,7 +304,7 @@ class BodyTemp(App):
 
     def check_and_view_body_temp(self, body_temp):
         if 0 < body_temp.distance and body_temp.distance < 1000:
-            self.previewScreen.labelTemp.text = self.get_temp_text(body_temp)
+            self.previewScreen.labelTemp.text = self.get_temp_text(body_temp.temperature)
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
