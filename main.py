@@ -35,6 +35,7 @@ class ApplicationEnvironment:
         self.LOG_LEVEL = app_env['log']['level']
         self.LOG_FILE_PATH = app_env['log']['file_path']
         self.DEVICE_NAME = app_env['deviceName']
+        self.APP_MODE = app_env['appMode']
 
 # Main関数
 if __name__ == '__main__':
