@@ -199,6 +199,7 @@ class BodyTemp(App):
         self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
+        self.pre_body_temp = None
 
         return self.screenManager
 
@@ -302,9 +303,8 @@ class BodyTemp(App):
         return current_status, OwliftHStatus(new_status)
 
     def check_and_view_body_temp(self, body_temp):
-        print(body_temp.distance)
         if 0 < body_temp.distance and body_temp.distance < 1000:
-            print("範囲内です")
+            self.previewScreen.labelTemp.text = self.get_temp_text(body_temp)
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
