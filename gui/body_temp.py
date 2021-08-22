@@ -311,7 +311,7 @@ class BodyTemp(App):
         if 0 < body_temp.distance and body_temp.distance < 1000:
             self.standalone_current_body_temp = self.standalone_best_body_temp(self.standalone_current_body_temp, body_temp)
             self.previewScreen.labelTemp.text = self.get_temp_text(self.standalone_current_body_temp.temperature)
-            print(self.standalone_current_body_temp.measurement_type, self.standalone_current_body_temp.temperature)
+            print(self.standalone_current_body_temp.measurement_type, self.standalone_current_body_temp.temperature, self.standalone_current_body_temp.distance)
         elif self.standalone_current_body_temp is not None:
             self.standalone_current_body_temp = None
             self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
