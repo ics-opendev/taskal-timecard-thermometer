@@ -307,11 +307,27 @@ class BodyTemp(App):
 
     def check_and_view_body_temp(self, body_temp):
         if 0 < body_temp.distance and body_temp.distance < 1000:
-            self.standalone_current_body_temp = body_temp
+            self.standalone_current_body_temp = self.standalone_best_body_temp(self.standalone_current_body_temp, body_temp) 
             self.previewScreen.labelTemp.text = self.get_temp_text(body_temp.temperature)
         else:
             self.standalone_current_body_temp = None
             self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
+            print("人を見失いました")
+
+    # スタンドアローンモードでのもっとも良い体温を表示する
+    def standalone_best_body_temp(self, a, b):
+        if a is None:
+            return b
+        
+        if b is None:
+            return None
+        
+        # 優先度チェック
+        if a.measurement_type.value > b.measurement_type.value:
+            return b
+        else:
+            return a
+
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
