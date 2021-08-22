@@ -201,6 +201,9 @@ class BodyTemp(App):
         self.last_frame = None
         self.pre_body_temp = None
 
+        # 単独での体温測定用
+        self.standalone_current_body_temp = None
+
         return self.screenManager
 
     def get_temp_text(self, temp):
@@ -305,6 +308,8 @@ class BodyTemp(App):
     def check_and_view_body_temp(self, body_temp):
         if 0 < body_temp.distance and body_temp.distance < 1000:
             self.previewScreen.labelTemp.text = self.get_temp_text(body_temp.temperature)
+        else:
+            self.previewScreen.labelTemp.text = self.LABELS[LABEL_NONE]
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):
