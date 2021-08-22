@@ -293,6 +293,7 @@ class BodyTemp(App):
             self.update_frame(img, meta, body_temp)
         except Exception as ex:
             print("サーモループでエラー", ex)
+            print(traceback.format_exc())
 
     # デバイスステータス更新
     def update_owlift_h_status(self, meta, current_status):
@@ -322,9 +323,6 @@ class BodyTemp(App):
     def standalone_best_body_temp(self, a, b):
         if a is None:
             return b
-        
-        if b is None:
-            return None
         
         # 優先度チェック
         if a.measurement_type.value > b.measurement_type.value:
