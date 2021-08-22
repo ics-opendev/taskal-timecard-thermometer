@@ -309,10 +309,12 @@ class BodyTemp(App):
         if 0 < body_temp.distance and body_temp.distance < 1000:
             self.standalone_current_body_temp = self.standalone_best_body_temp(self.standalone_current_body_temp, body_temp) 
             self.previewScreen.labelTemp.text = self.get_temp_text(body_temp.temperature)
-        else:
+        elif self.standalone_current_body_temp is not None:
             self.standalone_current_body_temp = None
             self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
             print("人を見失いました")
+        else:
+            pass
 
     # スタンドアローンモードでのもっとも良い体温を表示する
     def standalone_best_body_temp(self, a, b):
