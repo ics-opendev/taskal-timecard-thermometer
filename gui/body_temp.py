@@ -13,6 +13,7 @@ from entity.owlift_h_status import OwliftHStatus
 from entity.enum.measurement_type import MeasurementType
 from entity.enum.application_mode import ApplicationMode
 from logic.body_surface_temperature_calculation_service import BodySurfaceTemperatureCalculationService
+import random
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -308,11 +309,11 @@ class BodyTemp(App):
     def check_and_view_body_temp(self, body_temp):
         if 0 < body_temp.distance and body_temp.distance < 1000:
             self.standalone_current_body_temp = self.standalone_best_body_temp(self.standalone_current_body_temp, body_temp) 
-            self.previewScreen.labelTemp.text = self.get_temp_text(body_temp.temperature)
+            self.previewScreen.labelTemp.text = self.get_temp_text(self.standalone_current_body_temp.temperature)
         elif self.standalone_current_body_temp is not None:
             self.standalone_current_body_temp = None
             self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
-            print("人を見失いました")
+            print("人が消えた", random.uniform(0, 1))
         else:
             pass
 
