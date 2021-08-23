@@ -204,6 +204,7 @@ class BodyTemp(App):
 
         # 単独での体温測定用
         self.standalone_current_body_temp = None
+        self.lost_count = 0
 
         return self.screenManager
 
@@ -308,14 +309,28 @@ class BodyTemp(App):
         return current_status, OwliftHStatus(new_status)
 
     def check_and_view_body_temp(self, body_temp):
+        # TODO: 3コマ外れたら削除
+        # TODO: 表示は検出後0.7秒
+        # TODO: 3秒同じ位置かつ、-1なら削除
+        print(body_temp.distance)
         if 0 < body_temp.distance and body_temp.distance < 1000:
+            # よりよい情報に更新
             self.standalone_current_body_temp = self.standalone_best_body_temp(self.standalone_current_body_temp, body_temp)
+
+            if self.standalone_current_body_temp.temperature == -1:
+                self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
+                return
+            
             self.previewScreen.labelTemp.text = self.get_temp_text(self.standalone_current_body_temp.temperature)
-            print(self.standalone_current_body_temp.measurement_type, self.standalone_current_body_temp.temperature, self.standalone_current_body_temp.distance)
+            self.lost_count = 0
+            #print(self.standalone_current_body_temp.measurement_type, self.standalone_current_body_temp.temperature, self.standalone_current_body_temp.distance)
         elif self.standalone_current_body_temp is not None:
-            self.standalone_current_body_temp = None
-            self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
-            print("人が消えた", random.uniform(0, 1))
+            self.lost_count += 1
+            if self.lost_count > 3:
+                self.standalone_current_body_temp = None
+                self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
+                self.lost_count = 0
+                print("人が消えた", random.uniform(0, 1))
         else:
             pass
 
