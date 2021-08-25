@@ -81,3 +81,9 @@ git config --global credential.helper cache
 自動起動の設定
 
 https://qiita.com/tkato/items/6a227e7c2c2bde19521c
+
+
+passwd
+
+raspberry
+NewPass
