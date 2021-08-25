@@ -55,6 +55,8 @@ class BodySurfaceTemperatureCalculationService:
         range_result = self.range_check(mean_temp)
         if range_result == 0:
             return BodySurfaceTemperature(MeasurementType.PERIPHERAL_TEMPERATURE, mean_temp, distance)
+
+        print(max_temp, mean_temp)
         
         # NOTE: 高温ばかりでるなら出現頻度から演算を実施を検討
         return BodySurfaceTemperature(MeasurementType.NO_MEASUREMENT, -1, distance)
