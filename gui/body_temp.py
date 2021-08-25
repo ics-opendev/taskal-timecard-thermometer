@@ -291,7 +291,7 @@ class BodyTemp(App):
                 detection_result = self.standalone_body_temp_detection_service.execute(body_temp)
                 # 測定結果の表示
                 if detection_result.show:
-                    self.previewScreen.labelTemp.text = self.get_temp_text(self.detection_result.temperature)
+                    self.previewScreen.labelTemp.text = self.get_temp_text(detection_result.temperature)
                 else:
                     self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
 
