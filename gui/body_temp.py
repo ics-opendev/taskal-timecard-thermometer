@@ -209,8 +209,8 @@ class BodyTemp(App):
 
     def get_temp_text(self, temp):
         if temp >= gParam.TempThreshold:
-            return '[color=FF0000]{:.1f}[/color]'.format(temp)
-        return '{:.1f}'.format(temp)
+            return '[b][color=FF0000]{:.1f}[/color][/b]'.format(temp)
+        return '[b][color=FFFFFF]{:.1f}[/color][/b]'.format(temp)
 
     # フレーム情報の解析
     def update_frame(self, img, meta, body_temp):
