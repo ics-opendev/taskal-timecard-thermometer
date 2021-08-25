@@ -1,13 +1,13 @@
 [Unit]
-Description = 説明文（好きにに入れて良いです）
+Description = TaskalTimecard-thermometer連携アプリ
 After=local-fs.target
 ConditionPathExists=/home/pi/taskal-timecard-thermometer
 
 [Service]
-ExecStart=/home/pi/taskal-timecard-thermometer/start.sh
+ExecStart=/bin/sh /home/pi/taskal-timecard-thermometer/start.sh
 Restart=no
-Type=simple
+Type=forking
 
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical.target
