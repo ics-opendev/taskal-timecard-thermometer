@@ -11,7 +11,10 @@ from turbojpeg import TJPF_BGRA
 from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
 from entity.owlift_h_status import OwliftHStatus
 from entity.enum.measurement_type import MeasurementType
+from entity.enum.application_mode import ApplicationMode
 from logic.body_surface_temperature_calculation_service import BodySurfaceTemperatureCalculationService
+from logic.standalone_body_temp_detection_service import StandaloneBodyTempDetectionService
+import random
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -153,6 +156,8 @@ class BodyTemp(App):
 
         # 体表温度の演算を行う
         self.body_surface_temparature_calculation = BodySurfaceTemperatureCalculationService()
+        # 単独動作の場合使用するサービス
+        self.standalone_body_temp_detection_service = StandaloneBodyTempDetectionService()
 
         # フルスクリーン
         # Window.fullscreen = 'auto'
@@ -198,13 +203,14 @@ class BodyTemp(App):
         self.disp_temp = False
         self.info_disp_cnt = 0
         self.last_frame = None
+        self.pre_body_temp = None
 
         return self.screenManager
 
     def get_temp_text(self, temp):
         if temp >= gParam.TempThreshold:
-            return '[color=FF0000]{:.1f}[/color]'.format(temp)
-        return '{:.1f}'.format(temp)
+            return '[b][color=FF0000]{:.1f}[/color][/b]'.format(temp)
+        return '[b][color=FFFFFF]{:.1f}[/color][/b]'.format(temp)
 
     # フレーム情報の解析
     def update_frame(self, img, meta, body_temp):
@@ -279,10 +285,22 @@ class BodyTemp(App):
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
             self.bleno_manager.updateBodyTemp(body_temp)
 
+            # config設定でスタンドアローンモードなら処理を行う
+            if self.environment.APP_MODE == ApplicationMode.STANDALONE:
+                # 対象を検出して温度を測定する
+                detection_result = self.standalone_body_temp_detection_service.execute(body_temp)
+                # 測定結果の表示
+                if detection_result.show:
+                    self.previewScreen.labelTemp.text = self.get_temp_text(detection_result.temperature)
+                else:
+                    self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
+
+
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)
         except Exception as ex:
             print("サーモループでエラー", ex)
+            print(traceback.format_exc())
 
     # デバイスステータス更新
     def update_owlift_h_status(self, meta, current_status):
