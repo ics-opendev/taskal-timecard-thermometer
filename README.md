@@ -79,9 +79,7 @@ git config --global credential.helper cache
 ```
 
 自動起動の設定
-
-https://qiita.com/tkato/items/6a227e7c2c2bde19521c
-
+https://qiita.com/karaage0703/items/ed18f318a1775b28eab4
 
 passwd
 
