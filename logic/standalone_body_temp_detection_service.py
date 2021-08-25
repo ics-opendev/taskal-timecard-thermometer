@@ -70,6 +70,6 @@ class StandaloneBodyTempDetectionService:
         return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, body_temp, distance) 
 
     def is_timeout(self, body_temp):
-        undetection = self.standalone_current_body_temp.temperature == -1 and body_temp.temperature == -1
+        undetection = self.standalone_current_body_temp is not None and self.standalone_current_body_temp.temperature == -1 and body_temp.temperature == -1
         timeout = self.start_time is not None and (time.time() - self.start_time) > 2.5
         return (undetection and timeout)
