@@ -13,6 +13,7 @@ from entity.owlift_h_status import OwliftHStatus
 from entity.enum.measurement_type import MeasurementType
 from entity.enum.application_mode import ApplicationMode
 from logic.body_surface_temperature_calculation_service import BodySurfaceTemperatureCalculationService
+from logic.standalone_body_temp_detection_service import StandaloneBodyTempDetectionService
 import random
 
 if 'KIVY_HOME' not in os.environ:
@@ -155,6 +156,8 @@ class BodyTemp(App):
 
         # 体表温度の演算を行う
         self.body_surface_temparature_calculation = BodySurfaceTemperatureCalculationService()
+        # 単独動作の場合使用するサービス
+        self.standalone_body_temp_detection_service = StandaloneBodyTempDetectionService()
 
         # フルスクリーン
         # Window.fullscreen = 'auto'
@@ -201,10 +204,6 @@ class BodyTemp(App):
         self.info_disp_cnt = 0
         self.last_frame = None
         self.pre_body_temp = None
-
-        # 単独での体温測定用
-        self.standalone_current_body_temp = None
-        self.lost_count = 0
 
         return self.screenManager
 
@@ -286,9 +285,16 @@ class BodyTemp(App):
             body_temp = self.body_surface_temparature_calculation.execute(meta, gParam.ManuCorr)
             self.bleno_manager.updateBodyTemp(body_temp)
 
-            # 体温表示
+            # config設定でスタンドアローンモードなら処理を行う
             if self.environment.APP_MODE == ApplicationMode.STANDALONE:
-                self.check_and_view_body_temp(body_temp)
+                # 対象を検出して温度を測定する
+                detection_result = self.standalone_body_temp_detection_service.execute(body_temp)
+                # 測定結果の表示
+                if detection_result.show:
+                    self.previewScreen.labelTemp.text = self.get_temp_text(self.detection_result.temperature)
+                else:
+                    self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
+
 
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)
@@ -307,44 +313,6 @@ class BodyTemp(App):
                 new_status = OwliftHDeviceStatus.PREPARATION
 
         return current_status, OwliftHStatus(new_status)
-
-    def check_and_view_body_temp(self, body_temp):
-        # TODO: 3コマ外れたら削除
-        # TODO: 表示は検出後0.7秒
-        # TODO: 3秒同じ位置かつ、-1なら削除
-        print(body_temp.distance)
-        if 0 < body_temp.distance and body_temp.distance < 1000:
-            # よりよい情報に更新
-            self.standalone_current_body_temp = self.standalone_best_body_temp(self.standalone_current_body_temp, body_temp)
-
-            if self.standalone_current_body_temp.temperature == -1:
-                self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
-                return
-            
-            self.previewScreen.labelTemp.text = self.get_temp_text(self.standalone_current_body_temp.temperature)
-            self.lost_count = 0
-            #print(self.standalone_current_body_temp.measurement_type, self.standalone_current_body_temp.temperature, self.standalone_current_body_temp.distance)
-        elif self.standalone_current_body_temp is not None:
-            self.lost_count += 1
-            if self.lost_count > 3:
-                self.standalone_current_body_temp = None
-                self.previewScreen.labelTemp.text = self.LABELS[self.LABEL_NONE]
-                self.lost_count = 0
-                print("人が消えた", random.uniform(0, 1))
-        else:
-            pass
-
-    # スタンドアローンモードでのもっとも良い体温を表示する
-    def standalone_best_body_temp(self, a, b):
-        if a is None:
-            return b
-        
-        # 優先度チェック
-        if a.measurement_type.value > b.measurement_type.value:
-            return b
-        else:
-            return a
-
 
     # サーモデバイスのステータス更新を通知する
     def update_device_status_if_necessary(self, old, new):

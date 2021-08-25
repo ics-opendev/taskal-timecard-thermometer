@@ -16,3 +16,6 @@ def get_event_type(meta):
         return OwhMeta.EV_LOST
     else:
         return OwhMeta.EV_NONE
+
+def get_max_random_temp():
+    pass
