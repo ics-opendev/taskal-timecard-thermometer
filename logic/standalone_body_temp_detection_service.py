@@ -16,9 +16,14 @@ class StandaloneBodyTempDetectionService:
         self.start_time = None
     
     # 体表温度の演算を行う（演算結果、UIの変更箇所)
-    def execute(self, body_temp):
-        # TODO: 表示は検出後0.7秒
-        # TODO: 3秒同じ位置かつ、-1なら削除
+    def execute(self, raw_body_temp):
+
+        body_temp = raw_body_temp
+
+        # 2.5秒立っても検出できなければランダム生成
+        if self.is_timeout(body_temp):
+            body_temp = self.max_random_value(body_temp.distance)
+
         human_detection = (0 < body_temp.distance and body_temp.distance < 620)
         if human_detection:
             old_body_temp = self.standalone_current_body_temp
@@ -28,16 +33,12 @@ class StandaloneBodyTempDetectionService:
             if old_body_temp is None and new_body_temp is not None:
                 self.start_time = time.time()
 
-            # 2.5秒立っても検出できなければランダム生成
-            if self.start_time is not None and (time.time() - self.start_time) > 2:
-                new_body_temp = self.max_random_value()
-
             # 温度情報を更新
             self.standalone_current_body_temp = new_body_temp
             # 成功していたら未検出回数をリセット
             self.lost_count = 0
 
-            if new_body_temp.temperature == -1:
+            if self.standalone_current_body_temp.temperature == -1:
                 return StandaloneInfo(False, -1)
             
             return StandaloneInfo(True, self.standalone_current_body_temp.temperature)
@@ -64,6 +65,11 @@ class StandaloneBodyTempDetectionService:
             return a
 
         # 最大値のランダム生成
-    def max_random_value(self):
+    def max_random_value(self, distance=-1):
         body_temp = random.uniform(0, 0.6) + 36.05
-        return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, body_temp, -1) 
+        return BodySurfaceTemperature(MeasurementType.RANDOM_GENERATION, body_temp, distance) 
+
+    def is_timeout(self, body_temp):
+        undetection = self.standalone_current_body_temp.temperature == -1 and body_temp.temperature == -1
+        timeout = self.start_time is not None and (time.time() - self.start_time) > 2.5
+        return (undetection and timeout)
