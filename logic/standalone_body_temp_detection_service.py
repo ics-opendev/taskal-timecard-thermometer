@@ -21,6 +21,7 @@ class StandaloneBodyTempDetectionService:
             old_body_temp = self.standalone_current_body_temp
             new_body_temp = self.standalone_best_body_temp(self.standalone_current_body_temp, body_temp)
             self.standalone_current_body_temp = new_body_temp
+            print(body_temp.temperature, body_temp.measurement_type, new_body_temp.temperature)
             # 温度検出に失敗していたら終了
             if new_body_temp is None or new_body_temp.temperature == -1:
                 return StandaloneInfo(False, -1)
