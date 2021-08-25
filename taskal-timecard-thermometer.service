@@ -5,6 +5,7 @@ ConditionPathExists=/home/pi/taskal-timecard-thermometer
 
 [Service]
 ExecStart=/bin/sh /home/pi/taskal-timecard-thermometer/start.sh
+WorkingDirectory=/home/pi/taskal-timecard-thermometer
 Restart=no
 Type=forking
 
