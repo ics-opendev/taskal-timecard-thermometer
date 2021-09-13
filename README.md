@@ -69,6 +69,14 @@ $ sudo cp start.sh /home/pi/Desktop
 $ reboot
 ```
 
+## app autostart
+
+```
+$ su
+$ sudo echo '@sleep 10s' >> /etc/xdg/lxsession/LXDE-pi/autostart
+$ sudo echo '@bash /home/pi/taskal-timecard-thermometer/start.sh' >> /etc/xdg/lxsession/LXDE-pi/autostart
+```
+
 # 警告が邪魔な場合（非推奨）
 https://qiita.com/nayuki_eng/items/3180da7ea0e4adab4e6c
 
@@ -77,3 +85,10 @@ gitのパスワード一時保存
 ```
 git config --global credential.helper cache
 ```
+
+自動起動の設定
+https://qiita.com/karaage0703/items/ed18f318a1775b28eab4
+
+passwd
+raspberry
+NewPass

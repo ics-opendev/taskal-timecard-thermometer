@@ -160,7 +160,7 @@ class BodyTemp(App):
         self.standalone_body_temp_detection_service = StandaloneBodyTempDetectionService()
 
         # フルスクリーン
-        # Window.fullscreen = 'auto'
+        Window.fullscreen = 'auto'
 
         # 温度計画像のサイズ
         self.wx = 120
