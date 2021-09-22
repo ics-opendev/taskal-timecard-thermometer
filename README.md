@@ -18,25 +18,20 @@ Raspberry Pi OS with desktop and recommended softwareをインストールする
 
 変更後パスワード : Icsoft123
 
-SSHの有効化
-この[サイト](https://qiita.com/tomokin966/items/bc22d09f97ebeb3955d2)を参考にどうぞ
-
 SSHはリリース時にOffへ変更してください
 
 Wifi へ接続
 
 この[サイト](http://www.openspc2.org/reibun/RaspberryPI/OS/Raspbian/etc/0002/index.html)を参考にIPを確認
 
-TeamViewerのダウンロード (Raspiberry Version)
-↓
-高橋アカウントでログイン
 
 ### 画面インストール
 
 LCD-show.tar.gz をdownloadに配置
 
 ```
-$ cd /home/pi/Downloads
+$ git clone https://github.com/ics-opendev/taskal-timecard-thermometer.git
+$ cd taskal-timecard-thermometer
 $ sudo cp LCD-show.tar.gz /boot
 $ sudo passwd root
 $ sudo su -
@@ -48,12 +43,25 @@ $ cd LCD-show/
 $ ./MPI3508-show
 ```
 
+TeamViewerのダウンロード (Raspiberry Version)
+↓
+高橋アカウントでログイン
+
 # bluetoothが一時的に利用できなくなるため、この修正を追加
 https://github.com/waveshare/LCD-show/issues/43
 
+### edit /boot/cmdline.txt and replace
+
+vi は x で1文字消し
+
+```
+$ console=ttyAMA0,115200 -> console=serial0,115200
+```
+
+
 ```
 # 再起動とインストールが入ります
-$ sudo passwd -l root
+$ sudo reboot
 ```
 
 
@@ -61,7 +69,6 @@ $ sudo passwd -l root
 
 アプリのインストール
 ```
-$ git clone https://github.com/ics-opendev/taskal-timecard-thermometer.git
 $ cd taskal-timecard-thermometer
 $ sudo chmod 777 *
 $ sudo ./setup.sh
@@ -70,6 +77,9 @@ $ reboot
 ```
 
 ## app autostart
+
+自動起動の設定
+https://qiita.com/karaage0703/items/ed18f318a1775b28eab4
 
 ```
 $ su
@@ -80,15 +90,8 @@ $ sudo echo '@bash /home/pi/taskal-timecard-thermometer/start.sh' >> /etc/xdg/lx
 # 警告が邪魔な場合（非推奨）
 https://qiita.com/nayuki_eng/items/3180da7ea0e4adab4e6c
 
-gitのパスワード一時保存
-
 ```
-git config --global credential.helper cache
+$ sudo vi /boot/config.txt
+# config.txtファイルを管理者権限で開いて 1行を追記
+$ avoid_warnings=1
 ```
-
-自動起動の設定
-https://qiita.com/karaage0703/items/ed18f318a1775b28eab4
-
-passwd
-raspberry
-NewPass
