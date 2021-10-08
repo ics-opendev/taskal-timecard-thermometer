@@ -1,18 +1,15 @@
 from pybleno import *
-import sys
-import signal
 from bleno.characteristic import BodyTempCharacteristic, ThermometerStatusCharacteristic
-import math
-
 class BlenoManager:
 
-    def __init__(self, environment):
+    def __init__(self, environment, logger):
         self.inner_bleno = Bleno()
         self.environment = environment
         self.body_temp_chara = BodyTempCharacteristic('ec100001-9999-9999-9999-000000000001')
         self.thermometer_status = ThermometerStatusCharacteristic('ec100001-9999-9999-9999-000000000003')
         self.inner_bleno.on('stateChange', self.onStateChange)
         self.inner_bleno.on('advertisingStart', self.onAdvertisingStart)
+        self.logger = logger
 
     def start(self):
         print('start bleno')
@@ -24,7 +21,7 @@ class BlenoManager:
         self.inner_bleno.disconnect()
 
     def onStateChange(self, state):
-        print('on -> stateChange: ' + state);
+        self.logger.debug('on -> stateChange: ' + state)
 
         if (state == 'poweredOn'):
             self.inner_bleno.startAdvertising(self.environment.DEVICE_NAME, ['ec100001-9999-9999-9999-000000000000'])
@@ -32,7 +29,7 @@ class BlenoManager:
             self.inner_bleno.stopAdvertising()
 
     def onAdvertisingStart(self, error):
-        print('on -> advertisingStart: ' + ('error ' + error if error else 'success'));
+        self.logger.debug('on -> advertisingStart: ' + ('error ' + error if error else 'success'))
 
         if not error:
             self.inner_bleno.setServices([

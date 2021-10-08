@@ -76,6 +76,19 @@ $ sudo cp start.sh /home/pi/Desktop
 $ reboot
 ```
 
+# 警告が邪魔な場合（非推奨）
+
+16:9 720*480 へ変更しておく
+
+https://qiita.com/nayuki_eng/items/3180da7ea0e4adab4e6c
+
+```
+$ sudo vi /boot/config.txt
+# config.txtファイルを管理者権限で開いて 1行を追記
+$ avoid_warnings=1
+```
+
+
 ## app autostart
 
 自動起動の設定
@@ -87,11 +100,3 @@ $ sudo echo '@sleep 10s' >> /etc/xdg/lxsession/LXDE-pi/autostart
 $ sudo echo '@bash /home/pi/taskal-timecard-thermometer/start.sh' >> /etc/xdg/lxsession/LXDE-pi/autostart
 ```
 
-# 警告が邪魔な場合（非推奨）
-https://qiita.com/nayuki_eng/items/3180da7ea0e4adab4e6c
-
-```
-$ sudo vi /boot/config.txt
-# config.txtファイルを管理者権限で開いて 1行を追記
-$ avoid_warnings=1
-```

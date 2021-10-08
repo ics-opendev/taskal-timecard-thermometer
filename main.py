@@ -61,7 +61,7 @@ if __name__ == '__main__':
     from bleno.bleno_manager import BlenoManager
     app = None
     try:
-        bleno_manager = BlenoManager(app_env)
+        bleno_manager = BlenoManager(app_env, logger)
         bleno_manager.start()
         while True:
             app = BodyTemp(app_env, bleno_manager)
