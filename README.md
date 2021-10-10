@@ -27,7 +27,7 @@ Wifi へ接続
 
 ### 画面インストール
 
-LCD-show.tar.gz をdownloadに配置
+LCD-show.tar.gz をdownloadに配置 SSHで操作
 
 ```
 $ git clone https://github.com/ics-opendev/taskal-timecard-thermometer.git
@@ -42,10 +42,6 @@ $ sudo cp config.txt ./LCD-show/boot
 $ cd LCD-show/
 $ ./MPI3508-show
 ```
-
-TeamViewerのダウンロード (Raspiberry Version)
-↓
-高橋アカウントでログイン
 
 # bluetoothが一時的に利用できなくなるため、この修正を追加
 https://github.com/waveshare/LCD-show/issues/43
@@ -78,21 +74,26 @@ $ reboot
 
 # 警告が邪魔な場合（非推奨）
 
-16:9 720*480 へ変更しておく
-
-https://qiita.com/nayuki_eng/items/3180da7ea0e4adab4e6c
-
 ```
+$ sudo apt remove lxplug-ptbatt -y
+
 $ sudo vi /boot/config.txt
 # config.txtファイルを管理者権限で開いて 1行を追記
 $ avoid_warnings=1
 ```
 
+# TeamViewerのダウンロード (Raspiberry Version)
+
+```
+$ cd ~
+$ sudo wget https://download.teamviewer.com/download/linux/teamviewer_armhf.deb
+$ sudo chmod 777 teamviewer_armhf.deb
+$ sudo apt install ./teamviewer_armhf.deb -y
+$ sudo teamviewer setup
+```
+
 
 ## app autostart
-
-自動起動の設定
-https://qiita.com/karaage0703/items/ed18f318a1775b28eab4
 
 ```
 $ su

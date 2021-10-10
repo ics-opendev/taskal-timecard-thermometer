@@ -53,8 +53,7 @@ if __name__ == '__main__':
 
     # ロガーの初期化
     logger = setup_logger(app_env)
-    logger.debug('アプリの起動')
-    logger.debug('アプリの初期化に成功しました')
+
 
     # GUIを起動
     from gui.body_temp import BodyTemp
@@ -65,9 +64,13 @@ if __name__ == '__main__':
         bleno_manager.start()
         while True:
             app = BodyTemp(app_env, bleno_manager)
+            logger.debug('アプリの起動')
+            logger.debug('アプリの初期化に成功しました')
             app.run()
+            logger.debug('アプリが終了しました')
     except:
         import traceback
+        logger.debug('エラー発生')
         logger.critical(traceback.format_exc())
         if app:
             app.stop()
