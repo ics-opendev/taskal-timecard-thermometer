@@ -9,14 +9,15 @@ class BlenoManager:
         self.thermometer_status = ThermometerStatusCharacteristic('ec100001-9999-9999-9999-000000000003')
         self.inner_bleno.on('stateChange', self.onStateChange)
         self.inner_bleno.on('advertisingStart', self.onAdvertisingStart)
+        self.inner_bleno.on('advertisingStop', self.onAdvertisingStop)
         self.logger = logger
 
     def start(self):
-        print('start bleno')
+        self.logger.debug('start bleno')
         self.inner_bleno.start()
     
     def stop(self):
-        print('stop bleno')
+        self.logger.debug('stop bleno')
         self.inner_bleno.stopAdvertising()
         self.inner_bleno.disconnect()
 
@@ -39,6 +40,9 @@ class BlenoManager:
                 })
             ])
 
+    def onAdvertisingStop(self):
+        self.logger.debug('onAdvertisingStop')
+
     # 測定に変更があったことを通知
     def updateBodyTemp(self, body_temp):
         # キャラクタステック内で温度情報を確定する
@@ -46,6 +50,6 @@ class BlenoManager:
     
     # カメラの状態に変化があったことを通知
     def updateThermometerStatus(self, status_code):
-        print("更新されました", status_code)
+        self.logger.debug("更新されました", status_code)
         self.thermometer_status.updateStatus(status_code)
 

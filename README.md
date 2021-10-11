@@ -51,6 +51,7 @@ https://github.com/waveshare/LCD-show/issues/43
 vi は x で1文字消し
 
 ```
+$ sudo vi /boot/cmdline.txt
 $ console=ttyAMA0,115200 -> console=serial0,115200
 ```
 
@@ -98,6 +99,6 @@ $ sudo teamviewer setup
 ```
 $ su
 $ sudo echo '@sleep 10s' >> /etc/xdg/lxsession/LXDE-pi/autostart
-$ sudo echo '@bash /home/pi/taskal-timecard-thermometer/start.sh' >> /etc/xdg/lxsession/LXDE-pi/autostart
+$ sudo echo '@lxterminal --command="/home/pi/taskal-timecard-thermometer/start.sh"' >> /etc/xdg/lxsession/LXDE-pi/autostart
 ```
 
