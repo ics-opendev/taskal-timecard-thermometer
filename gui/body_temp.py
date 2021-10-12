@@ -1,12 +1,8 @@
 # coding: utf-8
 
-import base64
 import json
-import numpy as np
 import sys
 import os
-import pickle
-import socket
 from turbojpeg import TJPF_BGRA
 from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
 from entity.owlift_h_status import OwliftHStatus
@@ -14,7 +10,6 @@ from entity.enum.measurement_type import MeasurementType
 from entity.enum.application_mode import ApplicationMode
 from logic.body_surface_temperature_calculation_service import BodySurfaceTemperatureCalculationService
 from logic.standalone_body_temp_detection_service import StandaloneBodyTempDetectionService
-import random
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -73,7 +68,6 @@ from gui.settings import SystemResetSettingsScreen
 from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
 from gui.param import gParam
-from bleno.bleno_manager import BlenoManager
 
 # argsのデフォルト値
 class MockArgs:
@@ -128,10 +122,11 @@ class BodyTemp(App):
     INFO_DISP_CNT = 26
 
     # コンストラクター
-    def __init__(self, environment, bleno_manager):
+    def __init__(self, environment, bleno_manager, logger):
         super().__init__()
         self.environment = environment
         self.bleno_manager = bleno_manager
+        self.logger = logger
         self.restart = False
 
     def open_settings(self, *largs):
@@ -299,8 +294,8 @@ class BodyTemp(App):
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)
         except Exception as ex:
-            print("サーモループでエラー", ex)
-            print(traceback.format_exc())
+            self.logger.error("サーモループでエラー", ex)
+            self.logger.error(traceback.format_exc())
 
     # デバイスステータス更新
     def update_owlift_h_status(self, meta, current_status):
@@ -464,4 +459,4 @@ class BodyTemp(App):
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # Windowがクローズされる前に呼び出される
     def on_stop(self):
-        pass
+        self.bleno_manager.stop()

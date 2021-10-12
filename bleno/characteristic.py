@@ -1,10 +1,7 @@
 from pybleno import *
 import array
-import struct
-import sys
 import traceback
 import time
-import datetime
 from entity.body_surface_temperature import BodySurfaceTemperature
 from entity.enum.measurement_type import MeasurementType
 import random
@@ -12,7 +9,7 @@ import random
 # 体温が検出できたことを管理する
 class BodyTempCharacteristic(Characteristic):
     
-    def __init__(self, uuid):
+    def __init__(self, uuid, logger):
         Characteristic.__init__(self, {
             'uuid': uuid,
             'properties': ['read', 'notify', 'write'],
@@ -23,6 +20,7 @@ class BodyTempCharacteristic(Characteristic):
         self.activate_notification = False
         self.force_notification_second = 1.5
         self.notification_limit_start = None
+        self.logger = logger
 
     # リクエストの瞬間に適切な品質が得られているか検査し、得られない場合はnotifyを起動
     def onReadRequest(self, offset, callback):
@@ -36,7 +34,7 @@ class BodyTempCharacteristic(Characteristic):
             return
 
         callback(Characteristic.RESULT_SUCCESS, bytes(f'{now_current_body_temp.temperature}', encoding='utf-8', errors='replace'))
-        print('read', now_current_body_temp.temperature, now_current_body_temp.measurement_type)
+        self.logger.debug('read', now_current_body_temp.temperature, now_current_body_temp.measurement_type)
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
         #48=人検出
@@ -47,15 +45,15 @@ class BodyTempCharacteristic(Characteristic):
             self.notification_limit_start = None
 
         callback(Characteristic.RESULT_SUCCESS)
-        print('write', value)
+        self.logger.debug('write', value)
 
     def onSubscribe(self, maxValueSize, updateValueCallback):
-        print('onSubscribe:BodyTemp')
+        self.logger.debug('onSubscribe:BodyTemp')
         
         self._updateValueCallback = updateValueCallback
 
     def onUnsubscribe(self):
-        print('onUnsubscribe:BodyTemp');
+        self.logger.debug('onUnsubscribe:BodyTemp');
         
         self._updateValueCallback = None
 
@@ -77,7 +75,7 @@ class BodyTempCharacteristic(Characteristic):
             if self._updateValueCallback:
                 self._updateValueCallback(value)
                 self.activate_notification = False
-                print('notifiy', self.current_body_temp.temperature)
+                self.logger.debug('notifiy', f'{self.current_body_temp.temperature} {self.current_body_temp.measurement_type}')
     
     def best_body_temp(self, a, b):
         if a is None:
