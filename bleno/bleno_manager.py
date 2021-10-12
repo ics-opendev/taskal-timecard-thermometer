@@ -5,7 +5,7 @@ class BlenoManager:
     def __init__(self, environment, logger):
         self.inner_bleno = Bleno()
         self.environment = environment
-        self.body_temp_chara = BodyTempCharacteristic('ec100001-9999-9999-9999-000000000001')
+        self.body_temp_chara = BodyTempCharacteristic('ec100001-9999-9999-9999-000000000001', logger)
         self.thermometer_status = ThermometerStatusCharacteristic('ec100001-9999-9999-9999-000000000003')
         self.inner_bleno.on('stateChange', self.onStateChange)
         self.inner_bleno.on('advertisingStart', self.onAdvertisingStart)

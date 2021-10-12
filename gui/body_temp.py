@@ -1,12 +1,8 @@
 # coding: utf-8
 
-import base64
 import json
-import numpy as np
 import sys
 import os
-import pickle
-import socket
 from turbojpeg import TJPF_BGRA
 from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
 from entity.owlift_h_status import OwliftHStatus
@@ -14,7 +10,6 @@ from entity.enum.measurement_type import MeasurementType
 from entity.enum.application_mode import ApplicationMode
 from logic.body_surface_temperature_calculation_service import BodySurfaceTemperatureCalculationService
 from logic.standalone_body_temp_detection_service import StandaloneBodyTempDetectionService
-import random
 
 if 'KIVY_HOME' not in os.environ:
     os.environ['KIVY_HOME'] = 'gui/kivy'
@@ -73,7 +68,6 @@ from gui.settings import SystemResetSettingsScreen
 from gui.settings import SystemRebootScreen
 from gui.preview import PreviewScreen
 from gui.param import gParam
-from bleno.bleno_manager import BlenoManager
 
 # argsのデフォルト値
 class MockArgs:
