@@ -128,10 +128,11 @@ class BodyTemp(App):
     INFO_DISP_CNT = 26
 
     # コンストラクター
-    def __init__(self, environment, bleno_manager):
+    def __init__(self, environment, bleno_manager, logger):
         super().__init__()
         self.environment = environment
         self.bleno_manager = bleno_manager
+        self.logger = logger
         self.restart = False
 
     def open_settings(self, *largs):
@@ -299,8 +300,8 @@ class BodyTemp(App):
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)
         except Exception as ex:
-            print("サーモループでエラー", ex)
-            print(traceback.format_exc())
+            self.logger.error("サーモループでエラー", ex)
+            self.logger.error(traceback.format_exc())
 
     # デバイスステータス更新
     def update_owlift_h_status(self, meta, current_status):
@@ -464,4 +465,4 @@ class BodyTemp(App):
     # kivyの関数 https://pyky.github.io/kivy-doc-ja/api-kivy.app.html
     # Windowがクローズされる前に呼び出される
     def on_stop(self):
-        pass
+        self.bleno_manager.stop()

@@ -98,7 +98,6 @@ $ sudo teamviewer setup
 
 ```
 $ su
-$ sudo echo '@sleep 10s' >> /etc/xdg/lxsession/LXDE-pi/autostart
 $ sudo echo '@lxterminal --command="/home/pi/taskal-timecard-thermometer/start.sh"' >> /etc/xdg/lxsession/LXDE-pi/autostart
 ```
 
