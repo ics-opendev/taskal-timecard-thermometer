@@ -64,7 +64,7 @@ if __name__ == '__main__':
         bleno_manager = BlenoManager(app_env)
         bleno_manager.start()
         while True:
-            app = BodyTemp(app_env, bleno_manager)
+            app = BodyTemp(app_env, bleno_manager, logger)
             app.run()
     except:
         import traceback
