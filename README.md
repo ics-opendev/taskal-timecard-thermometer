@@ -27,9 +27,9 @@ Wifi へ接続
 
 ### 画面インストール
 
-LCD-show.tar.gz をdownloadに配置 SSHで操作
 
 ```
+$ cd ~
 $ git clone https://github.com/ics-opendev/taskal-timecard-thermometer.git
 $ cd taskal-timecard-thermometer
 $ sudo cp LCD-show.tar.gz /boot
@@ -66,6 +66,7 @@ $ sudo reboot
 
 アプリのインストール
 ```
+$ cd ~
 $ cd taskal-timecard-thermometer
 $ sudo chmod 777 *
 $ sudo ./setup.sh
