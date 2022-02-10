@@ -313,6 +313,7 @@ class BodyTemp(App):
     def update_device_status_if_necessary(self, old, new):
         if old.status is not new.status:
             self.bleno_manager.updateThermometerStatus(new.status)
+            self.logger.logger.debug(f"サーモデバイスのステータスが更新されました 旧: {old} 新: {new}")
 
     def enable_shortcut(self):
         """
@@ -341,6 +342,7 @@ class BodyTemp(App):
         elif self.correct_cnt > 0:
             self.set_label(BodyTemp.LABEL_GO_OUT)
         else:
+            self.logger.debug("校正が完了しました")
             self.set_label(BodyTemp.LABEL_END_CORRECT)
             self.info_disp_cnt = BodyTemp.INFO_DISP_CNT
             gParam.ManuCorr = meta.manu_corr
@@ -432,11 +434,11 @@ class BodyTemp(App):
                 "show_target": False,
             })
 
-            print(options)
 
             self.ow.set_options(options)
             self.owlift_h_status = OwliftHStatus(OwliftHDeviceStatus.WATING)
             self.ow.capture_start()
+            self.logger.debug("カメラキャプチャーを開始しました(準備中)")
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
             print("接続成功")
