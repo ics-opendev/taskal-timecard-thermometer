@@ -239,10 +239,14 @@ class BodyTemp(App):
         elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
             # カメラを暖気運転中
             self.set_label(BodyTemp.LABEL_NOT_READY)
+            if self.old_raw_status is not st:
+                self.logger.debug(f"サーモデバイスのステータスが更新されました 旧: {self.old_raw_status} 新: {st}")
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
+            if self.old_raw_status is not st:
+                self.logger.debug(f"サーモデバイスのステータスが更新されました 旧: {self.old_raw_status} 新: {st}")
 
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             self.last_frame = (img, meta)
@@ -294,6 +298,8 @@ class BodyTemp(App):
 
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)
+            # 処理の完了したフレームのメタデータ
+            self.old_raw_status = meta.status
         except Exception as ex:
             self.logger.error("サーモループでエラー", ex)
             self.logger.error(traceback.format_exc())
@@ -314,7 +320,6 @@ class BodyTemp(App):
     def update_device_status_if_necessary(self, old, new):
         if old.status is not new.status:
             self.bleno_manager.updateThermometerStatus(new.status)
-            self.logger.debug(f"サーモデバイスのステータスが更新されました 旧: {old} 新: {new}")
 
     def enable_shortcut(self):
         """
