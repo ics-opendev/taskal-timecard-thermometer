@@ -1,4 +1,4 @@
-from pybleno import *
+from pybleno import Characteristic
 import array
 import traceback
 import time
