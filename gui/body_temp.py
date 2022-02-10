@@ -3,6 +3,7 @@
 import json
 import sys
 import os
+import traceback
 from turbojpeg import TJPF_BGRA
 from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
 from entity.owlift_h_status import OwliftHStatus
@@ -313,7 +314,7 @@ class BodyTemp(App):
     def update_device_status_if_necessary(self, old, new):
         if old.status is not new.status:
             self.bleno_manager.updateThermometerStatus(new.status)
-            self.logger.logger.debug(f"サーモデバイスのステータスが更新されました 旧: {old} 新: {new}")
+            self.logger.debug(f"サーモデバイスのステータスが更新されました 旧: {old} 新: {new}")
 
     def enable_shortcut(self):
         """
