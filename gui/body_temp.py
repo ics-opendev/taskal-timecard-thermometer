@@ -129,6 +129,7 @@ class BodyTemp(App):
         self.bleno_manager = bleno_manager
         self.logger = logger
         self.restart = False
+        self.old_raw_status = None
 
     def open_settings(self, *largs):
         pass
@@ -240,13 +241,13 @@ class BodyTemp(App):
             # カメラを暖気運転中
             self.set_label(BodyTemp.LABEL_NOT_READY)
             if self.old_raw_status is not st:
-                self.logger.debug(f"サーモデバイスのステータスが更新されました 旧: {self.old_raw_status} 新: {st}")
+                self.logger.debug(f"サーモデバイスのステータスが更新され『準備中』が表示されました 旧: {self.old_raw_status} 新: {st}")
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
             if self.old_raw_status is not st:
-                self.logger.debug(f"サーモデバイスのステータスが更新されました 旧: {self.old_raw_status} 新: {st}")
+                self.logger.debug(f"サーモデバイスのステータスが更新され『準備中』が表示されました 旧: {self.old_raw_status} 新: {st}")
 
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             self.last_frame = (img, meta)
