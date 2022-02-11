@@ -1,5 +1,4 @@
-taskal-timecard-thermometer
-===
+# taskal-timecard-thermometer
 
 TTC(ios) の 体温測定拡張 アプリケーションです。
 
@@ -7,26 +6,30 @@ TTC(ios) の 体温測定拡張 アプリケーションです。
 
 [Raspberry Pi OS with desktop](https://www.raspberrypi.org/software/)をダウンロード
 
-balenaEtcherをインストールして、
-Raspberry Pi OS with desktop and recommended softwareをインストールする
+balenaEtcher をインストールして、
+Raspberry Pi OS with desktop and recommended software をインストールする
 
 ## os setup
 
 初期ユーザ
- loginUser : pi
- password  : raspberry
+loginUser : pi
+password : raspberry
+
+初期パスワードから変更
+
+```
+$ passwd
+```
 
 変更後パスワード : Icsoft123
 
-SSHはリリース時にOffへ変更してください
+SSH はリリース時に Off へ変更してください
 
 Wifi へ接続
 
-この[サイト](http://www.openspc2.org/reibun/RaspberryPI/OS/Raspbian/etc/0002/index.html)を参考にIPを確認
-
+この[サイト](http://www.openspc2.org/reibun/RaspberryPI/OS/Raspbian/etc/0002/index.html)を参考に IP を確認
 
 ### 画面インストール
-
 
 ```
 $ cd ~
@@ -43,28 +46,28 @@ $ cd LCD-show/
 $ ./MPI3508-show
 ```
 
-# bluetoothが一時的に利用できなくなるため、この修正を追加
+# bluetooth が一時的に利用できなくなるため、この修正を追加
+
 https://github.com/waveshare/LCD-show/issues/43
 
 ### edit /boot/cmdline.txt and replace
 
-vi は x で1文字消し
+vi は x で 1 文字消し
 
 ```
 $ sudo vi /boot/cmdline.txt
 $ console=ttyAMA0,115200 -> console=serial0,115200
 ```
 
-
 ```
 # 再起動とインストールが入ります
 $ sudo reboot
 ```
 
-
 ## app install
 
 アプリのインストール
+
 ```
 $ cd ~
 $ cd taskal-timecard-thermometer
@@ -84,7 +87,7 @@ $ sudo vi /boot/config.txt
 $ avoid_warnings=1
 ```
 
-# TeamViewerのダウンロード (Raspiberry Version)
+# TeamViewer のダウンロード (Raspiberry Version)
 
 ```
 $ cd ~
@@ -94,7 +97,6 @@ $ sudo apt install ./teamviewer_armhf.deb -y
 $ sudo teamviewer setup
 ```
 
-
 ## app autostart
 
 ```
@@ -102,3 +104,28 @@ $ su
 $ sudo echo '@lxterminal --command="/home/pi/taskal-timecard-thermometer/start.sh"' >> /etc/xdg/lxsession/LXDE-pi/autostart
 ```
 
+## お客様の wifi に自動接続を行う
+
+お客様より SSID と PW を受け取っている場合に限り事前に登録することができます
+仮にお客様から受け取った情報が下記の場合の例を示す
+SSID: "testSSID"
+パスワード: 123456789
+
+```
+
+$ wpa_passphrase ${SSID}
+この後パスワードの入力を求められます
+
+network={
+	ssid="testSSID"
+	#psk="12345678"
+	psk=aff6ecef59e550c27a16fa07f9451b9628d73ca974e83cdb50addfb3a3249fa9
+}
+
+#pskを消す
+
+$ sudo vi wpa_supplicant.conf
+
+末端を vi の oコマンドで改行し貼り付けを行う
+
+```
