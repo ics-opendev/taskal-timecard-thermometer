@@ -3,6 +3,7 @@
 import json
 import sys
 import os
+import traceback
 from turbojpeg import TJPF_BGRA
 from entity.enum.owlift_h_device_status import OwliftHDeviceStatus
 from entity.owlift_h_status import OwliftHStatus
@@ -128,6 +129,7 @@ class BodyTemp(App):
         self.bleno_manager = bleno_manager
         self.logger = logger
         self.restart = False
+        self.old_raw_status = None
 
     def open_settings(self, *largs):
         pass
@@ -238,10 +240,14 @@ class BodyTemp(App):
         elif st == OwhMeta.S_NO_TEMP or st == OwhMeta.S_INVALID_TEMP:
             # カメラを暖気運転中
             self.set_label(BodyTemp.LABEL_NOT_READY)
+            if self.old_raw_status is not st:
+                self.logger.debug(f"サーモデバイスのステータスが更新され『準備中』が表示されました 旧: {self.old_raw_status} 新: {st}")
         else:
             # なんらかのイレギュラーが発生した場合は「準備中」を表示
             # ステータスについては ドキュメント class OwhMetaを参照
             self.set_label(BodyTemp.LABEL_NOT_READY)
+            if self.old_raw_status is not st:
+                self.logger.debug(f"サーモデバイスのステータスが更新され『準備中』が表示されました 旧: {self.old_raw_status} 新: {st}")
 
         if self.operating_mode == gParam.OPE_MODE_GUEST:
             self.last_frame = (img, meta)
@@ -293,6 +299,8 @@ class BodyTemp(App):
 
             # フレーム単位の更新処理
             self.update_frame(img, meta, body_temp)
+            # 処理の完了したフレームのメタデータ
+            self.old_raw_status = meta.status
         except Exception as ex:
             self.logger.error("サーモループでエラー", ex)
             self.logger.error(traceback.format_exc())
@@ -341,6 +349,7 @@ class BodyTemp(App):
         elif self.correct_cnt > 0:
             self.set_label(BodyTemp.LABEL_GO_OUT)
         else:
+            self.logger.debug("校正が完了しました")
             self.set_label(BodyTemp.LABEL_END_CORRECT)
             self.info_disp_cnt = BodyTemp.INFO_DISP_CNT
             gParam.ManuCorr = meta.manu_corr
@@ -432,11 +441,11 @@ class BodyTemp(App):
                 "show_target": False,
             })
 
-            print(options)
 
             self.ow.set_options(options)
             self.owlift_h_status = OwliftHStatus(OwliftHDeviceStatus.WATING)
             self.ow.capture_start()
+            self.logger.debug("カメラキャプチャーを開始しました(準備中)")
 
             self.update_event = Clock.schedule_interval(self.update, self.args.interval)
             print("接続成功")
